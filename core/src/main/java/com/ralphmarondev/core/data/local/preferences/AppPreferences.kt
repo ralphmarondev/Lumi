@@ -33,6 +33,7 @@ class AppPreferences(
         val SYSTEM_LANGUAGE = stringPreferencesKey("system_language")
         val SYSTEM_IS_AUTHENTICATED = booleanPreferencesKey("system_is_authenticated")
         val SYSTEM_ENABLE_AUTH = booleanPreferencesKey("system_enable_auth")
+        val SYSTEM_CURRENT_USER = stringPreferencesKey("system_current_user")
     }
 
     suspend fun setSystemInDarkMode(value: Boolean) {
@@ -75,5 +76,13 @@ class AppPreferences(
 
     fun isSystemEnableAuth(): Flow<Boolean> {
         return dataStore.data.map { it[SYSTEM_ENABLE_AUTH] ?: true }
+    }
+
+    suspend fun setSystemCurrentUser(value: String) {
+        dataStore.edit { it[SYSTEM_CURRENT_USER] = value }
+    }
+
+    fun getSystemCurrentUser(): Flow<String> {
+        return dataStore.data.map { it[SYSTEM_CURRENT_USER] ?: "" }
     }
 }
