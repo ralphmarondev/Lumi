@@ -41,7 +41,7 @@ fun AppNavigation(
         composable<Routes.Launcher> {
             LauncherScreenRoot(
                 navigateToSettings = {
-                    navController.navigate(Routes.Setup) {
+                    navController.navigate(Routes.Settings) {
                         launchSingleTop = true
                     }
                 },
