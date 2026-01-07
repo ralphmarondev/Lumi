@@ -25,7 +25,9 @@ class LoginViewModel : ViewModel() {
             }
 
             LoginAction.Login -> {
-
+                _state.update {
+                    it.copy(success = true)
+                }
             }
         }
     }
