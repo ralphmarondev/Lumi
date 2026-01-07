@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.material.icons.extended.android)
     implementation(libs.lottie.animation)
+    implementation(libs.coil.compose)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.bundles.koin)
     implementation(libs.androidx.datastore)
