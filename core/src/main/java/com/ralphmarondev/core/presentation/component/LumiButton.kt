@@ -14,12 +14,14 @@ import androidx.compose.ui.unit.dp
 fun LumiButton(
     text: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
 ) {
     Button(
         onClick = onClick,
         modifier = modifier,
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(12.dp),
+        enabled = enabled
     ) {
         Text(
             text = text,

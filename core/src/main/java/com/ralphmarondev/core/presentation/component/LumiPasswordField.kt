@@ -27,6 +27,8 @@ fun LumiPasswordField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    readOnly: Boolean = false,
     labelText: String = "",
     supportingText: String = "",
     placeholderText: String = "••••••••",
@@ -42,6 +44,8 @@ fun LumiPasswordField(
         value = value,
         onValueChange = onValueChange,
         modifier = modifier,
+        enabled = enabled,
+        readOnly = readOnly,
         shape = RoundedCornerShape(20),
         textStyle = MaterialTheme.typography.bodyLarge.copy(
             color = MaterialTheme.colorScheme.secondary
