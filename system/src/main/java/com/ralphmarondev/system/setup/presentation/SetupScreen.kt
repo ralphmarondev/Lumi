@@ -2,10 +2,8 @@ package com.ralphmarondev.system.setup.presentation
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,18 +17,18 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountBox
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
-import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.LightMode
 import androidx.compose.material.icons.outlined.Password
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -38,6 +36,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,6 +55,7 @@ import com.ralphmarondev.core.presentation.component.LumiPasswordField
 import com.ralphmarondev.core.presentation.component.LumiTextField
 import com.ralphmarondev.core.presentation.theme.LocalThemeState
 import com.ralphmarondev.system.R
+import com.ralphmarondev.system.setup.presentation.component.LanguageCard
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -68,7 +68,7 @@ fun SetupScreenRoot(
     LaunchedEffect(state.completed) {
         if (state.completed) {
             onCompleted()
-            viewModel.onAction(SetupAction.Reset)
+            viewModel.onAction(SetupAction.ResetNavigation)
         }
     }
 
@@ -80,11 +80,19 @@ fun SetupScreenRoot(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SetupScreen(
+private fun SetupScreen(
     state: SetupState,
     action: (SetupAction) -> Unit
 ) {
     val themeState = LocalThemeState.current
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(state.message) {
+        state.message?.let { msg ->
+            snackbarHostState.showSnackbar(message = msg)
+            action(SetupAction.ResetMessage)
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -136,10 +144,12 @@ fun SetupScreen(
                 LumiButton(
                     text = "Continue",
                     onClick = { action(SetupAction.Continue) },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = state.enableContinueButton
                 )
             }
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
@@ -150,7 +160,7 @@ fun SetupScreen(
         ) {
             item {
                 when (state.currentScreen) {
-                    0 -> ChooseLanguage()
+                    0 -> ChooseLanguage(state, action)
                     1 -> AboutLumi()
                     2 -> PrivacyAndSecurity()
                     3 -> CreateAccount(state, action)
@@ -162,7 +172,10 @@ fun SetupScreen(
 }
 
 @Composable
-private fun ChooseLanguage() {
+private fun ChooseLanguage(
+    state: SetupState,
+    action: (SetupAction) -> Unit
+) {
     LumiLottie(
         animatedResId = R.raw.language,
         modifier = Modifier
@@ -188,49 +201,18 @@ private fun ChooseLanguage() {
     )
 
     Spacer(modifier = Modifier.height(32.dp))
-    OutlinedCard(
-        onClick = {},
-        modifier = Modifier
-            .padding(vertical = 4.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondary,
-            contentColor = MaterialTheme.colorScheme.onSecondary
-        )
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "English"
-            )
-            Icon(
-                imageVector = Icons.Outlined.Check,
-                contentDescription = null
-            )
-        }
-    }
-    OutlinedCard(
-        onClick = {},
-        modifier = Modifier
-            .padding(vertical = 4.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Filipino",
-                color = MaterialTheme.colorScheme.secondary
-            )
-        }
-    }
+    LanguageCard(
+        text = "English",
+        onClick = { action(SetupAction.SetLanguage(0)) },
+        modifier = Modifier.padding(vertical = 4.dp),
+        selected = state.selectedLanguage == 0
+    )
+    LanguageCard(
+        text = "Filipino",
+        onClick = { action(SetupAction.SetLanguage(1)) },
+        modifier = Modifier.padding(vertical = 4.dp),
+        selected = state.selectedLanguage == 1
+    )
 }
 
 @Composable
@@ -315,7 +297,7 @@ private fun PrivacyAndSecurity() {
     LumiLottie(
         animatedResId = R.raw.download_and_storage,
         modifier = Modifier
-            .size(180.dp)
+            .size(120.dp)
     )
 
     Spacer(modifier = Modifier.height(8.dp))
@@ -338,7 +320,6 @@ private fun PrivacyAndSecurity() {
 
     Spacer(modifier = Modifier.height(32.dp))
     OutlinedCard(
-        onClick = {},
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)
@@ -349,7 +330,6 @@ private fun PrivacyAndSecurity() {
         )
     }
     OutlinedCard(
-        onClick = {},
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)
@@ -360,7 +340,6 @@ private fun PrivacyAndSecurity() {
         )
     }
     OutlinedCard(
-        onClick = {},
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)
@@ -371,14 +350,13 @@ private fun PrivacyAndSecurity() {
         )
     }
     OutlinedCard(
-        onClick = {},
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)
     ) {
         Text(
             text = "Delete or export your data whenever you want.",
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(16.dp)
         )
     }
 }
