@@ -2,13 +2,18 @@ package com.ralphmarondev.system.setup.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ralphmarondev.core.domain.model.Language
+import com.ralphmarondev.core.domain.model.Result
+import com.ralphmarondev.system.setup.domain.repository.SetupRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class SetupViewModel : ViewModel() {
+class SetupViewModel(
+    private val repository: SetupRepository
+) : ViewModel() {
     private val _state = MutableStateFlow(SetupState())
     val state = _state.asStateFlow()
 
@@ -95,15 +100,53 @@ class SetupViewModel : ViewModel() {
             try {
                 _state.update { it.copy(isLoading = true, enableContinueButton = false) }
 
-                delay(3000)
+                val selectedLanguage = when (_state.value.selectedLanguage) {
+                    0 -> Language.ENGLISH
+                    1 -> Language.FILIPINO
+                    else -> Language.ENGLISH
+                }
 
+                val validationResult = validateInput(
+                    username = _state.value.username.trim(),
+                    password = _state.value.password.trim(),
+                    confirmPassword = _state.value.confirmPassword.trim()
+                )
+
+                if (validationResult is Result.Error) {
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            enableContinueButton = true,
+                            message = validationResult.message
+                        )
+                    }
+                    return@launch
+                }
+
+                val result = repository.setup(
+                    language = selectedLanguage,
+                    username = _state.value.username.trim(),
+                    password = _state.value.password.trim()
+                )
+                delay(3000)
                 _state.update {
-                    it.copy(
-                        isLoading = false,
-                        enableContinueButton = true,
-                        completed = true,
-                        message = "Setup Completed!"
-                    )
+                    when (result) {
+                        is Result.Success -> it.copy(
+                            isLoading = false,
+                            enableContinueButton = true,
+                            completed = true,
+                            message = "Setup Completed!"
+                        )
+
+                        is Result.Error -> it.copy(
+                            isLoading = false,
+                            isError = true,
+                            enableContinueButton = true,
+                            message = result.message
+                        )
+
+                        else -> it
+                    }
                 }
             } catch (e: Exception) {
                 _state.update {
@@ -116,5 +159,20 @@ class SetupViewModel : ViewModel() {
                 }
             }
         }
+    }
+
+    private suspend fun validateInput(
+        username: String,
+        password: String,
+        confirmPassword: String
+    ): Result<Unit> {
+        if (username.isBlank()) return Result.Error("Username cannot be empty")
+        if (password.isBlank()) return Result.Error("Password cannot be empty")
+        if (password != confirmPassword) return Result.Error("Passwords do not match")
+
+        val existingUser = repository.getUserByUsername(username)
+        if (existingUser != null) return Result.Error("Username already exists")
+
+        return Result.Success(Unit)
     }
 }
