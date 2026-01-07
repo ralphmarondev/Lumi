@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.ralphmarondev.system.auth.presentation.login.LoginScreenRoot
+import com.ralphmarondev.system.launcher.presentation.LauncherScreenRoot
 import com.ralphmarondev.system.setup.presentation.SetupScreenRoot
 
 @Composable
@@ -30,7 +31,7 @@ fun AppNavigation(
         composable<Routes.Login> {
             LoginScreenRoot(
                 onSuccess = {
-                    navController.navigate(Routes.Login) {
+                    navController.navigate(Routes.Launcher) {
                         popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
@@ -38,7 +39,18 @@ fun AppNavigation(
             )
         }
         composable<Routes.Launcher> {
-
+            LauncherScreenRoot(
+                navigateToSettings = {
+                    navController.navigate(Routes.Setup) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToNotes = {
+                    navController.navigate(Routes.Notes) {
+                        launchSingleTop = true
+                    }
+                }
+            )
         }
         composable<Routes.Settings> {
 
