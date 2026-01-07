@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.ralphmarondev.system.auth.presentation.login.LoginScreenRoot
 import com.ralphmarondev.system.launcher.presentation.LauncherScreenRoot
+import com.ralphmarondev.system.settings.navigation.SettingsNavigation
 import com.ralphmarondev.system.setup.presentation.SetupScreenRoot
 
 @Composable
@@ -53,7 +54,7 @@ fun AppNavigation(
             )
         }
         composable<Routes.Settings> {
-
+            SettingsNavigation()
         }
         composable<Routes.Notes> {
 
