@@ -12,7 +12,9 @@ import com.ralphmarondev.core.presentation.theme.LocalThemeState
 import com.ralphmarondev.system.settings.presentation.overview.OverviewScreenRoot
 
 @Composable
-fun SettingsNavigation() {
+fun SettingsNavigation(
+    navigateBack: () -> Unit
+) {
     val navController = rememberNavController()
     val themeState = LocalThemeState.current
     val view = LocalView.current
@@ -31,7 +33,13 @@ fun SettingsNavigation() {
         startDestination = SettingsRoute.Overview
     ) {
         composable<SettingsRoute.Overview> {
-            OverviewScreenRoot()
+            OverviewScreenRoot(
+                navigateBack = navigateBack,
+                account = {},
+                wallpaper = {},
+                security = {},
+                about = {}
+            )
         }
     }
 }

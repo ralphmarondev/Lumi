@@ -25,6 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -42,9 +43,22 @@ import com.ralphmarondev.system.settings.presentation.component.SettingCard
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun OverviewScreenRoot() {
+fun OverviewScreenRoot(
+    navigateBack: () -> Unit,
+    account: () -> Unit,
+    wallpaper: () -> Unit,
+    security: () -> Unit,
+    about: () -> Unit
+) {
     val viewModel: OverviewViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
+
+    LaunchedEffect(state.navigateBack) {
+        if (state.navigateBack) {
+            navigateBack()
+            viewModel.onAction(OverviewAction.ResetNavigation)
+        }
+    }
 
     OverviewScreen(
         state = state,
@@ -65,7 +79,7 @@ private fun OverviewScreen(
                     Text(text = "Settings")
                 },
                 navigationIcon = {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = { action(OverviewAction.NavigateBack) }) {
                         Icon(
                             imageVector = Icons.Outlined.ArrowBackIosNew,
                             contentDescription = "Back"
@@ -102,13 +116,13 @@ private fun OverviewScreen(
                 SettingCard(
                     text = "Personal Info",
                     imageVector = Icons.Outlined.AccountCircle,
-                    onClick = {},
+                    onClick = { action(OverviewAction.NavigateToAccount) },
                     modifier = Modifier.padding(vertical = 4.dp)
                 )
                 SettingCard(
                     text = "Wallpapers and style",
                     imageVector = Icons.Outlined.Palette,
-                    onClick = {},
+                    onClick = { action(OverviewAction.NavigateToWallpaper) },
                     modifier = Modifier.padding(vertical = 4.dp)
                 )
 
