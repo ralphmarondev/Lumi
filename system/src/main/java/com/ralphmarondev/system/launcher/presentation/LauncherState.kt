@@ -13,5 +13,6 @@ sealed class NavigationTarget {
 data class LauncherState(
     val miniApps: List<MiniApp> = emptyList(),
     val navigationTarget: NavigationTarget = NavigationTarget.None,
-    val pageCount: Int = 2
+    val pageCount: Int = 2,
+    val wallpaper: Int = 1
 )

@@ -95,13 +95,18 @@ private fun LauncherScreen(
     }
 
     val pagerState = rememberPagerState { state.pageCount }
+    val wallpaper = when (state.wallpaper) {
+        1 -> R.drawable.wallpaper1
+        2 -> R.drawable.wallpaper2
+        else -> R.drawable.wallpaper1
+    }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
     ) {
         Image(
-            painter = rememberAsyncImagePainter(model = com.ralphmarondev.system.R.drawable.wallpaper2),
+            painter = rememberAsyncImagePainter(model = wallpaper),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()

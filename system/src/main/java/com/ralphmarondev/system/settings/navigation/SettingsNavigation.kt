@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.ralphmarondev.core.presentation.theme.LocalThemeState
 import com.ralphmarondev.system.settings.presentation.overview.OverviewScreenRoot
+import com.ralphmarondev.system.settings.presentation.wallpaper.WallPaperScreenRoot
 
 @Composable
 fun SettingsNavigation(
@@ -36,9 +37,20 @@ fun SettingsNavigation(
             OverviewScreenRoot(
                 navigateBack = navigateBack,
                 account = {},
-                wallpaper = {},
+                wallpaper = {
+                    navController.navigate(SettingsRoute.Wallpapers) {
+                        launchSingleTop = true
+                    }
+                },
                 security = {},
                 about = {}
+            )
+        }
+        composable<SettingsRoute.Wallpapers> {
+            WallPaperScreenRoot(
+                navigateBack = {
+                    navController.navigateUp()
+                }
             )
         }
     }
