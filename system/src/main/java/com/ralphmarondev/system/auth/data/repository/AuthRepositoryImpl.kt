@@ -19,7 +19,9 @@ class AuthRepositoryImpl(
             val userEntity = userDao.login(username, password)
             if (userEntity != null) {
                 preferences.setSystemOnboardingCompleted(true)
+                preferences.setSystemIsAuthenticated(true)
                 preferences.setSystemCurrentUser(username)
+                preferences.setSystemEnableAuth(false)
                 return Result.Success(userEntity.toDomain())
             }
             Result.Error(message = "Invalid credentials.")
