@@ -54,7 +54,11 @@ fun AppNavigation(
             )
         }
         composable<Routes.Settings> {
-            SettingsNavigation()
+            SettingsNavigation(
+                navigateBack = {
+                    navController.navigateUp()
+                }
+            )
         }
         composable<Routes.Notes> {
 
