@@ -30,12 +30,26 @@ class OverviewViewModel : ViewModel() {
                 }
             }
 
+            OverviewAction.NavigateToAbout -> {
+                _state.update {
+                    it.copy(navigateToAbout = true)
+                }
+            }
+
+            OverviewAction.NavigateToSecurity -> {
+                _state.update {
+                    it.copy(navigateToSecurity = true)
+                }
+            }
+
             OverviewAction.ResetNavigation -> {
                 _state.update {
                     it.copy(
                         navigateToWallpaper = false,
                         navigateBack = false,
-                        navigateToAccount = false
+                        navigateToAccount = false,
+                        navigateToSecurity = false,
+                        navigateToAbout = false
                     )
                 }
             }

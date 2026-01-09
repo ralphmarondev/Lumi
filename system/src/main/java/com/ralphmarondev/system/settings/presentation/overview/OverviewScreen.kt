@@ -60,6 +60,34 @@ fun OverviewScreenRoot(
         }
     }
 
+    LaunchedEffect(state.navigateToAccount) {
+        if (state.navigateToAccount) {
+            account()
+            viewModel.onAction(OverviewAction.ResetNavigation)
+        }
+    }
+
+    LaunchedEffect(state.navigateToWallpaper) {
+        if (state.navigateToWallpaper) {
+            wallpaper()
+            viewModel.onAction(OverviewAction.ResetNavigation)
+        }
+    }
+
+    LaunchedEffect(state.navigateToSecurity) {
+        if (state.navigateToSecurity) {
+            security()
+            viewModel.onAction(OverviewAction.ResetNavigation)
+        }
+    }
+
+    LaunchedEffect(state.navigateToAbout) {
+        if (state.navigateToAbout) {
+            about()
+            viewModel.onAction(OverviewAction.ResetNavigation)
+        }
+    }
+
     OverviewScreen(
         state = state,
         action = viewModel::onAction
@@ -129,14 +157,14 @@ private fun OverviewScreen(
                 SettingCard(
                     text = "Security",
                     imageVector = Icons.Outlined.Security,
-                    onClick = {},
+                    onClick = { action(OverviewAction.NavigateToSecurity) },
                     modifier = Modifier.padding(vertical = 4.dp)
                 )
 
                 SettingCard(
                     text = "About",
                     imageVector = Icons.Outlined.Info,
-                    onClick = {},
+                    onClick = { action(OverviewAction.NavigateToAbout) },
                     modifier = Modifier.padding(vertical = 4.dp)
                 )
             }
