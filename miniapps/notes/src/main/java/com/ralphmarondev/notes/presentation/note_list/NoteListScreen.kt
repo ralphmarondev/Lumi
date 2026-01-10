@@ -22,12 +22,15 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.ralphmarondev.notes.domain.model.Note
@@ -36,7 +39,8 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun NoteListScreenRoot(
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
+    navigateToNewNote: () -> Unit
 ) {
     val viewModel: NoteListViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
@@ -44,6 +48,13 @@ fun NoteListScreenRoot(
     LaunchedEffect(state.navigateBack) {
         if (state.navigateBack) {
             navigateBack()
+            viewModel.onAction(NoteListAction.ResetNavigation)
+        }
+    }
+
+    LaunchedEffect(state.navigateToNewNote) {
+        if (state.navigateToNewNote) {
+            navigateToNewNote()
             viewModel.onAction(NoteListAction.ResetNavigation)
         }
     }
@@ -61,6 +72,13 @@ private fun NoteListScreen(
     action: (NoteListAction) -> Unit
 ) {
     val themeState = LocalThemeState.current
+    val snackbarState = remember { SnackbarHostState() }
+
+    LaunchedEffect(state.errorMessage) {
+        if (state.errorMessage != null) {
+            snackbarState.showSnackbar(message = state.errorMessage)
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -110,7 +128,8 @@ private fun NoteListScreen(
                     contentDescription = "New note"
                 )
             }
-        }
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbarState) }
     ) { innerPadding ->
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),

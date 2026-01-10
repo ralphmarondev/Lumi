@@ -30,7 +30,8 @@ fun NoteApp(
             ) {
                 composable<Routes.NoteList> {
                     NoteListScreenRoot(
-                        navigateBack = navigateBack
+                        navigateBack = navigateBack,
+                        navigateToNewNote = {}
                     )
                 }
             }

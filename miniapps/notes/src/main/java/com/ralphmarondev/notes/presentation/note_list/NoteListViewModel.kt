@@ -1,25 +1,23 @@
 package com.ralphmarondev.notes.presentation.note_list
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ralphmarondev.notes.data.local.database.dao.NoteDao
-import com.ralphmarondev.notes.data.local.database.entities.NoteEntity
-import com.ralphmarondev.notes.data.local.database.mapper.toDomain
+import com.ralphmarondev.notes.domain.repository.NoteRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class NoteListViewModel(
-    private val noteDao: NoteDao
+    private val repository: NoteRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(NoteListState())
     val state = _state.asStateFlow()
 
     init {
-        sample()
+        getNotes()
     }
 
     fun onAction(action: NoteListAction) {
@@ -47,21 +45,26 @@ class NoteListViewModel(
         }
     }
 
-    private fun sample() {
+    private fun getNotes() {
         viewModelScope.launch {
-            try {
-                noteDao.create(noteEntity = NoteEntity(title = "Sample", content = "Content"))
-                Log.d("NoteList", "Note saved.")
-
-                Log.d("NoteList", "Reading notes...")
-                noteDao.getNotes().collect { notes ->
-                    _state.update { current ->
-                        current.copy(notes = notes.map { it.toDomain() })
+            _state.update { it.copy(isLoading = true, errorMessage = null) }
+            repository.getList()
+                .catch { e ->
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = e.message ?: "Unknown error"
+                        )
                     }
                 }
-            } catch (e: Exception) {
-                Log.e("NoteList", "Error saving note: ${e.message}")
-            }
+                .collect { notes ->
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            notes = notes
+                        )
+                    }
+                }
         }
     }
 }
