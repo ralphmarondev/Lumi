@@ -23,6 +23,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -130,25 +131,32 @@ private fun LauncherScreen(
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
-                modifier = Modifier.padding(bottom = 8.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
+            Box(
+                modifier = Modifier
+                    .padding(vertical = 4.dp, horizontal = 16.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(MaterialTheme.colorScheme.surfaceContainerLow)
             ) {
-                repeat(pagerState.pageCount) {
-                    val active = pagerState.currentPage == it
-                    Box(
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .size(size = if (active) 12.dp else 8.dp)
-                            .clip(CircleShape)
-                            .background(
-                                color = if (active)
-                                    MaterialTheme.colorScheme.primaryContainer
-                                else
-                                    MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                    )
+                Row(
+                    modifier = Modifier.padding(vertical = 2.dp, horizontal = 8.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    repeat(pagerState.pageCount) {
+                        val active = pagerState.currentPage == it
+                        Box(
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .size(size = if (active) 12.dp else 8.dp)
+                                .clip(CircleShape)
+                                .background(
+                                    color = if (active)
+                                        MaterialTheme.colorScheme.onPrimaryContainer
+                                    else
+                                        MaterialTheme.colorScheme.primaryContainer
+                                )
+                        )
+                    }
                 }
             }
             LazyVerticalGrid(
