@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.ralphmarondev.notes.NoteApp
 import com.ralphmarondev.system.auth.presentation.login.LoginScreenRoot
 import com.ralphmarondev.system.launcher.presentation.LauncherScreenRoot
 import com.ralphmarondev.system.settings.navigation.SettingsNavigation
@@ -61,7 +62,11 @@ fun AppNavigation(
             )
         }
         composable<Routes.Notes> {
-
+            NoteApp(
+                navigateBack = {
+                    navController.navigateUp()
+                }
+            )
         }
     }
 }
