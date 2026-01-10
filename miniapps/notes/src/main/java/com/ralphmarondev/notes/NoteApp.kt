@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.ralphmarondev.notes.data.local.preferences.NoteAppPreferences
+import com.ralphmarondev.notes.presentation.new_note.NewNoteScreenRoot
 import com.ralphmarondev.notes.presentation.note_list.NoteListScreenRoot
 import com.ralphmarondev.notes.theme.LocalThemeState
 import com.ralphmarondev.notes.theme.NoteTheme
@@ -31,7 +32,18 @@ fun NoteApp(
                 composable<Routes.NoteList> {
                     NoteListScreenRoot(
                         navigateBack = navigateBack,
-                        navigateToNewNote = {}
+                        navigateToNewNote = {
+                            navController.navigate(Routes.NewNote) {
+                                launchSingleTop = true
+                            }
+                        }
+                    )
+                }
+                composable<Routes.NewNote> {
+                    NewNoteScreenRoot(
+                        navigateBack = {
+                            navController.navigateUp()
+                        }
                     )
                 }
             }
