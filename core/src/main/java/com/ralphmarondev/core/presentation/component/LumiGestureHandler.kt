@@ -34,7 +34,7 @@ import kotlin.math.roundToInt
 fun LumiGestureHandler(
     onBackSwipe: () -> Unit,
     modifier: Modifier = Modifier,
-    edgeWidthDp: Dp = 48.dp,
+    edgeWidthDp: Dp = 80.dp,
     maxOffsetDp: Dp = 40.dp,
     content: @Composable () -> Unit
 ) {
