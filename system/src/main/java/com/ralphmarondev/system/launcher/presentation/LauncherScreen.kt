@@ -1,6 +1,5 @@
 package com.ralphmarondev.system.launcher.presentation
 
-import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -28,19 +27,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
-import androidx.core.view.WindowCompat
 import coil.compose.rememberAsyncImagePainter
 import com.ralphmarondev.core.presentation.component.LumiLottie
-import com.ralphmarondev.core.presentation.theme.LocalThemeState
 import com.ralphmarondev.system.R
 import com.ralphmarondev.system.launcher.presentation.component.AppContainer
 import com.ralphmarondev.system.launcher.presentation.widget.ClockWidget
@@ -83,18 +78,6 @@ private fun LauncherScreen(
     state: LauncherState,
     action: (LauncherAction) -> Unit
 ) {
-    val themeState = LocalThemeState.current
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            val window = (view.context as Activity).window
-            val insetsController = window?.let {
-                WindowCompat.getInsetsController(it, view)
-            }
-            insetsController?.isAppearanceLightStatusBars = themeState.darkTheme.value
-        }
-    }
-
     val pagerState = rememberPagerState { state.pageCount }
     val wallpaper = when (state.wallpaper) {
         1 -> R.drawable.wallpaper1
@@ -117,6 +100,7 @@ private fun LauncherScreen(
             state = pagerState,
             modifier = Modifier
                 .fillMaxSize()
+                .padding(vertical = 48.dp)
         ) { currentPage ->
             when (currentPage) {
                 0 -> FirstPage()
