@@ -32,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
@@ -119,7 +120,7 @@ private fun LauncherScreen(
                 modifier = Modifier
                     .padding(vertical = 4.dp, horizontal = 16.dp)
                     .clip(RoundedCornerShape(16.dp))
-                    .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                    .background(color = Color.Black.copy(alpha = 0.25f))
             ) {
                 Row(
                     modifier = Modifier.padding(vertical = 2.dp, horizontal = 8.dp),
@@ -135,9 +136,9 @@ private fun LauncherScreen(
                                 .clip(CircleShape)
                                 .background(
                                     color = if (active)
-                                        MaterialTheme.colorScheme.onPrimaryContainer
-                                    else
                                         MaterialTheme.colorScheme.primaryContainer
+                                    else
+                                        MaterialTheme.colorScheme.onPrimaryContainer
                                 )
                         )
                     }
