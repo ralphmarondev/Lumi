@@ -38,6 +38,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.ralphmarondev.core.presentation.component.LumiGestureHandler
 import com.ralphmarondev.core.presentation.theme.LumiTheme
 import com.ralphmarondev.system.settings.presentation.component.SettingCard
 import org.koin.compose.viewmodel.koinViewModel
@@ -87,11 +88,12 @@ fun OverviewScreenRoot(
             viewModel.onAction(OverviewAction.ResetNavigation)
         }
     }
-
-    OverviewScreen(
-        state = state,
-        action = viewModel::onAction
-    )
+    LumiGestureHandler(onBackSwipe = navigateBack) {
+        OverviewScreen(
+            state = state,
+            action = viewModel::onAction
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

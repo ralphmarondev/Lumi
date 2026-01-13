@@ -22,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.ralphmarondev.core.presentation.component.LumiGestureHandler
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -38,10 +39,12 @@ fun AccountScreenRoot(
         }
     }
 
-    AccountScreen(
-        state = state,
-        action = viewModel::onAction
-    )
+    LumiGestureHandler(onBackSwipe = navigateBack) {
+        AccountScreen(
+            state = state,
+            action = viewModel::onAction
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

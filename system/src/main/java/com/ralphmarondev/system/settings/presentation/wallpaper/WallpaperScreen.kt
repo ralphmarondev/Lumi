@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.ralphmarondev.core.presentation.component.LumiGestureHandler
 import com.ralphmarondev.system.R
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -50,10 +51,12 @@ fun WallPaperScreenRoot(
         }
     }
 
-    WallpaperScreen(
-        state = state,
-        action = viewModel::onAction
-    )
+    LumiGestureHandler(onBackSwipe = navigateBack) {
+        WallpaperScreen(
+            state = state,
+            action = viewModel::onAction
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

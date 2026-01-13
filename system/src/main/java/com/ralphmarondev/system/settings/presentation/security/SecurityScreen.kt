@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.ralphmarondev.core.presentation.component.LumiGestureHandler
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -44,10 +45,12 @@ fun SecurityScreenRoot(
         }
     }
 
-    SecurityScreen(
-        state = state,
-        action = viewModel::onAction
-    )
+    LumiGestureHandler(onBackSwipe = navigateBack) {
+        SecurityScreen(
+            state = state,
+            action = viewModel::onAction
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
