@@ -13,4 +13,7 @@ sealed interface SettingsRoute {
 
     @Serializable
     data object Wallpapers : SettingsRoute
+
+    @Serializable
+    data object Security : SettingsRoute
 }
