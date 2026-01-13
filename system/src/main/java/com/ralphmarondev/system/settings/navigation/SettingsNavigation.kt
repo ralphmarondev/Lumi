@@ -26,7 +26,7 @@ fun SettingsNavigation(
             val insetsController = window?.let {
                 WindowCompat.getInsetsController(it, view)
             }
-            insetsController?.isAppearanceLightStatusBars = !themeState.darkTheme.value
+            insetsController?.isAppearanceLightStatusBars = themeState.darkTheme.value
         }
     }
 
