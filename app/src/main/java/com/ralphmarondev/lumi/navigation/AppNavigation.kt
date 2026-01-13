@@ -5,12 +5,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.ralphmarondev.lumi.LumiShell
 import com.ralphmarondev.notes.NoteApp
 import com.ralphmarondev.system.auth.presentation.login.LoginScreenRoot
 import com.ralphmarondev.system.launcher.presentation.LauncherScreenRoot
 import com.ralphmarondev.system.settings.navigation.SettingsNavigation
 import com.ralphmarondev.system.setup.presentation.SetupScreenRoot
+import com.ralphmarondev.system.shell.presentation.LumiShell
 
 @Composable
 fun AppNavigation(
