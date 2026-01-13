@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -35,14 +35,14 @@ fun LumiGestureHandler(
     onBackSwipe: () -> Unit,
     modifier: Modifier = Modifier,
     edgeWidthDp: Dp = 80.dp,
-    maxOffsetDp: Dp = 40.dp,
+    maxOffsetDp: Dp = 60.dp,
     content: @Composable () -> Unit
 ) {
     val density = LocalDensity.current
     val edgePx = with(density) { edgeWidthDp.toPx() }
     val maxOffsetPx = with(density) { maxOffsetDp.toPx() }
 
-    var dragOffset by remember { mutableStateOf(0f) }
+    var dragOffset by remember { mutableFloatStateOf(0f) }
     val animOffset = remember { Animatable(0f) }
     val coroutineScope = rememberCoroutineScope()
 
