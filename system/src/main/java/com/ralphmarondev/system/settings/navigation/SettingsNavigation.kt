@@ -1,14 +1,11 @@
 package com.ralphmarondev.system.settings.navigation
 
-import android.app.Activity
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.platform.LocalView
-import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.ralphmarondev.core.presentation.theme.LocalThemeState
 import com.ralphmarondev.system.settings.presentation.account.AccountScreenRoot
 import com.ralphmarondev.system.settings.presentation.overview.OverviewScreenRoot
 import com.ralphmarondev.system.settings.presentation.security.SecurityScreenRoot
@@ -19,23 +16,37 @@ fun SettingsNavigation(
     navigateBack: () -> Unit
 ) {
     val navController = rememberNavController()
-    val themeState = LocalThemeState.current
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            val window = (view.context as Activity).window
-            val insetsController = window?.let {
-                WindowCompat.getInsetsController(it, view)
-            }
-            insetsController?.isAppearanceLightStatusBars = themeState.darkTheme.value
-        }
-    }
 
     NavHost(
         navController = navController,
         startDestination = SettingsRoute.Overview
     ) {
-        composable<SettingsRoute.Overview> {
+        composable<SettingsRoute.Overview>(
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(300)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(300)
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(300)
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(300)
+                )
+            }
+        ) {
             OverviewScreenRoot(
                 navigateBack = navigateBack,
                 account = {
@@ -56,21 +67,96 @@ fun SettingsNavigation(
                 about = {}
             )
         }
-        composable<SettingsRoute.Account> {
+        composable<SettingsRoute.Account>(
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(300)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(300)
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(300)
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(300)
+                )
+            }
+        ) {
             AccountScreenRoot(
                 navigateBack = {
                     navController.navigateUp()
                 }
             )
         }
-        composable<SettingsRoute.Wallpapers> {
+        composable<SettingsRoute.Wallpapers>(
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(300)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(300)
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(300)
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(300)
+                )
+            }
+        ) {
             WallPaperScreenRoot(
                 navigateBack = {
                     navController.navigateUp()
                 }
             )
         }
-        composable<SettingsRoute.Security> {
+        composable<SettingsRoute.Security>(
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(300)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(300)
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(300)
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(300)
+                )
+            }
+        ) {
             SecurityScreenRoot(
                 navigateBack = {
                     navController.navigateUp()
