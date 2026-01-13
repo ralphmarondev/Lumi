@@ -2,6 +2,7 @@ package com.ralphmarondev.system.settings.di
 
 import com.ralphmarondev.system.settings.data.repository.SettingsRepositoryImpl
 import com.ralphmarondev.system.settings.domain.repository.SettingsRepository
+import com.ralphmarondev.system.settings.presentation.about.AboutViewModel
 import com.ralphmarondev.system.settings.presentation.account.AccountViewModel
 import com.ralphmarondev.system.settings.presentation.overview.OverviewViewModel
 import com.ralphmarondev.system.settings.presentation.security.SecurityViewModel
@@ -18,4 +19,5 @@ val settingsModule = module {
     viewModelOf(::AccountViewModel)
     viewModelOf(::WallpaperViewModel)
     viewModelOf(::SecurityViewModel)
+    viewModelOf(::AboutViewModel)
 }

@@ -16,4 +16,7 @@ sealed interface SettingsRoute {
 
     @Serializable
     data object Security : SettingsRoute
+
+    @Serializable
+    data object About : SettingsRoute
 }

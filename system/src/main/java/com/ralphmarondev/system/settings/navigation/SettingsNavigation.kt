@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.ralphmarondev.system.settings.presentation.about.AboutScreenRoot
 import com.ralphmarondev.system.settings.presentation.account.AccountScreenRoot
 import com.ralphmarondev.system.settings.presentation.overview.OverviewScreenRoot
 import com.ralphmarondev.system.settings.presentation.security.SecurityScreenRoot
@@ -64,7 +65,11 @@ fun SettingsNavigation(
                         launchSingleTop = true
                     }
                 },
-                about = {}
+                about = {
+                    navController.navigate(SettingsRoute.About) {
+                        launchSingleTop = true
+                    }
+                }
             )
         }
         composable<SettingsRoute.Account>(
@@ -158,6 +163,38 @@ fun SettingsNavigation(
             }
         ) {
             SecurityScreenRoot(
+                navigateBack = {
+                    navController.navigateUp()
+                }
+            )
+        }
+        composable<SettingsRoute.About>(
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(300)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(300)
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(300)
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(300)
+                )
+            }
+        ) {
+            AboutScreenRoot(
                 navigateBack = {
                     navController.navigateUp()
                 }
