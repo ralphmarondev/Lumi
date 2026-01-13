@@ -1,4 +1,4 @@
-package com.ralphmarondev.lumi
+package com.ralphmarondev.system.shell.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,86 +21,60 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 
 @Composable
 fun LumiShell(
     content: @Composable () -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
-        // Fake Status Bar
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(24.dp) // typical status bar height
-                .background(Color(0xFF1E1E1E))
-                .padding(horizontal = 8.dp),
+                .height(28.dp)
+                .background(Color.Transparent)
+                .padding(horizontal = 12.dp)
+                .zIndex(1f),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Left side (time)
-            Text("9:41", color = Color.White, style = MaterialTheme.typography.bodySmall)
+            Text(
+                "9:41",
+                color = Color.White,
+                fontSize = 13.sp,
+                style = MaterialTheme.typography.bodySmall
+            )
 
-            // Right side (icons)
             Row(
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    Icons.Default.SignalCellular4Bar,
+                    Icons.Filled.SignalCellular4Bar,
                     contentDescription = null,
                     tint = Color.White,
-                    modifier = Modifier.size(16.dp)
+                    modifier = Modifier.size(18.dp)
                 )
                 Icon(
-                    Icons.Default.Wifi,
+                    Icons.Filled.Wifi,
                     contentDescription = null,
                     tint = Color.White,
-                    modifier = Modifier.size(16.dp)
+                    modifier = Modifier.size(18.dp)
                 )
                 Icon(
-                    Icons.Default.BatteryFull,
+                    Icons.Filled.BatteryFull,
                     contentDescription = null,
                     tint = Color.White,
-                    modifier = Modifier.size(16.dp)
+                    modifier = Modifier.size(18.dp)
                 )
             }
         }
 
-        // Content area
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 24.dp, bottom = 48.dp) // reserve space for status & nav bars
+            modifier = Modifier.fillMaxSize()
         ) {
             content()
-        }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp) // typical nav bar height
-                .align(Alignment.BottomCenter)
-                .background(Color(0xFF1E1E1E)),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(width = 40.dp, height = 4.dp)
-                    .background(Color.Gray)
-            ) // mimic home pill
-
-            Box(
-                modifier = Modifier
-                    .size(32.dp)
-                    .background(Color.Gray)
-            ) // mimic back button
-
-            Box(
-                modifier = Modifier
-                    .size(32.dp)
-                    .background(Color.Gray)
-            ) // mimic recent button
         }
     }
 }
