@@ -1,5 +1,9 @@
 package com.ralphmarondev.system.shell.presentation
 
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.os.BatteryManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,14 +25,17 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -41,6 +48,7 @@ import java.util.Locale
 fun LumiShell(
     content: @Composable () -> Unit
 ) {
+    val context = LocalContext.current
     var currentTime by remember { mutableStateOf(Calendar.getInstance().time) }
     LaunchedEffect(Unit) {
         while (true) {
@@ -49,6 +57,7 @@ fun LumiShell(
         }
     }
     val timeFormatter = remember { SimpleDateFormat("h:mm a", Locale.getDefault()) }
+    val (batteryLevel, isCharging) = rememberBatteryLevel(context)
 
     Box(modifier = Modifier.fillMaxSize()) {
         Row(
@@ -86,8 +95,8 @@ fun LumiShell(
                     modifier = Modifier.size(18.dp)
                 )
                 LumiBatteryIndicator(
-                    level = 86,
-                    charging = false
+                    level = batteryLevel,
+                    charging = isCharging
                 )
             }
         }
@@ -101,10 +110,41 @@ fun LumiShell(
 }
 
 @Composable
+private fun rememberBatteryLevel(context: Context): Pair<Int, Boolean> {
+    var batteryLevel by remember { mutableIntStateOf(86) }
+    var isCharging by remember { mutableStateOf(false) }
+
+    DisposableEffect(context) {
+        val receiver = object : android.content.BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                intent ?: return
+
+                val level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
+                val scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
+                batteryLevel = if (level >= 0 && scale > 0) level * 100 / scale else 0
+
+                val status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1)
+                isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
+                        status == BatteryManager.BATTERY_STATUS_FULL
+            }
+        }
+
+        val filter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
+        context.registerReceiver(receiver, filter)
+
+        onDispose {
+            context.unregisterReceiver(receiver)
+        }
+    }
+
+    return batteryLevel to isCharging
+}
+
+@Composable
 private fun LumiBatteryIndicator(
     level: Int,         // 0..100
-    charging: Boolean = false,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    charging: Boolean = false
 ) {
     val clampedLevel = level.coerceIn(0, 100)
 
