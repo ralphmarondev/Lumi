@@ -25,6 +25,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -39,6 +40,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.ralphmarondev.core.presentation.shell.LocalLumiShellState
+import com.ralphmarondev.core.presentation.shell.LumiShellState
+import com.ralphmarondev.core.presentation.shell.rememberLumiShellState
 import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -46,6 +50,22 @@ import java.util.Locale
 
 @Composable
 fun LumiShell(
+    content: @Composable () -> Unit
+) {
+    val shellState = rememberLumiShellState()
+    CompositionLocalProvider(
+        LocalLumiShellState provides shellState
+    ) {
+        LumiShellLayout(
+            shellState = shellState,
+            content = content
+        )
+    }
+}
+
+@Composable
+private fun LumiShellLayout(
+    shellState: LumiShellState,
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
@@ -66,14 +86,14 @@ fun LumiShell(
                 .wrapContentHeight()
                 .windowInsetsPadding(WindowInsets.statusBars)
                 .padding(horizontal = 24.dp, vertical = 12.dp)
-                .background(Color.Transparent)
+                .background(shellState.appearance.value.backgroundColor)
                 .zIndex(1f),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = timeFormatter.format(currentTime),
-                color = Color.White,
+                color = shellState.appearance.value.foregroundColor,
                 fontSize = 13.sp,
                 style = MaterialTheme.typography.bodySmall
             )
@@ -83,20 +103,21 @@ fun LumiShell(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    Icons.Filled.SignalCellular4Bar,
+                    imageVector = Icons.Filled.SignalCellular4Bar,
                     contentDescription = null,
-                    tint = Color.White,
+                    tint = shellState.appearance.value.foregroundColor,
                     modifier = Modifier.size(18.dp)
                 )
                 Icon(
-                    Icons.Filled.Wifi,
+                    imageVector = Icons.Filled.Wifi,
                     contentDescription = null,
-                    tint = Color.White,
+                    tint = shellState.appearance.value.foregroundColor,
                     modifier = Modifier.size(18.dp)
                 )
                 LumiBatteryIndicator(
                     level = batteryLevel,
-                    charging = isCharging
+                    charging = isCharging,
+                    foreGroundColor = shellState.appearance.value.foregroundColor
                 )
             }
         }
@@ -144,7 +165,8 @@ private fun rememberBatteryLevel(context: Context): Pair<Int, Boolean> {
 private fun LumiBatteryIndicator(
     level: Int,         // 0..100
     modifier: Modifier = Modifier,
-    charging: Boolean = false
+    charging: Boolean = false,
+    foreGroundColor: Color = Color.White
 ) {
     val clampedLevel = level.coerceIn(0, 100)
 
@@ -157,7 +179,7 @@ private fun LumiBatteryIndicator(
             modifier = Modifier
                 .size(width = 36.dp, height = 16.dp)
                 .background(
-                    color = Color.White.copy(alpha = 0.25f),
+                    color = foreGroundColor.copy(alpha = 0.25f),
                     shape = RoundedCornerShape(3.dp)
                 )
                 .padding(2.dp)
@@ -167,14 +189,14 @@ private fun LumiBatteryIndicator(
                     .fillMaxHeight()
                     .fillMaxWidth(clampedLevel / 100f)
                     .background(
-                        color = if (charging) Color.Green else Color.White,
+                        color = if (charging) Color.Green else foreGroundColor,
                         shape = RoundedCornerShape(2.dp)
                     )
             )
         }
         Text(
             text = "$clampedLevel%",
-            color = Color.White,
+            color = foreGroundColor,
             fontSize = 13.sp,
             style = MaterialTheme.typography.bodySmall
         )
