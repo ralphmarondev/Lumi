@@ -3,13 +3,13 @@ package com.ralphmarondev.lumi
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.Crossfade
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.core.view.WindowCompat
 import com.ralphmarondev.core.data.local.preferences.AppPreferences
 import com.ralphmarondev.core.presentation.component.LumiSplash
 import com.ralphmarondev.core.presentation.theme.LocalThemeState
@@ -27,7 +27,17 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        @Suppress("DEPRECATION")
+        window.decorView.systemUiVisibility =
+            (android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    or android.view.View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    or android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    or android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                    or android.view.View.SYSTEM_UI_FLAG_FULLSCREEN      // hide status bar
+                    or android.view.View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) // stay hidden on swipe
+
         setContent {
             ThemeProvider(preferences = preferences) {
                 val themeState = LocalThemeState.current
