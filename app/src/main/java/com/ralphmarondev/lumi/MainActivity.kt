@@ -8,7 +8,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.core.view.WindowCompat
 import com.ralphmarondev.core.data.local.preferences.AppPreferences
@@ -46,7 +46,9 @@ class MainActivity : ComponentActivity() {
                 LumiTheme(
                     darkTheme = themeState.darkTheme.value
                 ) {
-                    var startDestination by remember { mutableStateOf<Routes?>(null) }
+                    var startDestination by rememberSaveable {
+                        mutableStateOf<Routes?>(null)
+                    }
 
                     LaunchedEffect(Unit) {
                         delay(2000)
