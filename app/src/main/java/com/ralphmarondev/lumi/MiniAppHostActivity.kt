@@ -1,49 +1,33 @@
 package com.ralphmarondev.lumi
 
+import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.animation.Crossfade
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.core.view.WindowCompat
-import com.ralphmarondev.core.data.local.preferences.AppPreferences
-import com.ralphmarondev.core.presentation.component.LumiSplash
-import com.ralphmarondev.core.presentation.theme.LocalThemeState
 import com.ralphmarondev.core.presentation.theme.LumiTheme
-import com.ralphmarondev.core.presentation.theme.ThemeProvider
-import com.ralphmarondev.lumi.navigation.AppNavigation
-import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import com.ralphmarondev.lumi.navigation.MiniAppType
+import com.ralphmarondev.notes.NoteApp
+import com.ralphmarondev.system.shell.presentation.LumiShell
 
-class MainActivity : ComponentActivity() {
-
-    private val preferences: AppPreferences by inject()
-    private val viewModel: MainViewModel by viewModel()
-
+class MiniAppHostActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         enableFullScreen()
 
-        setContent {
-            ThemeProvider(preferences = preferences) {
-                val themeState = LocalThemeState.current
-                LumiTheme(
-                    darkTheme = themeState.darkTheme.value
-                ) {
-                    val startDestination by viewModel.startDestination.collectAsState(initial = null)
+        val miniApp = intent.getSerializableExtra(KEY_MINI_APP) as? MiniAppType ?: MiniAppType.Notes
 
-                    Crossfade(
-                        targetState = startDestination,
-                        label = "splashToApp"
-                    ) { destination ->
-                        when (destination) {
-                            null -> LumiSplash()
-                            else -> AppNavigation(startDestination = destination)
-                        }
+        setContent {
+            LumiTheme {
+                LumiShell {
+                    when (miniApp) {
+                        MiniAppType.Notes -> NoteApp(
+                            navigateBack = { finish() }
+                        )
                     }
                 }
             }
@@ -60,6 +44,11 @@ class MainActivity : ComponentActivity() {
         enableFullScreen()
     }
 
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+    }
+
     private fun enableFullScreen() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         @Suppress("DEPRECATION")
@@ -71,5 +60,14 @@ class MainActivity : ComponentActivity() {
                     or android.view.View.SYSTEM_UI_FLAG_FULLSCREEN      // hide status bar
                     or android.view.View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) // stay hidden on swipe
         actionBar?.hide()
+    }
+
+    companion object {
+        private const val KEY_MINI_APP = "mini_app"
+
+        fun intent(context: Context, miniApp: MiniAppType): Intent =
+            Intent(context, MiniAppHostActivity::class.java).apply {
+                putExtra(KEY_MINI_APP, miniApp)
+            }
     }
 }

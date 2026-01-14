@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Lumi</string>
+    <string name="title_activity_mini_app_host">MiniAppHostActivity</string>
 </resources>

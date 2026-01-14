@@ -16,7 +16,4 @@ sealed interface Routes {
 
     @Serializable
     data object Settings : Routes
-
-    @Serializable
-    data object Notes : Routes
 }
