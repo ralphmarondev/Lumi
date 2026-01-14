@@ -37,6 +37,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.ralphmarondev.core.presentation.component.LumiLottie
+import com.ralphmarondev.core.presentation.shell.LocalLumiShellState
+import com.ralphmarondev.core.presentation.shell.LumiShellStyle
 import com.ralphmarondev.system.R
 import com.ralphmarondev.system.launcher.presentation.component.AppContainer
 import com.ralphmarondev.system.launcher.presentation.widget.ClockWidget
@@ -49,6 +51,11 @@ fun LauncherScreenRoot(
 ) {
     val viewModel: LauncherViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
+    val shellState = LocalLumiShellState.current
+
+    LaunchedEffect(Unit) {
+        shellState.setAppearance(LumiShellStyle.WhiteOnTransparent)
+    }
 
     LaunchedEffect(state.navigationTarget) {
         when (state.navigationTarget) {
