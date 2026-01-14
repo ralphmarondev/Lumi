@@ -17,8 +17,8 @@ class LumiShellState internal constructor(
     private val _appearance = mutableStateOf(initial)
     val appearance: State<LumiShellAppearance> = _appearance
 
-    fun setAppearance(newAppearance: LumiShellAppearance) {
-        _appearance.value = newAppearance
+    fun setAppearance(style: LumiShellStyle) {
+        _appearance.value = style.toAppearance()
     }
 
     fun reset() {
@@ -41,28 +41,25 @@ enum class LumiShellStyle {
     WhiteOnDim
 }
 
-fun LumiShellState.applyStyle(style: LumiShellStyle) {
-    val appearance = when (style) {
-        LumiShellStyle.BlackOnTransparent -> {
-            LumiShellAppearance(
-                foregroundColor = Color(0xFF1A1A1A),
-                backgroundColor = Color.Transparent
-            )
-        }
-
-        LumiShellStyle.WhiteOnTransparent -> {
-            LumiShellAppearance(
-                foregroundColor = Color.White,
-                backgroundColor = Color.Transparent
-            )
-        }
-
-        LumiShellStyle.WhiteOnDim -> {
-            LumiShellAppearance(
-                foregroundColor = Color.White,
-                backgroundColor = Color(0x33000000) // black at ~20% opacity
-            )
-        }
+fun LumiShellStyle.toAppearance() = when (this) {
+    LumiShellStyle.BlackOnTransparent -> {
+        LumiShellAppearance(
+            foregroundColor = Color(0xFF1A1A1A),
+            backgroundColor = Color.Transparent
+        )
     }
-    setAppearance(appearance)
+
+    LumiShellStyle.WhiteOnTransparent -> {
+        LumiShellAppearance(
+            foregroundColor = Color.White,
+            backgroundColor = Color.Transparent
+        )
+    }
+
+    LumiShellStyle.WhiteOnDim -> {
+        LumiShellAppearance(
+            foregroundColor = Color.White,
+            backgroundColor = Color(0x33000000) // black at ~20% opacity
+        )
+    }
 }
