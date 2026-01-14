@@ -1,5 +1,6 @@
 package com.ralphmarondev.system.shell.presentation
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -44,7 +45,6 @@ import com.ralphmarondev.core.presentation.shell.LocalLumiShellState
 import com.ralphmarondev.core.presentation.shell.LumiShellState
 import com.ralphmarondev.core.presentation.shell.LumiShellStyle
 import com.ralphmarondev.core.presentation.shell.rememberLumiShellState
-import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -73,17 +73,6 @@ private fun LumiShellLayout(
     shellState: LumiShellState,
     content: @Composable () -> Unit
 ) {
-    val context = LocalContext.current
-    var currentTime by remember { mutableStateOf(Calendar.getInstance().time) }
-    LaunchedEffect(Unit) {
-        while (true) {
-            currentTime = Calendar.getInstance().time
-            delay(1000)
-        }
-    }
-    val timeFormatter = remember { SimpleDateFormat("h:mm a", Locale.getDefault()) }
-    val (batteryLevel, isCharging) = rememberBatteryLevel(context)
-
     Box(modifier = Modifier.fillMaxSize()) {
         Row(
             modifier = Modifier
@@ -96,11 +85,8 @@ private fun LumiShellLayout(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = timeFormatter.format(currentTime),
-                color = shellState.appearance.value.foregroundColor,
-                fontSize = 13.sp,
-                style = MaterialTheme.typography.bodySmall
+            LumiTimeIndicator(
+                foreGroundColor = shellState.appearance.value.foregroundColor
             )
 
             Row(
@@ -120,8 +106,6 @@ private fun LumiShellLayout(
                     modifier = Modifier.size(18.dp)
                 )
                 LumiBatteryIndicator(
-                    level = batteryLevel,
-                    charging = isCharging,
                     foreGroundColor = shellState.appearance.value.foregroundColor
                 )
             }
@@ -136,12 +120,53 @@ private fun LumiShellLayout(
 }
 
 @Composable
-private fun rememberBatteryLevel(context: Context): Pair<Int, Boolean> {
-    var batteryLevel by remember { mutableIntStateOf(86) }
+private fun LumiTimeIndicator(
+    modifier: Modifier = Modifier,
+    foreGroundColor: Color = Color.White,
+    timeFormat: String = "h:mm a"
+) {
+    val context = LocalContext.current
+    var currentTime by remember { mutableStateOf(Calendar.getInstance().time) }
+    val formatter = remember { SimpleDateFormat(timeFormat, Locale.getDefault()) }
+
+    DisposableEffect(context) {
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                currentTime = Calendar.getInstance().time
+            }
+        }
+        val filter = IntentFilter().apply {
+            addAction(Intent.ACTION_TIME_TICK)
+            addAction(Intent.ACTION_TIME_CHANGED)
+            addAction(Intent.ACTION_TIMEZONE_CHANGED)
+        }
+        context.registerReceiver(receiver, filter)
+
+        onDispose {
+            context.unregisterReceiver(receiver)
+        }
+    }
+
+    Text(
+        text = formatter.format(currentTime),
+        modifier = modifier,
+        color = foreGroundColor,
+        fontSize = 13.sp,
+        style = MaterialTheme.typography.bodySmall
+    )
+}
+
+@Composable
+private fun LumiBatteryIndicator(
+    modifier: Modifier = Modifier,
+    foreGroundColor: Color = Color.White
+) {
+    val context = LocalContext.current
+    var batteryLevel by remember { mutableIntStateOf(-1) }
     var isCharging by remember { mutableStateOf(false) }
 
     DisposableEffect(context) {
-        val receiver = object : android.content.BroadcastReceiver() {
+        val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 intent ?: return
 
@@ -163,17 +188,7 @@ private fun rememberBatteryLevel(context: Context): Pair<Int, Boolean> {
         }
     }
 
-    return batteryLevel to isCharging
-}
-
-@Composable
-private fun LumiBatteryIndicator(
-    level: Int,         // 0..100
-    modifier: Modifier = Modifier,
-    charging: Boolean = false,
-    foreGroundColor: Color = Color.White
-) {
-    val clampedLevel = level.coerceIn(0, 100)
+    val clampedLevel = batteryLevel.coerceIn(0, 100)
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -194,13 +209,14 @@ private fun LumiBatteryIndicator(
                     .fillMaxHeight()
                     .fillMaxWidth(clampedLevel / 100f)
                     .background(
-                        color = if (charging) Color.Green else foreGroundColor,
+                        color = if (isCharging) Color.Green else foreGroundColor,
                         shape = RoundedCornerShape(2.dp)
                     )
             )
         }
         Text(
             text = "$clampedLevel%",
+            modifier = modifier,
             color = foreGroundColor,
             fontSize = 13.sp,
             style = MaterialTheme.typography.bodySmall
