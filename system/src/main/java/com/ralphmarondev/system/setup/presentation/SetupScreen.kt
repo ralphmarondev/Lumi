@@ -41,7 +41,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
@@ -55,7 +54,7 @@ import com.ralphmarondev.core.presentation.component.LumiLottie
 import com.ralphmarondev.core.presentation.component.LumiPasswordField
 import com.ralphmarondev.core.presentation.component.LumiTextField
 import com.ralphmarondev.core.presentation.shell.LocalLumiShellState
-import com.ralphmarondev.core.presentation.shell.LumiShellAppearance
+import com.ralphmarondev.core.presentation.shell.LumiShellStyle
 import com.ralphmarondev.core.presentation.theme.LocalThemeState
 import com.ralphmarondev.system.R
 import com.ralphmarondev.system.setup.presentation.component.LanguageCard
@@ -67,16 +66,6 @@ fun SetupScreenRoot(
 ) {
     val viewModel: SetupViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
-    val shellState = LocalLumiShellState.current
-
-    LaunchedEffect(Unit) {
-        shellState.setAppearance(
-            LumiShellAppearance(
-                foregroundColor = Color(0xFF1A1A1A),
-                backgroundColor = Color.Transparent
-            )
-        )
-    }
 
     LaunchedEffect(state.completed) {
         if (state.completed) {
@@ -98,11 +87,20 @@ private fun SetupScreen(
     action: (SetupAction) -> Unit
 ) {
     val themeState = LocalThemeState.current
-    val snackbarHostState = remember { SnackbarHostState() }
+    val shellState = LocalLumiShellState.current
+    val snackbarState = remember { SnackbarHostState() }
+    val darkMode = themeState.darkTheme.value
+
+    LaunchedEffect(darkMode) {
+        shellState.setAppearance(
+            if (darkMode) LumiShellStyle.WhiteOnTransparent
+            else LumiShellStyle.BlackOnTransparent
+        )
+    }
 
     LaunchedEffect(state.message) {
         state.message?.let { msg ->
-            snackbarHostState.showSnackbar(message = msg)
+            snackbarState.showSnackbar(message = msg)
             action(SetupAction.ResetMessage)
         }
     }
@@ -126,8 +124,7 @@ private fun SetupScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { themeState.toggleTheme() }) {
-                        val darkMode = themeState.darkTheme.value
+                    IconButton(onClick = themeState::toggleTheme) {
                         Icon(
                             imageVector = if (darkMode) {
                                 Icons.Outlined.LightMode
@@ -162,7 +159,7 @@ private fun SetupScreen(
                 )
             }
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        snackbarHost = { SnackbarHost(snackbarState) }
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
