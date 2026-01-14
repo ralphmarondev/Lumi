@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.ralphmarondev.core.presentation.shell.LocalLumiShellState
 import com.ralphmarondev.core.presentation.shell.LumiShellState
+import com.ralphmarondev.core.presentation.shell.LumiShellStyle
 import com.ralphmarondev.core.presentation.shell.rememberLumiShellState
 import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
@@ -56,6 +57,10 @@ fun LumiShell(
     CompositionLocalProvider(
         LocalLumiShellState provides shellState
     ) {
+        LaunchedEffect(Unit) {
+            shellState.setAppearance(LumiShellStyle.BlackOnTransparent)
+        }
+
         LumiShellLayout(
             shellState = shellState,
             content = content
