@@ -43,6 +43,8 @@ import com.ralphmarondev.core.presentation.component.LumiButton
 import com.ralphmarondev.core.presentation.component.LumiLottie
 import com.ralphmarondev.core.presentation.component.LumiPasswordField
 import com.ralphmarondev.core.presentation.component.LumiTextField
+import com.ralphmarondev.core.presentation.shell.LocalLumiShellState
+import com.ralphmarondev.core.presentation.shell.LumiShellStyle
 import com.ralphmarondev.core.presentation.theme.LocalThemeState
 import com.ralphmarondev.system.R
 import org.koin.androidx.compose.koinViewModel
@@ -74,7 +76,16 @@ private fun LoginScreen(
 ) {
     val focusManager = LocalFocusManager.current
     val themeState = LocalThemeState.current
+    val shellState = LocalLumiShellState.current
     val snackbarHostState = remember { SnackbarHostState() }
+    val darkMode = themeState.darkTheme.value
+
+    LaunchedEffect(darkMode) {
+        shellState.setAppearance(
+            if (darkMode) LumiShellStyle.WhiteOnTransparent
+            else LumiShellStyle.BlackOnTransparent
+        )
+    }
 
     LaunchedEffect(state.message) {
         state.message?.let { msg ->
@@ -87,8 +98,7 @@ private fun LoginScreen(
             TopAppBar(
                 title = {},
                 actions = {
-                    IconButton(onClick = { themeState.toggleTheme() }) {
-                        val darkMode = themeState.darkTheme.value
+                    IconButton(onClick = themeState::toggleTheme) {
                         Icon(
                             imageVector = if (darkMode) {
                                 Icons.Outlined.LightMode
