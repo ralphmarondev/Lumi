@@ -42,6 +42,15 @@ class NoteListViewModel(
                     )
                 }
             }
+
+            is NoteListAction.MoveNote -> {
+                val notes = _state.value.notes.toMutableList()
+                if (action.fromIndex in notes.indices && action.toIndex in notes.indices) {
+                    val note = notes.removeAt(action.fromIndex)
+                    notes.add(action.toIndex, note)
+                    _state.update { it.copy(notes = notes) }
+                }
+            }
         }
     }
 
