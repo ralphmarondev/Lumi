@@ -35,6 +35,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.ralphmarondev.core.presentation.component.LumiButton
+import com.ralphmarondev.core.presentation.component.LumiGestureHandler
 import com.ralphmarondev.notes.presentation.component.NoteTextField
 import com.ralphmarondev.notes.theme.LocalThemeState
 import org.koin.compose.viewmodel.koinViewModel
@@ -53,10 +54,12 @@ fun NewNoteScreenRoot(
         }
     }
 
-    NewNoteScreen(
-        state = state,
-        action = viewModel::onAction
-    )
+    LumiGestureHandler(onBackSwipe = navigateBack) {
+        NewNoteScreen(
+            state = state,
+            action = viewModel::onAction
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

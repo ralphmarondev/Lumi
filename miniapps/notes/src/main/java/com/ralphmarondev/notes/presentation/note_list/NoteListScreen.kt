@@ -33,6 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.ralphmarondev.core.presentation.component.LumiGestureHandler
 import com.ralphmarondev.notes.domain.model.Note
 import com.ralphmarondev.notes.theme.LocalThemeState
 import org.koin.compose.viewmodel.koinViewModel
@@ -59,10 +60,14 @@ fun NoteListScreenRoot(
         }
     }
 
-    NoteListScreen(
-        state = state,
-        action = viewModel::onAction
-    )
+    LumiGestureHandler(
+        onBackSwipe = navigateBack
+    ) {
+        NoteListScreen(
+            state = state,
+            action = viewModel::onAction
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
