@@ -19,6 +19,7 @@ import com.ralphmarondev.system.settings.navigation.SettingsNavigation
 import com.ralphmarondev.system.setup.presentation.SetupScreenRoot
 import com.ralphmarondev.system.shell.presentation.LumiShell
 
+@Suppress("DEPRECATION")
 @Composable
 fun AppNavigation(
     startDestination: Routes = Routes.Setup,

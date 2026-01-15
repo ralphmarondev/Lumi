@@ -8,12 +8,20 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.WindowCompat
+import com.ralphmarondev.core.data.local.preferences.AppPreferences
+import com.ralphmarondev.core.presentation.theme.LocalThemeState
 import com.ralphmarondev.core.presentation.theme.LumiTheme
+import com.ralphmarondev.core.presentation.theme.ThemeProvider
 import com.ralphmarondev.lumi.navigation.MiniAppType
 import com.ralphmarondev.notes.NoteApp
 import com.ralphmarondev.system.shell.presentation.LumiShell
+import org.koin.android.ext.android.inject
 
+@Suppress("DEPRECATION")
 class MiniAppHostActivity : ComponentActivity() {
+
+    private val preferences: AppPreferences by inject()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -22,12 +30,17 @@ class MiniAppHostActivity : ComponentActivity() {
         val miniApp = intent.getSerializableExtra(KEY_MINI_APP) as? MiniAppType ?: MiniAppType.Notes
 
         setContent {
-            LumiTheme {
-                LumiShell {
-                    when (miniApp) {
-                        MiniAppType.Notes -> NoteApp(
-                            navigateBack = { finish() }
-                        )
+            ThemeProvider(preferences = preferences) {
+                val themeState = LocalThemeState.current
+                LumiTheme(
+                    darkTheme = themeState.darkTheme.value
+                ) {
+                    LumiShell {
+                        when (miniApp) {
+                            MiniAppType.Notes -> NoteApp(
+                                navigateBack = { finish() }
+                            )
+                        }
                     }
                 }
             }
