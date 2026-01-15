@@ -1,9 +1,12 @@
 package com.ralphmarondev.notes
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.ralphmarondev.core.presentation.shell.LocalLumiShellState
+import com.ralphmarondev.core.presentation.shell.LumiShellStyle
 import com.ralphmarondev.notes.data.local.preferences.NoteAppPreferences
 import com.ralphmarondev.notes.presentation.new_note.NewNoteScreenRoot
 import com.ralphmarondev.notes.presentation.note_list.NoteListScreenRoot
@@ -25,6 +28,16 @@ fun NoteApp(
         NoteTheme(
             darkTheme = themeState.darkTheme.value
         ) {
+            val shellState = LocalLumiShellState.current
+            val darkMode = themeState.darkTheme.value
+
+            LaunchedEffect(darkMode) {
+                shellState.setAppearance(
+                    if (!darkMode) LumiShellStyle.WhiteOnTransparent
+                    else LumiShellStyle.BlackOnTransparent
+                )
+            }
+
             NavHost(
                 navController = navController,
                 startDestination = Routes.NoteList
