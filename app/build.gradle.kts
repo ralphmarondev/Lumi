@@ -1,8 +1,16 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+}
+
+val localPropertiesFile = rootProject.file("local.properties")
+val localProperties = Properties()
+if (localPropertiesFile.exists()) {
+    localProperties.load(localPropertiesFile.inputStream())
 }
 
 android {
@@ -15,15 +23,28 @@ android {
         applicationId = "com.ralphmarondev.lumi"
         minSdk = 28
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+
+        versionCode = localProperties["LUMI_VERSION_CODE"]?.toString()?.toInt() ?: 1
+        versionName = localProperties["LUMI_VERSION_NAME"]?.toString() ?: "1.0 Lumi"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file(localProperties["RELEASE_STORE_FILE"] ?: "")
+            storePassword = localProperties["RELEASE_STORE_PASSWORD"]?.toString()
+            keyAlias = localProperties["RELEASE_KEY_ALIAS"]?.toString()
+            keyPassword = localProperties["RELEASE_KEY_PASSWORD"]?.toString()
+        }
+    }
+
     buildTypes {
         release {
-            isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = true
+            isShrinkResources = true
+            isDebuggable = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
