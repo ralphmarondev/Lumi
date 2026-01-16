@@ -70,6 +70,7 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":system"))
     implementation(project(":miniapps:notes"))
+    implementation(project(":miniapps:weather"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
