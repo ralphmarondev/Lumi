@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:name=".MyApp"
         android:allowBackup="true"
@@ -18,14 +21,15 @@
             android:exported="false"
             android:label="@string/title_activity_mini_app_host"
             android:screenOrientation="unspecified"
-            android:theme="@style/Theme.Lumi" />
+            android:theme="@style/Theme.Lumi"
+            tools:ignore="DiscouragedApi" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Lumi"
-            tools:ignore="DiscouragedApi,LockedOrientationActivity">
+            tools:ignore="DiscouragedApi,LockedOrientationActivity,RedundantLabel">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
