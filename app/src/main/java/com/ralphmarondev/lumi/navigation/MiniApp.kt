@@ -1,5 +1,6 @@
 package com.ralphmarondev.lumi.navigation
 
-enum class MiniAppType {
+enum class MiniApp {
+    Unknown,
     Notes
 }

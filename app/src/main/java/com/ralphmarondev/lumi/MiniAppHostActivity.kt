@@ -12,7 +12,7 @@ import com.ralphmarondev.core.data.local.preferences.AppPreferences
 import com.ralphmarondev.core.presentation.theme.LocalThemeState
 import com.ralphmarondev.core.presentation.theme.LumiTheme
 import com.ralphmarondev.core.presentation.theme.ThemeProvider
-import com.ralphmarondev.lumi.navigation.MiniAppType
+import com.ralphmarondev.lumi.navigation.MiniApp
 import com.ralphmarondev.notes.NoteApp
 import com.ralphmarondev.system.shell.presentation.LumiShell
 import org.koin.android.ext.android.inject
@@ -27,7 +27,8 @@ class MiniAppHostActivity : ComponentActivity() {
         enableEdgeToEdge()
         enableFullScreen()
 
-        val miniApp = intent.getSerializableExtra(KEY_MINI_APP) as? MiniAppType ?: MiniAppType.Notes
+        val miniApp =
+            intent.getSerializableExtra(KEY_MINI_APP) as? MiniApp ?: MiniApp.Unknown
 
         setContent {
             ThemeProvider(preferences = preferences) {
@@ -37,7 +38,8 @@ class MiniAppHostActivity : ComponentActivity() {
                 ) {
                     LumiShell {
                         when (miniApp) {
-                            MiniAppType.Notes -> NoteApp(
+                            MiniApp.Unknown -> Unit
+                            MiniApp.Notes -> NoteApp(
                                 navigateBack = { finish() }
                             )
                         }
@@ -78,7 +80,7 @@ class MiniAppHostActivity : ComponentActivity() {
     companion object {
         private const val KEY_MINI_APP = "mini_app"
 
-        fun intent(context: Context, miniApp: MiniAppType): Intent =
+        fun intent(context: Context, miniApp: MiniApp): Intent =
             Intent(context, MiniAppHostActivity::class.java).apply {
                 putExtra(KEY_MINI_APP, miniApp)
             }

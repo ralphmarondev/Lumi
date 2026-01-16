@@ -113,7 +113,7 @@ fun AppNavigation(
                         context.startActivity(
                             MiniAppHostActivity.intent(
                                 context,
-                                MiniAppType.Notes
+                                MiniApp.Notes
                             )
                         )
                         if (context is Activity) {
