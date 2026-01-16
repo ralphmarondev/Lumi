@@ -47,7 +47,9 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun LauncherScreenRoot(
     navigateToSettings: () -> Unit,
-    navigateToNotes: () -> Unit
+    navigateToNotes: () -> Unit,
+    navigateToClock: () -> Unit,
+    navigateToWeather: () -> Unit
 ) {
     val viewModel: LauncherViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
@@ -70,8 +72,15 @@ fun LauncherScreenRoot(
                 viewModel.onAction(LauncherAction.ResetNavigation)
             }
 
-            NavigationTarget.Clock -> {}
-            NavigationTarget.Weather -> {}
+            NavigationTarget.Clock -> {
+                navigateToClock()
+                viewModel.onAction(LauncherAction.ResetNavigation)
+            }
+
+            NavigationTarget.Weather -> {
+                navigateToWeather()
+                viewModel.onAction(LauncherAction.ResetNavigation)
+            }
         }
     }
 
