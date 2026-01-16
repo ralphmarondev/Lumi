@@ -3,7 +3,7 @@ package com.ralphmarondev.lumi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ralphmarondev.core.data.local.preferences.AppPreferences
-import com.ralphmarondev.lumi.navigation.Routes
+import com.ralphmarondev.lumi.navigation.SystemApp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,8 +14,8 @@ class MainViewModel(
     private val preferences: AppPreferences
 ) : ViewModel() {
 
-    private val _startDestination = MutableStateFlow<Routes?>(null)
-    val startDestination = _startDestination.asStateFlow()
+    private val _startApp = MutableStateFlow<SystemApp?>(null)
+    val startApp = _startApp.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -24,11 +24,11 @@ class MainViewModel(
             val authenticated = preferences.isAuthenticated().first()
             val enabledAuth = preferences.isSystemEnableAuth().first()
 
-            _startDestination.value = when {
-                setupCompleted && authenticated && !enabledAuth -> Routes.Launcher
-                setupCompleted && authenticated && enabledAuth -> Routes.Login
-                setupCompleted -> Routes.Login
-                else -> Routes.Setup
+            _startApp.value = when {
+                setupCompleted && authenticated && !enabledAuth -> SystemApp.Launcher
+                setupCompleted && authenticated && enabledAuth -> SystemApp.Login
+                setupCompleted -> SystemApp.Login
+                else -> SystemApp.Setup
             }
         }
     }

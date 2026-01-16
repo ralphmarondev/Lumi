@@ -34,15 +34,15 @@ class MainActivity : ComponentActivity() {
                 LumiTheme(
                     darkTheme = themeState.darkTheme.value
                 ) {
-                    val startDestination by viewModel.startDestination.collectAsState(initial = null)
+                    val startApp by viewModel.startApp.collectAsState(initial = null)
 
                     Crossfade(
-                        targetState = startDestination,
+                        targetState = startApp,
                         label = "splashToApp"
-                    ) { destination ->
-                        when (destination) {
+                    ) { app ->
+                        when (app) {
                             null -> LumiSplash()
-                            else -> AppNavigation(startDestination = destination)
+                            else -> AppNavigation(startApp = app)
                         }
                     }
                 }

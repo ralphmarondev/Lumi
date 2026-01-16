@@ -3,17 +3,17 @@ package com.ralphmarondev.lumi.navigation
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed interface Routes {
+sealed interface SystemApp {
 
     @Serializable
-    data object Setup : Routes
+    data object Setup : SystemApp
 
     @Serializable
-    data object Login : Routes
+    data object Login : SystemApp
 
     @Serializable
-    data object Launcher : Routes
+    data object Launcher : SystemApp
 
     @Serializable
-    data object Settings : Routes
+    data object Settings : SystemApp
 }

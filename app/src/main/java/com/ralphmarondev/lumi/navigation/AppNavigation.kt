@@ -1,6 +1,5 @@
 package com.ralphmarondev.lumi.navigation
 
-import android.app.Activity
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -11,18 +10,15 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.ralphmarondev.lumi.MiniAppHostActivity
-import com.ralphmarondev.lumi.R
 import com.ralphmarondev.system.auth.presentation.login.LoginScreenRoot
 import com.ralphmarondev.system.launcher.presentation.LauncherScreenRoot
 import com.ralphmarondev.system.settings.navigation.SettingsNavigation
 import com.ralphmarondev.system.setup.presentation.SetupScreenRoot
 import com.ralphmarondev.system.shell.presentation.LumiShell
 
-@Suppress("DEPRECATION")
 @Composable
 fun AppNavigation(
-    startDestination: Routes = Routes.Setup,
+    startApp: SystemApp = SystemApp.Setup,
     navController: NavHostController = rememberNavController()
 ) {
     val context = LocalContext.current
@@ -30,9 +26,9 @@ fun AppNavigation(
     LumiShell {
         NavHost(
             navController = navController,
-            startDestination = startDestination
+            startDestination = startApp
         ) {
-            composable<Routes.Setup>(
+            composable<SystemApp.Setup>(
                 enterTransition = {
                     slideIntoContainer(
                         AnimatedContentTransitionScope.SlideDirection.Left,
@@ -60,14 +56,14 @@ fun AppNavigation(
             ) {
                 SetupScreenRoot(
                     onCompleted = {
-                        navController.navigate(Routes.Login) {
+                        navController.navigate(SystemApp.Login) {
                             popUpTo(0) { inclusive = true }
                             launchSingleTop = true
                         }
                     }
                 )
             }
-            composable<Routes.Login>(
+            composable<SystemApp.Login>(
                 enterTransition = {
                     slideIntoContainer(
                         AnimatedContentTransitionScope.SlideDirection.Left,
@@ -95,37 +91,26 @@ fun AppNavigation(
             ) {
                 LoginScreenRoot(
                     onSuccess = {
-                        navController.navigate(Routes.Launcher) {
+                        navController.navigate(SystemApp.Launcher) {
                             popUpTo(0) { inclusive = true }
                             launchSingleTop = true
                         }
                     }
                 )
             }
-            composable<Routes.Launcher> {
+            composable<SystemApp.Launcher> {
                 LauncherScreenRoot(
                     navigateToSettings = {
-                        navController.navigate(Routes.Settings) {
+                        navController.navigate(SystemApp.Settings) {
                             launchSingleTop = true
                         }
                     },
                     navigateToNotes = {
-                        context.startActivity(
-                            MiniAppHostActivity.intent(
-                                context,
-                                MiniApp.Notes
-                            )
-                        )
-                        if (context is Activity) {
-                            context.overridePendingTransition(
-                                R.anim.slide_in_right,
-                                R.anim.slide_out_left
-                            )
-                        }
+                        context.launchMiniApp(MiniApp.Notes)
                     }
                 )
             }
-            composable<Routes.Settings>(
+            composable<SystemApp.Settings>(
                 enterTransition = {
                     slideIntoContainer(
                         towards = AnimatedContentTransitionScope.SlideDirection.Left,
