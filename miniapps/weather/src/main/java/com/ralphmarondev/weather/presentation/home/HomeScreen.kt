@@ -1,8 +1,14 @@
 package com.ralphmarondev.weather.presentation.home
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
 import androidx.compose.material.icons.outlined.DarkMode
@@ -12,20 +18,48 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.ralphmarondev.core.presentation.component.LumiGestureHandler
 import com.ralphmarondev.weather.theme.LocalThemeState
+import org.koin.androidx.compose.koinViewModel
+
+@Composable
+fun HomeScreenRoot(
+    navigateBack: () -> Unit
+) {
+    val viewModel: HomeViewModel = koinViewModel()
+    val state by viewModel.state.collectAsState()
+
+    LaunchedEffect(state.navigateBack) {
+        if (state.navigateBack) {
+            navigateBack()
+            viewModel.onAction(HomeAction.ResetNavigation)
+        }
+    }
+
+    LumiGestureHandler(onBackSwipe = navigateBack) {
+        HomeScreen(
+            state = state,
+            action = viewModel::onAction
+        )
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(
-    navigateBack: () -> Unit
+private fun HomeScreen(
+    state: HomeState,
+    action: (HomeAction) -> Unit
 ) {
     val themeState = LocalThemeState.current
 
@@ -48,7 +82,7 @@ fun HomeScreen(
                     }
                 },
                 navigationIcon = {
-                    IconButton(onClick = navigateBack) {
+                    IconButton(onClick = { action(HomeAction.NavigateBack) }) {
                         Icon(
                             imageVector = Icons.Outlined.ArrowBackIosNew,
                             contentDescription = null
@@ -64,20 +98,83 @@ fun HomeScreen(
             )
         }
     ) { innerPadding ->
-        Box(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
-            contentAlignment = Alignment.Center
+            contentPadding = PaddingValues(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = "Coming soon...",
-                style = MaterialTheme.typography.titleLarge.copy(
-                    color = MaterialTheme.colorScheme.primary
-                ),
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(16.dp)
-            )
+            item {
+                Text(
+                    text = "${state.weather?.temperature} degree C",
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                )
+                Text(
+                    text = state.weather?.location?.name ?: "Cagayan Philippines",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                )
+                Text(
+                    text = state.weather?.condition?.name ?: "Sunny",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+                CurrentCondition(
+                    state = state,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun CurrentCondition(
+    modifier: Modifier = Modifier,
+    state: HomeState
+) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3),
+        modifier = modifier
+    ) {
+        item {
+            OutlinedCard {
+                Text(
+                    text = "${state.weather?.windDirection ?: 0}"
+                )
+                Text(
+                    text = "Wind Flow"
+                )
+            }
+        }
+        item {
+            OutlinedCard {
+                Text(
+                    text = "${state.weather?.precipitationChance ?: 0}"
+                )
+                Text(
+                    text = "Precipitation"
+                )
+            }
+        }
+        item {
+            OutlinedCard {
+                Text(
+                    text = "${state.weather?.humidity ?: 0}"
+                )
+                Text(
+                    text = "Humidity"
+                )
+            }
         }
     }
 }

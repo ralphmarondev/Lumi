@@ -5,7 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.ralphmarondev.weather.presentation.home.HomeScreen
+import com.ralphmarondev.weather.presentation.home.HomeScreenRoot
 
 @Composable
 fun WeatherApp(
@@ -18,7 +18,7 @@ fun WeatherApp(
         startDestination = startDestination
     ) {
         composable<Routes.Home> {
-            HomeScreen(
+            HomeScreenRoot(
                 navigateBack = closeApp
             )
         }
