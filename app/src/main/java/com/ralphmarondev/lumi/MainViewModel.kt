@@ -19,7 +19,7 @@ class MainViewModel(
 
     init {
         viewModelScope.launch {
-            delay(2000)
+            delay(4000)
             val setupCompleted = preferences.isSystemOnboardingCompleted().first()
             val authenticated = preferences.isAuthenticated().first()
             val enabledAuth = preferences.isSystemEnableAuth().first()
