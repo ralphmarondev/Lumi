@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import com.ralphmarondev.core.data.local.database.converters.EnumConverters
 import com.ralphmarondev.core.data.local.database.dao.UserDao
 import com.ralphmarondev.core.data.local.database.entities.UserEntity
 
@@ -12,6 +14,7 @@ import com.ralphmarondev.core.data.local.database.entities.UserEntity
     version = 1,
     exportSchema = false
 )
+@TypeConverters(EnumConverters::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract val userDao: UserDao
