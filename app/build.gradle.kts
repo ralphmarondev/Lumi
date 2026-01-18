@@ -25,14 +25,14 @@ android {
         targetSdk = 36
 
         versionCode = localProperties["LUMI_VERSION_CODE"]?.toString()?.toInt() ?: 1
-        versionName = localProperties["LUMI_VERSION_NAME"]?.toString() ?: "1.0 Lumi"
+        versionName = localProperties["LUMI_VERSION_NAME"]?.toString() ?: "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
         create("release") {
-            storeFile = file(localProperties["RELEASE_STORE_FILE"] ?: "")
+            storeFile = file(localProperties["RELEASE_STORE_FILE"] ?: "lumi-release.jks")
             storePassword = localProperties["RELEASE_STORE_PASSWORD"]?.toString()
             keyAlias = localProperties["RELEASE_KEY_ALIAS"]?.toString()
             keyPassword = localProperties["RELEASE_KEY_PASSWORD"]?.toString()
