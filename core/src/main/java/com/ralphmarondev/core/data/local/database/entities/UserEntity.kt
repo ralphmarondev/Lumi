@@ -9,9 +9,7 @@ import com.ralphmarondev.core.domain.model.Role
 @Entity(
     tableName = "users",
     indices = [
-        Index(value = ["username"], unique = true),
-        Index(value = ["email"], unique = true),
-        Index(value = ["phoneNumber"], unique = true)
+        Index(value = ["username"], unique = true)
     ]
 )
 data class UserEntity(
