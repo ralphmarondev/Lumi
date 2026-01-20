@@ -29,4 +29,27 @@ class SettingsRepositoryImpl(
             Result.Error(message = e.message ?: "Failed fetching user details.")
         }
     }
+
+    override suspend fun updateUserInformation(user: User): Result<User> {
+        return try {
+            val username = preferences.getSystemCurrentUser().first()
+            val existingUser = userDao.getByUsername(username)
+                ?: return Result.Error("Failed updating user information.")
+
+            val userEntity = existingUser.copy(
+                displayName = user.displayName,
+                username = user.username,
+                email = user.email,
+                phoneNumber = user.phoneNumber,
+                gender = user.gender,
+                birthday = user.birthday,
+                profileImagePath = user.profileImagePath,
+                updatedAt = System.currentTimeMillis()
+            )
+            userDao.update(userEntity)
+            return Result.Success(userEntity.toDomain())
+        } catch (e: Exception) {
+            Result.Error(message = e.message ?: "Failed updating user information.")
+        }
+    }
 }

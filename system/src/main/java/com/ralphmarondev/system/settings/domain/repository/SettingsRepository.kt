@@ -9,4 +9,6 @@ interface SettingsRepository {
     suspend fun isAuthEnabled(): Boolean
 
     suspend fun getUserInformation(): Result<User>
+
+    suspend fun updateUserInformation(user: User): Result<User>
 }
