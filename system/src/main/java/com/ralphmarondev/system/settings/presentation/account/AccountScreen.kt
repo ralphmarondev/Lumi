@@ -41,9 +41,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -121,9 +118,9 @@ private fun AccountScreen(
             ) {
                 item {
                     UserImage(
-                        imagePath = state.user.profileImagePath,
-                        onImageSelected = {
-                            action(AccountAction.SelectImage(it))
+                        imagePath = state.profileImagePath,
+                        onImageSelected = { path ->
+                            action(AccountAction.ProfileImageChange(path))
                         },
                         modifier = Modifier
                             .padding(bottom = 16.dp)
@@ -143,18 +140,14 @@ private fun AccountScreen(
                         Column {
                             AccountField(
                                 label = "Display Name",
-                                value = state.user.displayName,
-                                onClick = {
-                                    action(AccountAction.ShowEditDialog(EditField.DISPLAY_NAME))
-                                }
+                                value = state.displayName,
+                                onClick = { action(AccountAction.ToggleDisplayNameDialog) }
                             )
                             HorizontalDivider(thickness = 0.3.dp)
                             AccountField(
                                 label = "Username",
-                                value = state.user.username,
-                                onClick = {
-                                    action(AccountAction.ShowEditDialog(EditField.USERNAME))
-                                }
+                                value = state.username,
+                                onClick = { action(AccountAction.ToggleUsernameDialog) }
                             )
                         }
                     }
@@ -173,34 +166,26 @@ private fun AccountScreen(
                         Column {
                             AccountField(
                                 label = "Email",
-                                value = state.user.email ?: "NOT_SET",
-                                onClick = {
-                                    action(AccountAction.ShowEditDialog(EditField.EMAIL))
-                                }
+                                value = state.email,
+                                onClick = { action(AccountAction.ToggleEmailDialog) }
                             )
                             HorizontalDivider(thickness = 0.3.dp)
                             AccountField(
                                 label = "Phone Number",
-                                value = state.user.phoneNumber ?: "NOT_SET",
-                                onClick = {
-                                    action(AccountAction.ShowEditDialog(EditField.PHONE))
-                                }
+                                value = state.phoneNumber,
+                                onClick = { action(AccountAction.TogglePhoneNumberDialog) }
                             )
                             HorizontalDivider(thickness = 0.3.dp)
                             AccountField(
                                 label = "Gender",
-                                value = state.user.gender.toString(),
-                                onClick = {
-                                    action(AccountAction.ShowEditDialog(EditField.GENDER))
-                                }
+                                value = state.gender,
+                                onClick = { action(AccountAction.ToggleGenderDialog) }
                             )
                             HorizontalDivider(thickness = 0.3.dp)
                             AccountField(
                                 label = "Birthday",
-                                value = state.user.birthday,
-                                onClick = {
-                                    action(AccountAction.ShowEditDialog(EditField.BIRTHDAY))
-                                }
+                                value = state.birthday,
+                                onClick = { action(AccountAction.ToggleBirthdayDialog) }
                             )
                         }
                     }
@@ -208,47 +193,10 @@ private fun AccountScreen(
             }
         }
 
-        state.editField?.let { field ->
-            val (title, desc, value) = when (field) {
-                EditField.DISPLAY_NAME -> Triple(
-                    "Display Name",
-                    "Change your display name",
-                    state.user.displayName
-                )
-
-                EditField.USERNAME -> Triple(
-                    "Username",
-                    "Change your username",
-                    state.user.username
-                )
-
-                EditField.EMAIL -> Triple("Email", "Update your email address", state.user.email)
-                EditField.PHONE -> Triple(
-                    "Phone Number",
-                    "Update your phone number",
-                    state.user.phoneNumber
-                )
-
-                EditField.GENDER -> Triple(
-                    "Gender",
-                    "Update your gender",
-                    state.user.gender.name
-                )
-
-                EditField.BIRTHDAY -> Triple(
-                    "Birthday",
-                    "Update your birthday",
-                    state.user.birthday
-                )
-            }
-            EditFieldDialog(
-                title = title,
-                description = desc,
-                value = value,
-                onDismiss = { action(AccountAction.DismissEditDialog) },
-                onConfirm = { newValue ->
-                    action(AccountAction.UpdateField(field, newValue))
-                }
+        if (state.showDisplayNameDialog) {
+            DisplayNameDialog(
+                state = state,
+                action = action
             )
         }
     }
@@ -266,8 +214,10 @@ private fun UserImage(
         uri?.let { onImageSelected(it) }
     }
 
+    val model = if (imagePath.isNullOrBlank()) R.drawable.ralphmaron else imagePath
+
     Image(
-        painter = rememberAsyncImagePainter(imagePath ?: R.drawable.ralphmaron),
+        painter = rememberAsyncImagePainter(model),
         contentDescription = "User Image",
         modifier = modifier
             .size(140.dp)
@@ -320,45 +270,40 @@ private fun AccountField(label: String, value: String, onClick: () -> Unit) {
 }
 
 @Composable
-private fun EditFieldDialog(
-    title: String,
-    description: String,
-    value: String?,
-    onDismiss: () -> Unit,
-    onConfirm: (String) -> Unit
+fun DisplayNameDialog(
+    state: AccountState,
+    action: (AccountAction) -> Unit
 ) {
-    var text by remember { mutableStateOf(value ?: "") }
-
     AlertDialog(
-        onDismissRequest = onDismiss,
+        onDismissRequest = { action(AccountAction.ToggleDisplayNameDialog) },
         title = {
             Text(
-                text = title,
+                text = "Display Name",
                 style = MaterialTheme.typography.titleMedium
             )
         },
         text = {
             Column {
                 Text(
-                    text = description,
+                    text = "Enter your display name.",
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 OutlinedTextField(
-                    value = text,
-                    onValueChange = { text = it },
+                    value = state.displayName,
+                    onValueChange = { action(AccountAction.DisplayNameChange(it)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
         },
         confirmButton = {
-            Button(onClick = { onConfirm(text) }) {
+            Button(onClick = { }) {
                 Text(text = "OK")
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
+            TextButton(onClick = { action(AccountAction.ToggleDisplayNameDialog) }) {
                 Text(text = "Cancel")
             }
         }

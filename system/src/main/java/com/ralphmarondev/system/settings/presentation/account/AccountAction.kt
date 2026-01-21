@@ -1,13 +1,30 @@
 package com.ralphmarondev.system.settings.presentation.account
 
 import android.net.Uri
+import com.ralphmarondev.core.domain.model.Gender
 
 sealed interface AccountAction {
     data object Refresh : AccountAction
     data object NavigateBack : AccountAction
     data object ResetNavigation : AccountAction
-    data class SelectImage(val path: Uri) : AccountAction
-    data class ShowEditDialog(val field: EditField) : AccountAction
-    object DismissEditDialog : AccountAction
-    data class UpdateField(val field: EditField, val value: String) : AccountAction
+
+    data class ProfileImageChange(val path: Uri) : AccountAction
+
+    data object ToggleDisplayNameDialog : AccountAction
+    data class DisplayNameChange(val displayName: String) : AccountAction
+
+    data object ToggleUsernameDialog : AccountAction
+    data class UsernameChange(val username: String) : AccountAction
+
+    data object ToggleEmailDialog : AccountAction
+    data class EmailChange(val email: String) : AccountAction
+
+    data object TogglePhoneNumberDialog : AccountAction
+    data class PhoneNumberChange(val phoneNumber: String) : AccountAction
+
+    data object ToggleGenderDialog : AccountAction
+    data class GenderChange(val gender: Gender) : AccountAction
+
+    data object ToggleBirthdayDialog : AccountAction
+    data class BirthdayChange(val birthday: String) : AccountAction
 }

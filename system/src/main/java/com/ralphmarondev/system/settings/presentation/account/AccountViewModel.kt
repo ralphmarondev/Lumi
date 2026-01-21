@@ -5,8 +5,8 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.ralphmarondev.core.domain.model.Gender
 import com.ralphmarondev.core.domain.model.Result
+import com.ralphmarondev.core.domain.model.User
 import com.ralphmarondev.system.settings.domain.repository.SettingsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,6 +24,8 @@ class AccountViewModel(
 
     private val _state = MutableStateFlow(AccountState())
     val state = _state.asStateFlow()
+
+    private val _currentUser = MutableStateFlow(User())
 
     init {
         loadUserInformation()
@@ -55,77 +57,60 @@ class AccountViewModel(
                 }
             }
 
-            is AccountAction.ShowEditDialog -> _state.update { it.copy(editField = action.field) }
-            AccountAction.DismissEditDialog -> _state.update { it.copy(editField = null) }
-            is AccountAction.UpdateField -> {
-                viewModelScope.launch {
-                    when (action.field) {
-                        EditField.DISPLAY_NAME -> _state.value.user.copy(displayName = action.value)
-                        EditField.USERNAME -> _state.value.user.copy(username = action.value)
-                        EditField.EMAIL -> _state.value.user.copy(email = action.value)
-                        EditField.PHONE -> _state.value.user.copy(phoneNumber = action.value)
-                        EditField.GENDER -> {
-                            _state.value.user.copy(
-                                gender = when (action.value) {
-                                    "Male" -> Gender.Male
-                                    "Female" -> Gender.Female
-                                    else -> Gender.NotSet
-                                }
-                            )
-                        }
-
-                        EditField.BIRTHDAY -> _state.value.user.copy(birthday = action.value)
-                    }
-                    Log.d("Account", "Updating user on state")
-                    _state.update { it.copy(user = _state.value.user, editField = null) }
-
-                    Log.d("Account", "Update Field. user: ${_state.value.user}")
-                    val result = repository.updateUserInformation(_state.value.user)
-                    Log.d("Account", "Result: $result")
-
-                    when (result) {
-                        Result.Loading -> Unit
-                        is Result.Success -> Unit
-                        is Result.Error -> {
-                            _state.update {
-                                it.copy(errorMessage = result.message ?: "Failed updating user")
-                            }
-                        }
-                    }
-                }
-            }
-
-            is AccountAction.SelectImage -> {
+            is AccountAction.ProfileImageChange -> {
                 viewModelScope.launch {
                     val imagePath = saveImageToInternalStorage(action.path)
-
-                    if (imagePath != null) {
-                        val result = repository.updateUserInformation(
-                            user = _state.value.user.copy(
-                                profileImagePath = imagePath
-                            )
-                        )
-
-                        when (result) {
-                            Result.Loading -> Unit
-                            is Result.Success -> {
-                                _state.update {
-                                    it.copy(
-                                        user = _state.value.user.copy(profileImagePath = imagePath)
-                                    )
-                                }
-                            }
-
-                            is Result.Error -> {
-                                _state.update {
-                                    it.copy(errorMessage = "Failed updating image.")
-                                }
+                    val user = User()
+                    val result = repository.updateUserInformation(user)
+                    when (result) {
+                        Result.Loading -> Unit
+                        is Result.Success -> {
+                            _state.update {
+                                it.copy(profileImagePath = imagePath ?: "")
                             }
                         }
 
+                        is Result.Error -> Unit
                     }
                 }
             }
+
+            is AccountAction.DisplayNameChange -> {
+                viewModelScope.launch {
+                    val user = _currentUser.value.copy(displayName = action.displayName)
+                    val result = repository.updateUserInformation(user)
+
+                    when (result) {
+                        is Result.Success -> {
+                            _currentUser.update { it.copy(displayName = action.displayName) }
+                            _state.update {
+                                it.copy(showDisplayNameDialog = !_state.value.showDisplayNameDialog)
+                            }
+                        }
+
+                        is Result.Error -> Unit
+                        Result.Loading -> Unit
+                    }
+                }
+            }
+
+            is AccountAction.UsernameChange -> {}
+            is AccountAction.EmailChange -> {}
+            is AccountAction.PhoneNumberChange -> {}
+            is AccountAction.GenderChange -> {}
+            is AccountAction.BirthdayChange -> {}
+
+            AccountAction.ToggleBirthdayDialog -> {}
+            AccountAction.ToggleDisplayNameDialog -> {
+                _state.update {
+                    it.copy(showDisplayNameDialog = !_state.value.showDisplayNameDialog)
+                }
+            }
+
+            AccountAction.ToggleEmailDialog -> {}
+            AccountAction.ToggleGenderDialog -> {}
+            AccountAction.TogglePhoneNumberDialog -> {}
+            AccountAction.ToggleUsernameDialog -> {}
         }
     }
 
@@ -136,8 +121,28 @@ class AccountViewModel(
 
             when (result) {
                 is Result.Success -> {
+                    _currentUser.update {
+                        it.copy(
+                            displayName = it.displayName,
+                            username = it.username,
+                            email = it.email,
+                            phoneNumber = it.phoneNumber,
+                            gender = it.gender,
+                            birthday = it.birthday,
+                            profileImagePath = it.profileImagePath
+                        )
+                    }
                     _state.update {
-                        it.copy(user = it.user, isLoading = false)
+                        val user = _currentUser.value
+                        it.copy(
+                            displayName = user.displayName,
+                            username = user.username,
+                            email = user.email ?: "NOT_SET",
+                            phoneNumber = user.phoneNumber ?: "NOT_SET",
+                            gender = user.gender.name, // UPDATE THIS LATER
+                            birthday = user.birthday,
+                            profileImagePath = user.profileImagePath ?: ""
+                        )
                     }
                 }
 

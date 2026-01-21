@@ -1,16 +1,22 @@
 package com.ralphmarondev.system.settings.presentation.account
 
-import com.ralphmarondev.core.domain.model.User
-
 data class AccountState(
-    val user: User = User(),
     val isRefreshing: Boolean = false,
     val navigateBack: Boolean = false,
-    val editField: EditField? = null,
     val isLoading: Boolean = false,
-    val errorMessage: String = ""
-)
+    val errorMessage: String = "",
+    val displayName: String = "",
+    val username: String = "",
+    val email: String = "",
+    val phoneNumber: String = "",
+    val gender: String = "",
+    val birthday: String = "",
+    val profileImagePath: String = "",
 
-enum class EditField {
-    DISPLAY_NAME, USERNAME, EMAIL, PHONE, GENDER, BIRTHDAY
-}
+    val showDisplayNameDialog: Boolean = false,
+    val showUsernameDialog: Boolean = false,
+    val showEmailDialog: Boolean = false,
+    val showPhoneNumberDialog: Boolean = false,
+    val showGenderDialog: Boolean = false,
+    val showBirthdayDialog: Boolean = false
+)
