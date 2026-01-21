@@ -8,5 +8,8 @@ data class OverviewState(
     val navigateToSecurity: Boolean = false,
     val navigateToAbout: Boolean = false,
     val navigateBack: Boolean = false,
-    val user: User = User()
+    val user: User = User(),
+    val isRefreshing: Boolean = false,
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null
 )

@@ -7,4 +7,5 @@ sealed interface OverviewAction {
     data object NavigateToAbout : OverviewAction
     data object NavigateBack : OverviewAction
     data object ResetNavigation : OverviewAction
+    data object Refresh : OverviewAction
 }

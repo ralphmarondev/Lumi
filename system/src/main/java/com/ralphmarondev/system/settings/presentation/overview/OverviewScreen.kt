@@ -23,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -39,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.ralphmarondev.core.presentation.component.LumiGestureHandler
 import com.ralphmarondev.core.presentation.theme.LumiTheme
+import com.ralphmarondev.system.R
 import com.ralphmarondev.system.settings.presentation.component.SettingCard
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -123,53 +125,65 @@ private fun OverviewScreen(
             )
         }
     ) { innerPadding ->
-        LazyColumn(
+        PullToRefreshBox(
+            isRefreshing = state.isRefreshing,
+            onRefresh = { action(OverviewAction.Refresh) },
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
-            contentPadding = PaddingValues(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(innerPadding)
         ) {
-            item {
-                AccountSection()
-                Spacer(modifier = Modifier.height(16.dp))
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                item {
+                    AccountSection(state = state)
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                SettingCard(
-                    text = "Personal Info",
-                    imageVector = Icons.Outlined.AccountCircle,
-                    onClick = { action(OverviewAction.NavigateToAccount) },
-                    modifier = Modifier.padding(vertical = 4.dp)
-                )
-                SettingCard(
-                    text = "Wallpapers and style",
-                    imageVector = Icons.Outlined.Palette,
-                    onClick = { action(OverviewAction.NavigateToWallpaper) },
-                    modifier = Modifier.padding(vertical = 4.dp)
-                )
+                    SettingCard(
+                        text = "Personal Info",
+                        imageVector = Icons.Outlined.AccountCircle,
+                        onClick = { action(OverviewAction.NavigateToAccount) },
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    )
+                    SettingCard(
+                        text = "Wallpapers and style",
+                        imageVector = Icons.Outlined.Palette,
+                        onClick = { action(OverviewAction.NavigateToWallpaper) },
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    )
 
-                SettingCard(
-                    text = "Security",
-                    imageVector = Icons.Outlined.Security,
-                    onClick = { action(OverviewAction.NavigateToSecurity) },
-                    modifier = Modifier.padding(vertical = 4.dp)
-                )
+                    SettingCard(
+                        text = "Security",
+                        imageVector = Icons.Outlined.Security,
+                        onClick = { action(OverviewAction.NavigateToSecurity) },
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    )
 
-                SettingCard(
-                    text = "About",
-                    imageVector = Icons.Outlined.Info,
-                    onClick = { action(OverviewAction.NavigateToAbout) },
-                    modifier = Modifier.padding(vertical = 4.dp)
-                )
+                    SettingCard(
+                        text = "About",
+                        imageVector = Icons.Outlined.Info,
+                        onClick = { action(OverviewAction.NavigateToAbout) },
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-private fun AccountSection() {
+private fun AccountSection(
+    state: OverviewState
+) {
+    val displayName = state.user.displayName.ifEmpty {
+        "LumiOS User"
+    }
+
     if (LocalView.current.isInEditMode) {
         Image(
-            painter = painterResource(com.ralphmarondev.system.R.drawable.ralphmaron),
+            painter = painterResource(R.drawable.ralphmaron),
             contentDescription = "Ralph Maron Eda",
             modifier = Modifier
                 .size(140.dp)
@@ -178,8 +192,10 @@ private fun AccountSection() {
         )
     } else {
         AsyncImage(
-            model = com.ralphmarondev.system.R.drawable.ralphmaron,
-            contentDescription = "Ralph Maron Eda",
+            model = state.user.profileImagePath,
+            placeholder = painterResource(R.drawable.ralphmaron),
+            error = painterResource(R.drawable.ralphmaron),
+            contentDescription = displayName,
             modifier = Modifier
                 .size(140.dp)
                 .clip(CircleShape),
@@ -188,7 +204,7 @@ private fun AccountSection() {
     }
 
     Text(
-        text = "Ralph Maron Eda",
+        text = displayName,
         style = MaterialTheme.typography.headlineMedium.copy(
             color = MaterialTheme.colorScheme.primary
         ),
@@ -196,7 +212,7 @@ private fun AccountSection() {
         modifier = Modifier.padding(top = 12.dp, bottom = 4.dp)
     )
     Text(
-        text = "edaralphmaron@gmail.com",
+        text = state.user.username,
         style = MaterialTheme.typography.bodyMedium.copy(
             color = MaterialTheme.colorScheme.secondary
         ),
