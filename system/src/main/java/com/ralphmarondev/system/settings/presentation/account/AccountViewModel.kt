@@ -60,17 +60,21 @@ class AccountViewModel(
             is AccountAction.ProfileImageChange -> {
                 viewModelScope.launch {
                     val imagePath = saveImageToInternalStorage(action.path)
-                    val user = User()
-                    val result = repository.updateUserInformation(user)
-                    when (result) {
-                        Result.Loading -> Unit
-                        is Result.Success -> {
-                            _state.update {
-                                it.copy(profileImagePath = imagePath ?: "")
-                            }
-                        }
 
-                        is Result.Error -> Unit
+                    if (imagePath != null) {
+                        val updatedUser = _currentUser.value.copy(
+                            profileImagePath = imagePath
+                        )
+
+                        when (repository.updateUserInformation(updatedUser)) {
+                            is Result.Success -> {
+                                _state.update {
+                                    it.copy(profileImagePath = imagePath)
+                                }
+                            }
+
+                            else -> Unit
+                        }
                     }
                 }
             }
@@ -161,7 +165,7 @@ class AccountViewModel(
         return try {
             withContext(Dispatchers.IO) {
                 val context = getApplication<Application>()
-                val file = File(context.filesDir, "profile.png")
+                val file = File(context.filesDir, "profile_${System.currentTimeMillis()}.png")
 
                 context.contentResolver.openInputStream(imageUri)?.use { input ->
                     FileOutputStream(file, false).use { output ->

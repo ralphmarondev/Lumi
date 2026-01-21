@@ -46,11 +46,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.ralphmarondev.core.presentation.component.LumiGestureHandler
 import com.ralphmarondev.system.R
 import org.koin.compose.viewmodel.koinViewModel
+import java.io.File
 
 @Composable
 fun AccountScreenRoot(
@@ -214,10 +216,13 @@ private fun UserImage(
         uri?.let { onImageSelected(it) }
     }
 
-    val model = if (imagePath.isNullOrBlank()) R.drawable.ralphmaron else imagePath
-
+    val painter = rememberAsyncImagePainter(
+        model = imagePath?.takeIf { it.isNotBlank() }?.let { File(it) },
+        error = painterResource(R.drawable.ralphmaron),
+        placeholder = painterResource(R.drawable.ralphmaron)
+    )
     Image(
-        painter = rememberAsyncImagePainter(model),
+        painter = painter,
         contentDescription = "User Image",
         modifier = modifier
             .size(140.dp)
