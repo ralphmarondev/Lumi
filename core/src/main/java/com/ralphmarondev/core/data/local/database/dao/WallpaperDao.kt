@@ -13,5 +13,8 @@ interface WallpaperDao {
     suspend fun create(wallpaperEntity: WallpaperEntity)
 
     @Query("SELECT * FROM wallpapers")
-    fun getAll(): Flow<List<WallpaperEntity>>
+    suspend fun getAll(): List<WallpaperEntity>
+
+    @Query("SELECT * FROM wallpapers WHERE id = :id LIMIT 1")
+    fun getById(id: Long): Flow<WallpaperEntity?>
 }

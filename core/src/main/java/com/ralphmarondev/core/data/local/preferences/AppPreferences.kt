@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStoreFile
 import com.ralphmarondev.core.domain.model.Language
@@ -35,7 +36,7 @@ class AppPreferences(
         val SYSTEM_IS_AUTHENTICATED = booleanPreferencesKey("system_is_authenticated")
         val SYSTEM_ENABLE_AUTH = booleanPreferencesKey("system_enable_auth")
         val SYSTEM_CURRENT_USER = stringPreferencesKey("system_current_user")
-        val SYSTEM_LAUNCHER_WALLPAPER = intPreferencesKey("launcher_wallpaper")
+        val SYSTEM_LAUNCHER_WALLPAPER = longPreferencesKey("launcher_wallpaper")
     }
 
     suspend fun setSystemInDarkMode(value: Boolean) {
@@ -88,11 +89,11 @@ class AppPreferences(
         return dataStore.data.map { it[SYSTEM_CURRENT_USER] ?: "" }
     }
 
-    suspend fun setSystemLauncherWallpaper(value: Int) {
+    suspend fun setSystemLauncherWallpaper(value: Long) {
         dataStore.edit { it[SYSTEM_LAUNCHER_WALLPAPER] = value }
     }
 
-    fun getSystemLauncherWallpaper(): Flow<Int> {
+    fun getSystemLauncherWallpaper(): Flow<Long> {
         return dataStore.data.map { it[SYSTEM_LAUNCHER_WALLPAPER] ?: 1 }
     }
 }
