@@ -7,10 +7,12 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.ralphmarondev.core.data.local.database.converters.EnumConverters
 import com.ralphmarondev.core.data.local.database.dao.UserDao
+import com.ralphmarondev.core.data.local.database.dao.WallpaperDao
 import com.ralphmarondev.core.data.local.database.entities.UserEntity
+import com.ralphmarondev.core.data.local.database.entities.WallpaperEntity
 
 @Database(
-    entities = [UserEntity::class],
+    entities = [UserEntity::class, WallpaperEntity::class],
     version = 1,
     exportSchema = false
 )
@@ -18,6 +20,7 @@ import com.ralphmarondev.core.data.local.database.entities.UserEntity
 abstract class AppDatabase : RoomDatabase() {
 
     abstract val userDao: UserDao
+    abstract val wallpaperDao: WallpaperDao
 
     companion object {
         private const val DATABASE_NAME = "lumi_os_database"

@@ -9,4 +9,5 @@ val coreModule = module {
     single { AppPreferences(context = androidContext().applicationContext) }
     single { AppDatabase.createDatabase(androidContext()) }
     single { get<AppDatabase>().userDao }
+    single { get<AppDatabase>().wallpaperDao }
 }
