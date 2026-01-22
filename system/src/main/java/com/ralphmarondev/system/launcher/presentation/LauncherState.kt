@@ -14,5 +14,5 @@ data class LauncherState(
     val miniApps: List<MiniApp> = emptyList(),
     val navigationTarget: NavigationTarget = NavigationTarget.None,
     val pageCount: Int = 2,
-    val wallpaper: Int = 1
+    val wallpaper: String = ""
 )
