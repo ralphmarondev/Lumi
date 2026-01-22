@@ -34,7 +34,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.ralphmarondev.core.presentation.component.LumiGestureHandler
-import com.ralphmarondev.system.R
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -65,11 +64,6 @@ private fun WallpaperScreen(
     state: WallpaperState,
     action: (WallpaperAction) -> Unit
 ) {
-    val wallpapers = listOf(
-        R.drawable.wallpaper1,
-        R.drawable.wallpaper2
-    )
-
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -101,12 +95,12 @@ private fun WallpaperScreen(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(wallpapers.indices.toList()) { index ->
-                val isSelected = state.wallpaper == index
+            items(state.wallpapers) { wallpaper ->
+                val isSelected = wallpaper.id == state.activeWallpaper
                 Wallpaper(
-                    image = wallpapers[index],
+                    image = wallpaper.path,
                     selected = isSelected,
-                    onClick = { action(WallpaperAction.ChangeWallpaper(index)) }
+                    onClick = { action(WallpaperAction.ChangeWallpaper(wallpaper.id)) }
                 )
             }
         }
@@ -115,7 +109,7 @@ private fun WallpaperScreen(
 
 @Composable
 private fun Wallpaper(
-    image: Int,
+    image: String,
     selected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
