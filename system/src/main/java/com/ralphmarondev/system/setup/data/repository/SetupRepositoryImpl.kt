@@ -1,17 +1,24 @@
 package com.ralphmarondev.system.setup.data.repository
 
+import android.content.Context
+import com.ralphmarondev.core.common.FileManager
 import com.ralphmarondev.core.data.local.database.dao.UserDao
+import com.ralphmarondev.core.data.local.database.dao.WallpaperDao
+import com.ralphmarondev.core.data.local.database.entities.WallpaperEntity
 import com.ralphmarondev.core.data.local.database.mapper.toDomain
 import com.ralphmarondev.core.data.local.database.mapper.toEntity
 import com.ralphmarondev.core.data.local.preferences.AppPreferences
 import com.ralphmarondev.core.domain.model.Language
 import com.ralphmarondev.core.domain.model.Result
 import com.ralphmarondev.core.domain.model.User
+import com.ralphmarondev.system.R
 import com.ralphmarondev.system.setup.domain.repository.SetupRepository
 
 class SetupRepositoryImpl(
     private val userDao: UserDao,
-    private val preferences: AppPreferences
+    private val wallpaperDao: WallpaperDao,
+    private val preferences: AppPreferences,
+    private val context: Context
 ) : SetupRepository {
     override suspend fun getUserByUsername(username: String): User? {
         return userDao.getByUsername(username)?.toDomain()
@@ -24,17 +31,52 @@ class SetupRepositoryImpl(
     ): Result<User>? {
         return try {
             val existingUser = userDao.getByUsername(username)
-            if(existingUser != null){
+            if (existingUser != null) {
                 return Result.Error("Username already exists")
             }
 
+            val profileImagePath = FileManager.saveFromDrawable(
+                context = context,
+                drawableResId = R.drawable.ralphmaron,
+                directory = FileManager.Directory.PROFILE,
+                fileName = "profile_default.jpg"
+            )
+
             val user = User(
                 username = username,
-                password = password
+                password = password,
+                profileImagePath = profileImagePath
             )
             val userEntityId = userDao.create(user.toEntity())
             val savedUserEntity = userDao.getById(userEntityId)
-            val savedUser = savedUserEntity?.toDomain() ?: User()
+                ?: return Result.Error("Failed creating user")
+
+            val savedUser = savedUserEntity.toDomain()
+
+            val wallpaper1Path = FileManager.saveFromDrawable(
+                context = context,
+                drawableResId = R.drawable.wallpaper1,
+                directory = FileManager.Directory.WALLPAPER,
+                fileName = "wallpaper1.jpg"
+            )
+            val wallpaper2Path = FileManager.saveFromDrawable(
+                context = context,
+                drawableResId = R.drawable.wallpaper2,
+                directory = FileManager.Directory.WALLPAPER,
+                fileName = "wallpaper2.jpg"
+            )
+            wallpaperDao.create(
+                wallpaperEntity = WallpaperEntity(
+                    path = wallpaper1Path,
+                    owner = savedUser.username
+                )
+            )
+            wallpaperDao.create(
+                wallpaperEntity = WallpaperEntity(
+                    path = wallpaper2Path,
+                    owner = savedUser.username
+                )
+            )
 
             preferences.setSystemLanguage(language.code)
             preferences.setSystemOnboardingCompleted(true)
