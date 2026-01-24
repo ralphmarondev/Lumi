@@ -1,6 +1,5 @@
 package com.ralphmarondev.lumi.navigation
 
-import android.util.Log
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -11,11 +10,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.ralphmarondev.core.presentation.shell.LumiShell
 import com.ralphmarondev.system.auth.presentation.login.LoginScreenRoot
 import com.ralphmarondev.system.launcher.presentation.LauncherScreenRoot
 import com.ralphmarondev.system.settings.navigation.SettingsNavigation
 import com.ralphmarondev.system.setup.presentation.SetupScreenRoot
-import com.ralphmarondev.core.presentation.shell.LumiShell
 
 @Composable
 fun AppNavigation(
@@ -110,7 +109,7 @@ fun AppNavigation(
                         context.launchMiniApp(MiniApp.Notes)
                     },
                     navigateToClock = {
-                        Log.d("AppNavigation", "Navigating to clock")
+                        context.launchMiniApp(MiniApp.Clock)
                     },
                     navigateToWeather = {
                         context.launchMiniApp(MiniApp.Weather)

@@ -1,5 +1,6 @@
 package com.ralphmarondev.lumi.di
 
+import com.ralphmarondev.clock.di.clockModule
 import com.ralphmarondev.core.di.coreModule
 import com.ralphmarondev.lumi.MainViewModel
 import com.ralphmarondev.notes.di.notesModule
@@ -13,6 +14,7 @@ val appModule = module {
     includes(systemModule)
     includes(notesModule)
     includes(weatherModule)
+    includes(clockModule)
 
     viewModelOf(::MainViewModel)
 }
