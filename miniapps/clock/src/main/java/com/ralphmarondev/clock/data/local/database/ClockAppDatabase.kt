@@ -1,0 +1,35 @@
+package com.ralphmarondev.clock.data.local.database
+
+import android.content.Context
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import com.ralphmarondev.clock.data.local.database.dao.AlarmDao
+import com.ralphmarondev.clock.data.local.database.entities.AlarmEntity
+
+@Database(
+    entities = [AlarmEntity::class],
+    version = 1,
+    exportSchema = false
+)
+abstract class ClockAppDatabase : RoomDatabase() {
+    abstract val alarmDao: AlarmDao
+
+    companion object {
+        private const val DATABASE_NAME = "clock_database"
+
+        fun createDatabase(context: Context): ClockAppDatabase {
+            try {
+                val database = Room.databaseBuilder(
+                    context = context,
+                    klass = ClockAppDatabase::class.java,
+                    name = DATABASE_NAME
+                ).build()
+                return database
+            } catch (e: Exception) {
+                e.printStackTrace()
+                throw e
+            }
+        }
+    }
+}
