@@ -8,11 +8,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.ralphmarondev.boot.auth.presentation.login.LoginScreenRoot
+import com.ralphmarondev.boot.setup.presentation.SetupScreenRoot
 import com.ralphmarondev.core.presentation.shell.LumiShell
-import com.ralphmarondev.system.auth.presentation.login.LoginScreenRoot
-import com.ralphmarondev.system.launcher.presentation.LauncherScreenRoot
-import com.ralphmarondev.system.settings.navigation.SettingsNavigation
-import com.ralphmarondev.system.setup.presentation.SetupScreenRoot
+import com.ralphmarondev.launcher.presentation.LauncherScreenRoot
+import com.ralphmarondev.settings.navigation.SettingsNavigation
 
 @Composable
 fun AppNavigation(
