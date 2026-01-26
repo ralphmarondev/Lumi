@@ -1,8 +1,6 @@
 package com.ralphmarondev.lumi.navigation
 
 import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
@@ -119,40 +117,28 @@ fun AppNavigation(
             composable<SystemApp.Settings>(
                 enterTransition = {
                     slideIntoContainer(
-                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                        animationSpec = spring(
-                            dampingRatio = Spring.DampingRatioNoBouncy,
-                            stiffness = Spring.StiffnessMedium
-                        )
+                        AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(300)
                     )
                 },
                 exitTransition = {
                     slideOutOfContainer(
-                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                        animationSpec = spring(
-                            dampingRatio = Spring.DampingRatioNoBouncy,
-                            stiffness = Spring.StiffnessMedium
-                        )
+                        AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(300)
                     )
                 },
                 popEnterTransition = {
                     slideIntoContainer(
-                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                        animationSpec = spring(
-                            dampingRatio = Spring.DampingRatioNoBouncy,
-                            stiffness = Spring.StiffnessMedium
-                        )
+                        AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(300)
                     )
                 },
                 popExitTransition = {
                     slideOutOfContainer(
-                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                        animationSpec = spring(
-                            dampingRatio = Spring.DampingRatioNoBouncy,
-                            stiffness = Spring.StiffnessMedium
-                        )
+                        AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(300)
                     )
-                },
+                }
             ) {
                 SettingsNavigation(
                     navigateBack = {
