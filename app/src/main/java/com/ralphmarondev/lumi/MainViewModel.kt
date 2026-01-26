@@ -19,10 +19,10 @@ class MainViewModel(
 
     init {
         viewModelScope.launch {
-            delay(4000)
             val setupCompleted = preferences.isSystemOnboardingCompleted().first()
             val authenticated = preferences.isAuthenticated().first()
             val enabledAuth = preferences.isSystemEnableAuth().first()
+            delay(4000)
 
             _startApp.value = when {
                 setupCompleted && authenticated && !enabledAuth -> SystemApp.Launcher
