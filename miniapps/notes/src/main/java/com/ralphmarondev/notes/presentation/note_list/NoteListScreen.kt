@@ -1,7 +1,9 @@
 package com.ralphmarondev.notes.presentation.note_list
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -39,9 +41,11 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.ralphmarondev.core.presentation.component.LumiGestureHandler
@@ -147,25 +151,58 @@ private fun NoteListScreen(
         },
         snackbarHost = { SnackbarHost(hostState = snackbarState) }
     ) { innerPadding ->
-        LazyVerticalStaggeredGrid(
-            columns = StaggeredGridCells.Fixed(2),
+        AnimatedVisibility(visible = state.notes.isEmpty()) {
+            EmptyList(modifier = Modifier.fillMaxSize())
+        }
+
+        NoteList(
+            state = state,
+            action = action,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
-            contentPadding = PaddingValues(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalItemSpacing = 8.dp
+                .padding(innerPadding)
+        )
+    }
+}
 
-        ) {
-            items(items = state.notes, key = { it.id }) { note ->
-                val index = state.notes.indexOf(note)
-                NoteCard(
-                    note = note,
-                    onClick = {},
-                    index = index,
-                    action = action
-                )
-            }
+@Composable
+private fun EmptyList(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "Your notes is empty.",
+            style = MaterialTheme.typography.titleLarge.copy(
+                color = MaterialTheme.colorScheme.secondary,
+                textAlign = TextAlign.Center
+            )
+        )
+    }
+}
+
+@Composable
+private fun NoteList(
+    state: NoteListState,
+    action: (NoteListAction) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Fixed(2),
+        modifier = modifier,
+        contentPadding = PaddingValues(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalItemSpacing = 8.dp
+
+    ) {
+        items(items = state.notes, key = { it.id }) { note ->
+            val index = state.notes.indexOf(note)
+            NoteCard(
+                note = note,
+                onClick = {},
+                index = index,
+                action = action
+            )
         }
     }
 }
