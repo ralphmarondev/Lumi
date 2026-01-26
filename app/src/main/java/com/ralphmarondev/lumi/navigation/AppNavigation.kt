@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.ralphmarondev.boot.auth.presentation.login.LoginScreenRoot
 import com.ralphmarondev.boot.setup.presentation.SetupScreenRoot
+import com.ralphmarondev.core.presentation.coming_soon.ComingSoonScreen
 import com.ralphmarondev.core.presentation.shell.LumiShell
 import com.ralphmarondev.launcher.presentation.LauncherScreenRoot
 import com.ralphmarondev.settings.navigation.SettingsNavigation
@@ -111,6 +112,31 @@ fun AppNavigation(
                     },
                     navigateToWeather = {
                         context.launchMiniApp(MiniApp.Weather)
+                    },
+                    navigateToCalendar = {
+                        navController.navigate(SystemApp.ComingSoon) {
+                            launchSingleTop = true
+                        }
+                    },
+                    navigateToCamera = {
+                        navController.navigate(SystemApp.ComingSoon) {
+                            launchSingleTop = true
+                        }
+                    },
+                    navigateToContacts = {
+                        navController.navigate(SystemApp.ComingSoon) {
+                            launchSingleTop = true
+                        }
+                    },
+                    navigateToPhotos = {
+                        navController.navigate(SystemApp.ComingSoon) {
+                            launchSingleTop = true
+                        }
+                    },
+                    navigateToVideos = {
+                        navController.navigate(SystemApp.ComingSoon) {
+                            launchSingleTop = true
+                        }
                     }
                 )
             }
@@ -141,6 +167,38 @@ fun AppNavigation(
                 }
             ) {
                 SettingsNavigation(
+                    navigateBack = {
+                        navController.navigateUp()
+                    }
+                )
+            }
+            composable<SystemApp.ComingSoon>(
+                enterTransition = {
+                    slideIntoContainer(
+                        AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(300)
+                    )
+                },
+                exitTransition = {
+                    slideOutOfContainer(
+                        AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(300)
+                    )
+                },
+                popEnterTransition = {
+                    slideIntoContainer(
+                        AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(300)
+                    )
+                },
+                popExitTransition = {
+                    slideOutOfContainer(
+                        AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(300)
+                    )
+                }
+            ) {
+                ComingSoonScreen(
                     navigateBack = {
                         navController.navigateUp()
                     }

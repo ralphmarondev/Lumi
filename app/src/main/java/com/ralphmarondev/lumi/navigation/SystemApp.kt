@@ -16,4 +16,7 @@ sealed interface SystemApp {
 
     @Serializable
     data object Settings : SystemApp
+
+    @Serializable
+    data object ComingSoon : SystemApp
 }
