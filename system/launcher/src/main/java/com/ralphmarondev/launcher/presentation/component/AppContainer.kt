@@ -29,11 +29,7 @@ fun AppContainer(
         modifier = modifier.padding(2.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Card(
-            onClick = info.onClick,
-            modifier = Modifier
-                .padding(12.dp)
-        ) {
+        Card(onClick = info.onClick) {
             Column(modifier = Modifier.padding(8.dp)) {
                 Image(
                     painter = rememberAsyncImagePainter(info.image),

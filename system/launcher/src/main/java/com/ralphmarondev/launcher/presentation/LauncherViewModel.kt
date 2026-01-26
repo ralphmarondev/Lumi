@@ -21,6 +21,7 @@ class LauncherViewModel(
         viewModelScope.launch {
             _state.update {
                 it.copy(
+                    dockApps = buildDockApps(),
                     miniApps = buildMiniApps()
                 )
             }
@@ -31,7 +32,7 @@ class LauncherViewModel(
         }
     }
 
-    private fun buildMiniApps(): List<MiniApp> {
+    private fun buildDockApps(): List<MiniApp> {
         return listOf(
             MiniApp(
                 id = 0,
@@ -56,6 +57,65 @@ class LauncherViewModel(
                 name = "Weather",
                 image = R.drawable.weather,
                 onClick = { onAction(LauncherAction.NavigateToWeather) }
+            )
+        )
+    }
+
+    private fun buildMiniApps(): List<MiniApp> {
+        return listOf(
+            MiniApp(
+                id = 10,
+                name = "Calendar",
+                image = R.drawable.calendar,
+                onClick = { onAction(LauncherAction.NavigateToCalendar) }
+            ),
+            MiniApp(
+                id = 11,
+                name = "Camera",
+                image = R.drawable.camera,
+                onClick = { onAction(LauncherAction.NavigateToCamera) }
+            ),
+            MiniApp(
+                id = 12,
+                name = "Photos",
+                image = R.drawable.photos,
+                onClick = { onAction(LauncherAction.NavigateToPhotos) }
+            ),
+            MiniApp(
+                id = 13,
+                name = "Videos",
+                image = R.drawable.video,
+                onClick = { onAction(LauncherAction.NavigateToVideos) }
+            ),
+            MiniApp(
+                id = 14,
+                name = "Contacts",
+                image = R.drawable.contacts,
+                onClick = { onAction(LauncherAction.NavigateToContacts) }
+            ),
+            MiniApp(
+                id = 15,
+                name = "Weather",
+                image = R.drawable.weather,
+                onClick = { onAction(LauncherAction.NavigateToWeather) }
+            ),
+            MiniApp(
+                id = 16,
+                name = "Clock",
+                image = R.drawable.clock,
+                onClick = { onAction(LauncherAction.NavigateToClock) }
+            ),
+            MiniApp(
+                id = 17,
+                name = "Settings",
+                image = R.drawable.setting,
+                onClick = { onAction(LauncherAction.NavigateToSettings) }
+            ),
+            MiniApp(
+                id = 18,
+                name = "Notes",
+                image = R.drawable.notepad,
+                onClick = { onAction(LauncherAction.NavigateToNotes) }
             )
         )
     }
@@ -89,6 +149,36 @@ class LauncherViewModel(
             LauncherAction.NavigateToWeather -> {
                 _state.update {
                     it.copy(navigationTarget = NavigationTarget.Weather)
+                }
+            }
+
+            LauncherAction.NavigateToCalendar -> {
+                _state.update {
+                    it.copy(navigationTarget = NavigationTarget.Calendar)
+                }
+            }
+
+            LauncherAction.NavigateToCamera -> {
+                _state.update {
+                    it.copy(navigationTarget = NavigationTarget.Camera)
+                }
+            }
+
+            LauncherAction.NavigateToContacts -> {
+                _state.update {
+                    it.copy(navigationTarget = NavigationTarget.Contacts)
+                }
+            }
+
+            LauncherAction.NavigateToPhotos -> {
+                _state.update {
+                    it.copy(navigationTarget = NavigationTarget.Photos)
+                }
+            }
+
+            LauncherAction.NavigateToVideos -> {
+                _state.update {
+                    it.copy(navigationTarget = NavigationTarget.Videos)
                 }
             }
         }

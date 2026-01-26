@@ -24,7 +24,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -47,7 +46,12 @@ fun LauncherScreenRoot(
     navigateToSettings: () -> Unit,
     navigateToNotes: () -> Unit,
     navigateToClock: () -> Unit,
-    navigateToWeather: () -> Unit
+    navigateToWeather: () -> Unit,
+    navigateToCalendar: () -> Unit,
+    navigateToCamera: () -> Unit,
+    navigateToContacts: () -> Unit,
+    navigateToPhotos: () -> Unit,
+    navigateToVideos: () -> Unit
 ) {
     val viewModel: LauncherViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
@@ -59,7 +63,7 @@ fun LauncherScreenRoot(
 
     LaunchedEffect(state.navigationTarget) {
         when (state.navigationTarget) {
-            NavigationTarget.None -> {}
+            NavigationTarget.None -> Unit
             NavigationTarget.Notes -> {
                 navigateToNotes()
                 viewModel.onAction(LauncherAction.ResetNavigation)
@@ -79,19 +83,40 @@ fun LauncherScreenRoot(
                 navigateToWeather()
                 viewModel.onAction(LauncherAction.ResetNavigation)
             }
+
+            NavigationTarget.Calendar -> {
+                navigateToCalendar()
+                viewModel.onAction(LauncherAction.ResetNavigation)
+            }
+
+            NavigationTarget.Camera -> {
+                navigateToCamera()
+                viewModel.onAction(LauncherAction.ResetNavigation)
+            }
+
+            NavigationTarget.Contacts -> {
+                navigateToContacts()
+                viewModel.onAction(LauncherAction.ResetNavigation)
+            }
+
+            NavigationTarget.Photos -> {
+                navigateToPhotos()
+                viewModel.onAction(LauncherAction.ResetNavigation)
+            }
+
+            NavigationTarget.Videos -> {
+                navigateToVideos()
+                viewModel.onAction(LauncherAction.ResetNavigation)
+            }
         }
     }
 
-    LauncherScreen(
-        state = state,
-        action = viewModel::onAction
-    )
+    LauncherScreen(state = state)
 }
 
 @Composable
 private fun LauncherScreen(
-    state: LauncherState,
-    action: (LauncherAction) -> Unit
+    state: LauncherState
 ) {
     val pagerState = rememberPagerState { state.pageCount }
 
@@ -114,7 +139,7 @@ private fun LauncherScreen(
         ) { currentPage ->
             when (currentPage) {
                 0 -> FirstPage()
-                1 -> SecondPage()
+                1 -> SecondPage(state = state)
                 else -> FirstPage()
             }
         }
@@ -160,7 +185,7 @@ private fun LauncherScreen(
                     .padding(horizontal = 8.dp, vertical = 16.dp),
                 userScrollEnabled = false
             ) {
-                items(items = state.miniApps, key = { it.id }) { app ->
+                items(items = state.dockApps, key = { it.id }) { app ->
                     AppContainer(info = app)
                 }
             }
@@ -189,20 +214,20 @@ private fun FirstPage() {
 }
 
 @Composable
-private fun SecondPage() {
+private fun SecondPage(
+    state: LauncherState
+) {
     WorkspacePage {
-        Text(
-            text = "Coming Soon...",
-            style = MaterialTheme.typography.headlineLarge.copy(
-                color = MaterialTheme.colorScheme.onPrimary
-            ),
-            modifier = Modifier.padding(16.dp)
-        )
-
-//        LumiLottie(
-//            animatedResId = R.raw.under_development,
-//            modifier = Modifier
-//                .size(200.dp)
-//        )
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(4),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp, vertical = 16.dp),
+            userScrollEnabled = false
+        ) {
+            items(items = state.miniApps, key = { it.id }) { app ->
+                AppContainer(info = app, showAppName = true)
+            }
+        }
     }
 }
