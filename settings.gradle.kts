@@ -22,7 +22,9 @@ dependencyResolutionManagement {
 rootProject.name = "Lumi"
 include(":app")
 include(":core")
-include(":system")
 include(":miniapps:notes")
 include(":miniapps:weather")
 include(":miniapps:clock")
+include(":system:boot")
+include(":system:launcher")
+include(":system:settings")
