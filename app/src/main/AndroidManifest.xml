@@ -32,17 +32,20 @@
             android:name="com.ralphmarondev.notes.NoteActivity"
             android:exported="false"
             android:label="@string/title_activity_note"
-            android:theme="@style/Theme.Notes" />
+            android:theme="@style/Theme.Notes"
+            tools:replace="android:theme" />
         <activity
             android:name="com.ralphmarondev.weather.WeatherActivity"
             android:exported="false"
             android:label="@string/title_activity_weather"
-            android:theme="@style/Theme.Weather" />
+            android:theme="@style/Theme.Weather"
+            tools:replace="android:theme" />
         <activity
             android:name="com.ralphmarondev.clock.ClockActivity"
             android:exported="false"
             android:label="@string/title_activity_clock"
-            android:theme="@style/Theme.Clock" />
+            android:theme="@style/Theme.Clock"
+            tools:replace="android:theme" />
     </application>
 
 </manifest>
