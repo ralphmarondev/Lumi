@@ -1,6 +1,5 @@
 package com.ralphmarondev.settings.presentation.overview
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,15 +31,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.ralphmarondev.core.presentation.component.LumiGestureHandler
-import com.ralphmarondev.core.presentation.theme.LumiTheme
-import com.ralphmarondev.settings.R
 import com.ralphmarondev.settings.presentation.component.SettingCard
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -142,7 +136,7 @@ private fun OverviewScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     SettingCard(
-                        text = "Personal Info",
+                        text = "Personal Information",
                         imageVector = Icons.Outlined.AccountCircle,
                         onClick = { action(OverviewAction.NavigateToAccount) },
                         modifier = Modifier.padding(vertical = 4.dp)
@@ -181,27 +175,14 @@ private fun AccountSection(
         "LumiOS User"
     }
 
-    if (LocalView.current.isInEditMode) {
-        Image(
-            painter = painterResource(R.drawable.ralphmaron),
-            contentDescription = "Ralph Maron Eda",
-            modifier = Modifier
-                .size(140.dp)
-                .clip(CircleShape),
-            contentScale = ContentScale.Crop
-        )
-    } else {
-        AsyncImage(
-            model = state.user.profileImagePath,
-            placeholder = painterResource(R.drawable.ralphmaron),
-            error = painterResource(R.drawable.ralphmaron),
-            contentDescription = displayName,
-            modifier = Modifier
-                .size(140.dp)
-                .clip(CircleShape),
-            contentScale = ContentScale.Crop
-        )
-    }
+    AsyncImage(
+        model = state.user.profileImagePath,
+        contentDescription = displayName,
+        modifier = Modifier
+            .size(140.dp)
+            .clip(CircleShape),
+        contentScale = ContentScale.Crop
+    )
 
     Text(
         text = displayName,
@@ -218,15 +199,4 @@ private fun AccountSection(
         ),
         textAlign = TextAlign.Center
     )
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-private fun OverviewScreenPreview() {
-    LumiTheme {
-        OverviewScreen(
-            state = OverviewState(),
-            action = {}
-        )
-    }
 }

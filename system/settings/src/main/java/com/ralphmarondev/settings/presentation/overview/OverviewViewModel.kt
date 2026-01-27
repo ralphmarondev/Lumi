@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ralphmarondev.core.domain.model.Result
 import com.ralphmarondev.settings.domain.repository.SettingsRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -70,6 +71,7 @@ class OverviewViewModel(
                     _state.update { it.copy(isLoading = true, isRefreshing = true) }
                     val result = repository.getUserInformation()
                     Log.d("Settings", "Result: $result")
+                    delay(1000)
 
                     when (result) {
                         is Result.Success -> {
