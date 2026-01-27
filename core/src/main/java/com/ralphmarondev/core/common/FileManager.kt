@@ -11,7 +11,8 @@ object FileManager {
 
     enum class Directory {
         PROFILE,
-        WALLPAPER
+        WALLPAPER,
+        APPS
     }
 
     fun save(
@@ -80,6 +81,7 @@ object FileManager {
             when (directory) {
                 Directory.PROFILE -> "profile"
                 Directory.WALLPAPER -> "wallpapers"
+                Directory.APPS -> "apps"
             }
         )
 

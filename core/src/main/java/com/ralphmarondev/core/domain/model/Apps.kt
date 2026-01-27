@@ -1,0 +1,13 @@
+package com.ralphmarondev.core.domain.model
+
+data class Apps(
+    val id: Long = 0,
+    val name: String = "",
+    val icon: String = "",
+    val versionName: String = "",
+    val versionCode: Int = 0,
+    val isSystemApp: Boolean = false,
+    val isDocked: Boolean = false,
+    val order: Int = 0,
+    val tag: String = ""
+)

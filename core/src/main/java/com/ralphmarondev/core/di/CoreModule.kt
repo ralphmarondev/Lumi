@@ -10,4 +10,5 @@ val coreModule = module {
     single { AppDatabase.createDatabase(androidContext()) }
     single { get<AppDatabase>().userDao }
     single { get<AppDatabase>().wallpaperDao }
+    single { get<AppDatabase>().appsDao }
 }
