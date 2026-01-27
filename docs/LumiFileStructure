@@ -1,0 +1,28 @@
+app (kernel):
+    Main entry point (app, dependency injection [koin])
+    Main Navigation of Lumi OS
+
+core (included in all modules):
+    data:
+        database for user and os (user, wallpaper)
+        preferences for user and os itself (user, wallpaper, darkTheme, firstLaunch, etc.)
+
+    domain:
+        Result wrapper
+        User, Weather (domain - business logic)
+
+    presentation:
+        Lumi OS theme, system components, shell
+
+system:
+    boot:
+        Setup and Auth
+
+    launcher:
+        Home launcher of apps (mini apps and system apps)
+
+    settings:
+        System configurations (user level)
+
+miniapps:
+    Consists of different miniapps, just like what a real os have.
