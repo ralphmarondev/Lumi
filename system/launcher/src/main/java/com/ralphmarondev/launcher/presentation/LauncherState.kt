@@ -1,6 +1,6 @@
 package com.ralphmarondev.launcher.presentation
 
-import com.ralphmarondev.launcher.domain.model.MiniApp
+import com.ralphmarondev.core.domain.model.Apps
 
 sealed class NavigationTarget {
     object None : NavigationTarget()
@@ -16,8 +16,8 @@ sealed class NavigationTarget {
 }
 
 data class LauncherState(
-    val dockApps: List<MiniApp> = emptyList(),
-    val miniApps: List<MiniApp> = emptyList(),
+    val dockApps: List<Apps> = emptyList(),
+    val miniApps: List<Apps> = emptyList(),
     val navigationTarget: NavigationTarget = NavigationTarget.None,
     val pageCount: Int = 2,
     val wallpaper: String = ""

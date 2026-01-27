@@ -111,12 +111,13 @@ fun LauncherScreenRoot(
         }
     }
 
-    LauncherScreen(state = state)
+    LauncherScreen(state = state, action = viewModel::onAction)
 }
 
 @Composable
 private fun LauncherScreen(
-    state: LauncherState
+    state: LauncherState,
+    action: (LauncherAction) -> Unit
 ) {
     val pagerState = rememberPagerState { state.pageCount }
 
@@ -139,7 +140,7 @@ private fun LauncherScreen(
         ) { currentPage ->
             when (currentPage) {
                 0 -> FirstPage()
-                1 -> SecondPage(state = state)
+                1 -> SecondPage(state = state, action = action)
                 else -> FirstPage()
             }
         }
@@ -186,7 +187,10 @@ private fun LauncherScreen(
                 userScrollEnabled = false
             ) {
                 items(items = state.dockApps, key = { it.id }) { app ->
-                    AppContainer(info = app)
+                    AppContainer(
+                        app = app,
+                        onClick = { action(LauncherAction.OnAppClick(app.tag)) }
+                    )
                 }
             }
         }
@@ -215,7 +219,8 @@ private fun FirstPage() {
 
 @Composable
 private fun SecondPage(
-    state: LauncherState
+    state: LauncherState,
+    action: (LauncherAction) -> Unit
 ) {
     WorkspacePage {
         LazyVerticalGrid(
@@ -226,7 +231,11 @@ private fun SecondPage(
             userScrollEnabled = false
         ) {
             items(items = state.miniApps, key = { it.id }) { app ->
-                AppContainer(info = app, showAppName = true)
+                AppContainer(
+                    app = app,
+                    onClick = { action(LauncherAction.OnAppClick(app.tag)) },
+                    showAppName = true
+                )
             }
         }
     }

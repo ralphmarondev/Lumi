@@ -17,11 +17,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
-import com.ralphmarondev.launcher.domain.model.MiniApp
+import com.ralphmarondev.core.domain.model.Apps
 
 @Composable
 fun AppContainer(
-    info: MiniApp,
+    app: Apps,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
     showAppName: Boolean = false
 ) {
@@ -29,11 +30,11 @@ fun AppContainer(
         modifier = modifier.padding(2.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Card(onClick = info.onClick) {
+        Card(onClick = onClick) {
             Column(modifier = Modifier.padding(8.dp)) {
                 Image(
-                    painter = rememberAsyncImagePainter(info.image),
-                    contentDescription = info.name,
+                    painter = rememberAsyncImagePainter(app.icon),
+                    contentDescription = app.name,
                     modifier = Modifier
                         .size(40.dp),
                     contentScale = ContentScale.Crop
@@ -42,7 +43,7 @@ fun AppContainer(
         }
         AnimatedVisibility(visible = showAppName) {
             Text(
-                text = info.name,
+                text = app.name,
                 maxLines = 2,
                 minLines = 2,
                 overflow = TextOverflow.Ellipsis,
