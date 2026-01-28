@@ -17,8 +17,6 @@ serialization = "1.9.0"
 koin = "4.1.1"
 workRuntimeVersion = "2.10.5"
 room = "2.8.2"
-converterGson = "3.0.0"
-retrofit = "3.0.0"
 ksp = "2.2.20-2.0.3"
 googleGmsGoogleServices = "4.4.4"
 firebaseAuth = "24.0.1"
@@ -61,8 +59,6 @@ androidx-room-common = { group = "androidx.room", name = "room-common", version.
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
 androidx-credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
 androidx-credentials-play-services-auth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentialsPlayServicesAuth" }
@@ -99,10 +95,6 @@ room = [
     "androidx-room-common",
     "androidx-room-ktx",
     "androidx-room-runtime"
-]
-retrofit = [
-    "retrofit",
-    "converter-gson"
 ]
 ktor = [
     "ktor-client-core",
