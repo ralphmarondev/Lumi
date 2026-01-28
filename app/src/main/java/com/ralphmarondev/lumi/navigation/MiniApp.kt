@@ -24,7 +24,9 @@ fun Context.launchMiniApp(miniApp: MiniApp) {
         MiniApp.Unknown -> return
     }
 
-    val intent = Intent(this, activityClass)
+    val intent = Intent(this, activityClass).apply {
+        flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+    }
     startActivity(intent)
 
     if (this is Activity) {
