@@ -6,6 +6,7 @@ import com.ralphmarondev.clock.di.clockModule
 import com.ralphmarondev.core.di.coreModule
 import com.ralphmarondev.launcher.di.launcherModule
 import com.ralphmarondev.lumi.MainViewModel
+import com.ralphmarondev.media.di.mediaModule
 import com.ralphmarondev.notes.di.notesModule
 import com.ralphmarondev.settings.di.settingsModule
 import com.ralphmarondev.weather.di.weatherModule
@@ -19,6 +20,7 @@ val appModule = module {
     includes(setupModule)
     includes(launcherModule)
     includes(settingsModule)
+    includes(mediaModule)
     // miniapps
     includes(notesModule)
     includes(weatherModule)

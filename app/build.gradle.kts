@@ -70,6 +70,7 @@ dependencies {
     implementation(project(":system:boot"))
     implementation(project(":system:launcher"))
     implementation(project(":system:settings"))
+    implementation(project(":system:media"))
     implementation(project(":miniapps:notes"))
     implementation(project(":miniapps:weather"))
     implementation(project(":miniapps:clock"))

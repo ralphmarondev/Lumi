@@ -29,6 +29,18 @@
             </intent-filter>
         </activity>
         <activity
+            android:name="com.ralphmarondev.media.camera.CameraActivity"
+            android:exported="false"
+            android:label="@string/title_activity_camera"
+            android:theme="@style/Theme.Camera"
+            tools:replace="android:theme" />
+        <activity
+            android:name="com.ralphmarondev.media.photos.PhotosActivity"
+            android:exported="false"
+            android:label="@string/title_activity_photos"
+            android:theme="@style/Theme.Photos"
+            tools:replace="android:theme" />
+        <activity
             android:name="com.ralphmarondev.notes.NoteActivity"
             android:exported="false"
             android:label="@string/title_activity_note"
