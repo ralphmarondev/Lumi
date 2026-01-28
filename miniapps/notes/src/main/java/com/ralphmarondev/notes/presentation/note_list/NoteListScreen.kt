@@ -56,7 +56,8 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun NoteListScreenRoot(
     navigateBack: () -> Unit,
-    navigateToNewNote: () -> Unit
+    navigateToNewNote: () -> Unit,
+    updateNote: (Long) -> Unit
 ) {
     val viewModel: NoteListViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
@@ -71,6 +72,13 @@ fun NoteListScreenRoot(
     LaunchedEffect(state.navigateToNewNote) {
         if (state.navigateToNewNote) {
             navigateToNewNote()
+            viewModel.onAction(NoteListAction.ResetNavigation)
+        }
+    }
+
+    LaunchedEffect(state.navigateToUpdateNote) {
+        if (state.navigateToUpdateNote) {
+            updateNote(state.selectedNoteId)
             viewModel.onAction(NoteListAction.ResetNavigation)
         }
     }
@@ -199,7 +207,7 @@ private fun NoteList(
             val index = state.notes.indexOf(note)
             NoteCard(
                 note = note,
-                onClick = {},
+                onClick = { action(NoteListAction.UpdateNote(note.id)) },
                 index = index,
                 action = action
             )

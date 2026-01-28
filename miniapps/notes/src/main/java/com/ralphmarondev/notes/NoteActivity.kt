@@ -41,7 +41,7 @@ class NoteActivity : ComponentActivity() {
                             )
                         }
 
-                        NoteApp(closeNoteApp = { finish() })
+                        NoteNavigation(closeNoteApp = { finish() })
                     }
                 }
             }

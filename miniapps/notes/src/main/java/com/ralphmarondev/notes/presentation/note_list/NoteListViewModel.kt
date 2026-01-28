@@ -38,7 +38,8 @@ class NoteListViewModel(
                 _state.update {
                     it.copy(
                         navigateBack = false,
-                        navigateToNewNote = false
+                        navigateToNewNote = false,
+                        navigateToUpdateNote = false
                     )
                 }
             }
@@ -49,6 +50,12 @@ class NoteListViewModel(
                     val note = notes.removeAt(action.fromIndex)
                     notes.add(action.toIndex, note)
                     _state.update { it.copy(notes = notes) }
+                }
+            }
+
+            is NoteListAction.UpdateNote -> {
+                _state.update {
+                    it.copy(navigateToUpdateNote = true, selectedNoteId = action.id)
                 }
             }
         }

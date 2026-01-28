@@ -14,4 +14,10 @@ interface NoteDao {
 
     @Query("SELECT * FROM notes ORDER BY id DESC")
     fun getNotes(): Flow<List<NoteEntity>>
+
+    @Query("SELECT * FROM notes WHERE id = :id LIMIT 1")
+    suspend fun getNoteById(id: Long): NoteEntity?
+
+    @Query("UPDATE notes SET title = :title, content = :content WHERE id = :id")
+    suspend fun updateNoteById(id: Long, title: String, content: String)
 }

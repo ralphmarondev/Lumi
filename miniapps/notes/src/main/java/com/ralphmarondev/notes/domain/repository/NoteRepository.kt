@@ -7,4 +7,8 @@ interface NoteRepository {
     suspend fun create(note: Note): Result<Long>
 
     fun getList(): Flow<List<Note>>
+
+    suspend fun getNoteById(id: Long): Note?
+
+    suspend fun updateNote(note: Note)
 }

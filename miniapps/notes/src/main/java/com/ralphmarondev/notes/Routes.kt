@@ -10,4 +10,7 @@ sealed interface Routes {
 
     @Serializable
     data object NewNote : Routes
+
+    @Serializable
+    data class UpdateNote(val id: Long) : Routes
 }

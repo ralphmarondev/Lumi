@@ -1,5 +1,6 @@
 package com.ralphmarondev.notes.data.repository
 
+import android.util.Log
 import com.ralphmarondev.notes.data.local.database.dao.NoteDao
 import com.ralphmarondev.notes.data.local.database.mapper.toDomain
 import com.ralphmarondev.notes.data.local.database.mapper.toEntity
@@ -22,5 +23,22 @@ class NoteRepositoryImpl(
             .map { entities ->
                 entities.map { it.toDomain() }
             }
+    }
+
+    override suspend fun getNoteById(id: Long): Note? {
+        return try {
+            noteDao.getNoteById(id)?.toDomain()
+        } catch (e: Exception) {
+            Log.e("Note", "Error getNoteById(): ${e.message}")
+            null
+        }
+    }
+
+    override suspend fun updateNote(note: Note) {
+        noteDao.updateNoteById(
+            id = note.id,
+            title = note.title,
+            content = note.content
+        )
     }
 }

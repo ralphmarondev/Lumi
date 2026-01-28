@@ -7,5 +7,7 @@ data class NoteListState(
     val errorMessage: String? = null,
     val isLoading: Boolean = false,
     val navigateToNewNote: Boolean = false,
+    val navigateToUpdateNote: Boolean = false,
+    val selectedNoteId: Long = 0,
     val navigateBack: Boolean = false
 )
