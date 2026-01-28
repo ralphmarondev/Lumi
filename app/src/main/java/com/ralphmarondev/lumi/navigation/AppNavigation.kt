@@ -119,9 +119,7 @@ fun AppNavigation(
                         }
                     },
                     navigateToCamera = {
-                        navController.navigate(SystemApp.ComingSoon) {
-                            launchSingleTop = true
-                        }
+                        context.launchMiniApp(MiniApp.Camera)
                     },
                     navigateToContacts = {
                         navController.navigate(SystemApp.ComingSoon) {
