@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <activity
+            android:name=".photos.PhotosActivity"
+            android:exported="false"
+            android:label="@string/title_activity_photos"
+            android:theme="@style/Theme.Lumi" />
+        <activity
+            android:name=".camera.CameraActivity"
+            android:exported="false"
+            android:label="@string/title_activity_camera"
+            android:theme="@style/Theme.Lumi" />
+    </application>
+
+</manifest>
