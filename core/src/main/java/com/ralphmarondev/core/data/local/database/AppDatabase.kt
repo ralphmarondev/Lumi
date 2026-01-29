@@ -19,7 +19,7 @@ import com.ralphmarondev.core.data.local.database.entities.WallpaperEntity
         WallpaperEntity::class,
         AppsEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(EnumConverters::class)
@@ -38,7 +38,8 @@ abstract class AppDatabase : RoomDatabase() {
                     context = context,
                     klass = AppDatabase::class.java,
                     name = DATABASE_NAME
-                ).build()
+                ).fallbackToDestructiveMigration(true)
+                    .build()
                 return database
             } catch (e: Exception) {
                 e.printStackTrace()
