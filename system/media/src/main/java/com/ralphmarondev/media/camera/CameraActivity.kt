@@ -6,8 +6,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.WindowCompat
-import com.ralphmarondev.media.R
 import com.ralphmarondev.core.presentation.shell.LumiShell
+import com.ralphmarondev.core.presentation.theme.LumiTheme
+import com.ralphmarondev.media.R
 import com.ralphmarondev.media.camera.presentation.CameraScreenRoot
 
 class CameraActivity : ComponentActivity() {
@@ -16,8 +17,10 @@ class CameraActivity : ComponentActivity() {
         enableEdgeToEdge()
         enableFullScreen()
         setContent {
-            LumiShell {
-                CameraScreenRoot()
+            LumiTheme {
+                LumiShell {
+                    CameraScreenRoot()
+                }
             }
         }
     }

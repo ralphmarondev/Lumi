@@ -1,6 +1,7 @@
 package com.ralphmarondev.media.camera.presentation
 
 import android.app.Application
+import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.core.content.ContextCompat
@@ -21,7 +22,18 @@ class CameraViewModel(
     fun onAction(action: CameraAction) {
         when (action) {
             CameraAction.CaptureImage -> captureImage()
-            CameraAction.SwitchCamera -> Unit
+            CameraAction.SwitchCamera -> {
+                _state.update {
+                    it.copy(
+                        lensFacing = if (it.lensFacing == CameraSelector.LENS_FACING_BACK) {
+                            CameraSelector.LENS_FACING_FRONT
+                        } else {
+                            CameraSelector.LENS_FACING_BACK
+                        }
+                    )
+                }
+            }
+
             is CameraAction.SetImageCapture -> {
                 _state.update {
                     it.copy(imageCapture = action.imageCapture)
