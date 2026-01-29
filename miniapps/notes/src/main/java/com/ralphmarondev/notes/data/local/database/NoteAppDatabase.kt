@@ -4,13 +4,12 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.ralphmarondev.core.data.local.database.AppDatabase
 import com.ralphmarondev.notes.data.local.database.dao.NoteDao
 import com.ralphmarondev.notes.data.local.database.entities.NoteEntity
 
 @Database(
     entities = [NoteEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class NoteAppDatabase : RoomDatabase() {
@@ -25,7 +24,7 @@ abstract class NoteAppDatabase : RoomDatabase() {
                     context = context,
                     klass = NoteAppDatabase::class.java,
                     name = DATABASE_NAME
-                ).build()
+                ).fallbackToDestructiveMigration(true).build()
                 return database
             } catch (e: Exception) {
                 e.printStackTrace()
