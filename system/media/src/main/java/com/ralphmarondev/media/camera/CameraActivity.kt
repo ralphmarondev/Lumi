@@ -6,7 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.WindowCompat
-import com.ralphmarondev.core.R
+import com.ralphmarondev.media.R
 import com.ralphmarondev.core.presentation.shell.LumiShell
 import com.ralphmarondev.media.camera.presentation.CameraScreenRoot
 

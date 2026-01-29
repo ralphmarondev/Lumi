@@ -14,6 +14,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
@@ -71,7 +72,9 @@ private fun CameraScreen(
         )
 
         FloatingActionButton(
-            onClick = { action(CameraAction.CaptureImage) }
+            onClick = { action(CameraAction.CaptureImage) },
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
         ) {
             Icon(
                 imageVector = Icons.Outlined.CameraAlt,
