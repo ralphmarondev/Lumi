@@ -9,7 +9,7 @@ import com.ralphmarondev.clock.data.local.database.entities.AlarmEntity
 
 @Database(
     entities = [AlarmEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class ClockAppDatabase : RoomDatabase() {
@@ -24,7 +24,8 @@ abstract class ClockAppDatabase : RoomDatabase() {
                     context = context,
                     klass = ClockAppDatabase::class.java,
                     name = DATABASE_NAME
-                ).build()
+                ).fallbackToDestructiveMigration(true)
+                    .build()
                 return database
             } catch (e: Exception) {
                 e.printStackTrace()
