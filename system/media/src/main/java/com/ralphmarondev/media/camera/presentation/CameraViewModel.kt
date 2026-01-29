@@ -24,13 +24,12 @@ class CameraViewModel(
             CameraAction.CaptureImage -> captureImage()
             CameraAction.SwitchCamera -> {
                 _state.update {
-                    it.copy(
-                        lensFacing = if (it.lensFacing == CameraSelector.LENS_FACING_BACK) {
-                            CameraSelector.LENS_FACING_FRONT
-                        } else {
-                            CameraSelector.LENS_FACING_BACK
-                        }
-                    )
+                    val newLens = if (it.lensFacing == CameraSelector.LENS_FACING_BACK) {
+                        CameraSelector.LENS_FACING_FRONT
+                    } else {
+                        CameraSelector.LENS_FACING_BACK
+                    }
+                    it.copy(lensFacing = newLens)
                 }
             }
 
