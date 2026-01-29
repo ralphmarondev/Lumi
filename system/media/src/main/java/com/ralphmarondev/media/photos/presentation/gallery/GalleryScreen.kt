@@ -35,7 +35,8 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun GalleryScreenRoot(
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
+    details: (String) -> Unit
 ) {
     val viewModel: GalleryViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
@@ -43,6 +44,13 @@ fun GalleryScreenRoot(
 
     LaunchedEffect(Unit) {
         shellState.setAppearance(LumiShellStyle.WhiteOnTransparent)
+    }
+
+    LaunchedEffect(state.navigateToDetails) {
+        if (state.navigateToDetails) {
+            details(state.selectedImagePath)
+            viewModel.onAction(GalleryAction.ResetNavigation)
+        }
     }
 
     LumiGestureHandler(onBackSwipe = navigateBack) {

@@ -23,7 +23,23 @@ class GalleryViewModel(
     fun onAction(action: GalleryAction) {
         when (action) {
             GalleryAction.LoadImages -> loadImages()
-            is GalleryAction.SelectImage -> Unit
+            GalleryAction.ResetNavigation -> {
+                _state.update {
+                    it.copy(
+                        navigateToDetails = false,
+                        selectedImagePath = ""
+                    )
+                }
+            }
+
+            is GalleryAction.SelectImage -> {
+                _state.update {
+                    it.copy(
+                        selectedImagePath = action.path,
+                        navigateToDetails = true
+                    )
+                }
+            }
         }
     }
 

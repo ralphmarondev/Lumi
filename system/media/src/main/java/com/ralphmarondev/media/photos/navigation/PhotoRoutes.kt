@@ -7,4 +7,7 @@ sealed interface PhotoRoutes {
 
     @Serializable
     data object Gallery : PhotoRoutes
+
+    @Serializable
+    data class Details(val imagePath: String) : PhotoRoutes
 }
