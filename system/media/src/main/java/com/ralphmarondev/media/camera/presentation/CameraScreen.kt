@@ -58,13 +58,16 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import coil.compose.AsyncImage
+import com.ralphmarondev.core.presentation.component.LumiGestureHandler
 import com.ralphmarondev.core.presentation.shell.LocalLumiShellState
 import com.ralphmarondev.core.presentation.shell.LumiShellStyle
 import org.koin.compose.viewmodel.koinViewModel
 import java.io.File
 
 @Composable
-fun CameraScreenRoot() {
+fun CameraScreenRoot(
+    navigateBack: () -> Unit
+) {
     val viewModel: CameraViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
     val shellState = LocalLumiShellState.current
@@ -73,10 +76,13 @@ fun CameraScreenRoot() {
         shellState.setAppearance(LumiShellStyle.WhiteOnTransparent)
     }
 
-    CameraScreen(
-        state = state,
-        action = viewModel::onAction
-    )
+    LumiGestureHandler(onBackSwipe = navigateBack) {
+        CameraScreen(
+            state = state,
+            action = viewModel::onAction,
+            navigateBack = navigateBack
+        )
+    }
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -84,7 +90,8 @@ fun CameraScreenRoot() {
 @Composable
 private fun CameraScreen(
     state: CameraState,
-    action: (CameraAction) -> Unit
+    action: (CameraAction) -> Unit,
+    navigateBack: () -> Unit
 ) {
     val context = LocalContext.current
     val lifeCycleOwner = LocalLifecycleOwner.current
@@ -115,9 +122,7 @@ private fun CameraScreen(
             CenterAlignedTopAppBar(
                 title = {},
                 navigationIcon = {
-                    IconButton(
-                        onClick = {}
-                    ) {
+                    IconButton(onClick = navigateBack) {
                         Icon(
                             imageVector = Icons.Outlined.ArrowBackIosNew,
                             contentDescription = "Navigate back"

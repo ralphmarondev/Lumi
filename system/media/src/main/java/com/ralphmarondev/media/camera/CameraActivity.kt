@@ -19,7 +19,7 @@ class CameraActivity : ComponentActivity() {
         setContent {
             LumiTheme {
                 LumiShell {
-                    CameraScreenRoot()
+                    CameraScreenRoot(navigateBack = { finish() })
                 }
             }
         }
