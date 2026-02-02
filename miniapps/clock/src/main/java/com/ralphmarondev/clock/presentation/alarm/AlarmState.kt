@@ -5,5 +5,5 @@ import com.ralphmarondev.clock.domain.model.Alarm
 data class AlarmState(
     val alarms: List<Alarm> = emptyList(),
     val isLoading: Boolean = false,
-    val error: String? = null
+    val errorMessage: String? = null
 )

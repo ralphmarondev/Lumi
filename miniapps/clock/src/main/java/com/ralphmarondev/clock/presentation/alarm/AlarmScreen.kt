@@ -8,11 +8,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,12 +29,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.ralphmarondev.core.presentation.component.LumiGestureHandler
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlarmScreenRoot(
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
+    newAlarm: () -> Unit
 ) {
     val viewModel: AlarmViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
@@ -41,6 +44,26 @@ fun AlarmScreenRoot(
         viewModel.onAction(AlarmAction.LoadAlarms)
     }
 
+    LumiGestureHandler(
+        onBackSwipe = navigateBack
+    ) {
+        AlarmScreen(
+            state = state,
+            action = viewModel::onAction,
+            navigateBack = navigateBack,
+            newAlarm = newAlarm
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AlarmScreen(
+    state: AlarmState,
+    action: (AlarmAction) -> Unit,
+    navigateBack: () -> Unit,
+    newAlarm: () -> Unit
+) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -64,22 +87,20 @@ fun AlarmScreenRoot(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {
-                    viewModel.onAction(
-                        AlarmAction.AddAlarm(7, 0)
-                    )
-                }
+                onClick = newAlarm,
+                shape = CircleShape
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Add,
                     contentDescription = null
                 )
             }
-        }
-    ) { padding ->
+        },
+        floatingActionButtonPosition = FabPosition.Center
+    ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
-                .padding(padding)
+                .padding(innerPadding)
                 .fillMaxSize()
         ) {
             items(state.alarms) { alarm ->
@@ -87,11 +108,7 @@ fun AlarmScreenRoot(
                     time = alarm.formattedTime,
                     label = alarm.label,
                     enabled = alarm.isEnabled,
-                    onToggle = {
-                        viewModel.onAction(
-                            AlarmAction.ToggleAlarm(alarm.id, it)
-                        )
-                    }
+                    onToggle = { action(AlarmAction.ToggleAlarm(alarm.id, it)) }
                 )
             }
         }

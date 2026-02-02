@@ -18,16 +18,17 @@ class AlarmViewModel(
 
     fun onAction(action: AlarmAction) {
         when (action) {
-            AlarmAction.LoadAlarms -> loadAlarms()
+            AlarmAction.LoadAlarms -> {
+                loadAlarms()
+            }
 
-            is AlarmAction.ToggleAlarm ->
+            is AlarmAction.ToggleAlarm -> {
                 toggleAlarm(action.id, action.enabled)
+            }
 
-            is AlarmAction.DeleteAlarm ->
+            is AlarmAction.DeleteAlarm -> {
                 deleteAlarm(action.id)
-
-            is AlarmAction.AddAlarm ->
-                addAlarm(action.hour, action.minute)
+            }
         }
     }
 
@@ -53,12 +54,6 @@ class AlarmViewModel(
     private fun deleteAlarm(id: Long) {
         viewModelScope.launch {
             repository.delete(id)
-        }
-    }
-
-    private fun addAlarm(hour: Int, minute: Int) {
-        viewModelScope.launch {
-            repository.insertDefault(hour, minute)
         }
     }
 }

@@ -7,4 +7,7 @@ sealed interface Routes {
 
     @Serializable
     data object Alarms : Routes
+
+    @Serializable
+    data object NewAlarm : Routes
 }

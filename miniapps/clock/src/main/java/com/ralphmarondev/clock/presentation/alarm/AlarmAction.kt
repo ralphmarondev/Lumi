@@ -12,9 +12,4 @@ sealed interface AlarmAction {
     data class DeleteAlarm(
         val id: Long
     ) : AlarmAction
-
-    data class AddAlarm(
-        val hour: Int,
-        val minute: Int
-    ) : AlarmAction
 }
