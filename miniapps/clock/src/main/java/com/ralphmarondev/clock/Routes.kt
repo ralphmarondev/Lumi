@@ -9,5 +9,8 @@ sealed interface Routes {
     data object Alarms : Routes
 
     @Serializable
-    data object NewAlarm : Routes
+    data object Timers : Routes
+
+    @Serializable
+    data object StopWatch : Routes
 }

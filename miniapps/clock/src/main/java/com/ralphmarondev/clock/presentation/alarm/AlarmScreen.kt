@@ -2,28 +2,25 @@ package com.ralphmarondev.clock.presentation.alarm
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.ArrowBackIosNew
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -36,8 +33,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AlarmScreenRoot(
-    navigateBack: () -> Unit,
-    newAlarm: () -> Unit
+    navigateBack: () -> Unit
 ) {
     val viewModel: AlarmViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
@@ -51,9 +47,7 @@ fun AlarmScreenRoot(
     ) {
         AlarmScreen(
             state = state,
-            action = viewModel::onAction,
-            navigateBack = navigateBack,
-            newAlarm = newAlarm
+            action = viewModel::onAction
         )
     }
 }
@@ -62,48 +56,27 @@ fun AlarmScreenRoot(
 @Composable
 private fun AlarmScreen(
     state: AlarmState,
-    action: (AlarmAction) -> Unit,
-    navigateBack: () -> Unit,
-    newAlarm: () -> Unit
+    action: (AlarmAction) -> Unit
 ) {
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(text = "Alarms")
-                },
-                navigationIcon = {
-                    IconButton(onClick = navigateBack) {
-                        Icon(
-                            imageVector = Icons.Outlined.ArrowBackIosNew,
-                            contentDescription = "Navigate back"
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
-                )
-            )
-        },
-        floatingActionButton = {
+    Box {
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)
+        ) {
             FloatingActionButton(
-                onClick = newAlarm,
-                shape = CircleShape
+                onClick = {}
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Add,
-                    contentDescription = null
+                    contentDescription = "New Alarm"
                 )
             }
-        },
-        floatingActionButtonPosition = FabPosition.Center
-    ) { innerPadding ->
+        }
         LazyColumn(
             modifier = Modifier
-                .padding(innerPadding)
                 .fillMaxSize(),
+            contentPadding = PaddingValues(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = if (state.alarms.isNotEmpty()) {
                 Arrangement.Top
@@ -139,6 +112,7 @@ private fun AlarmScreen(
                     onToggle = { action(AlarmAction.ToggleAlarm(alarm.id, it)) }
                 )
             }
+            item { Spacer(modifier = Modifier.height(100.dp)) }
         }
     }
 }
