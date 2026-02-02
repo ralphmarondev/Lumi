@@ -1,5 +1,6 @@
 package com.ralphmarondev.clock.presentation.alarm
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,15 +22,24 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.TimePickerDialog
+import androidx.compose.material3.TimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.ralphmarondev.core.presentation.component.LumiGestureHandler
 import org.koin.androidx.compose.koinViewModel
+import java.time.LocalTime
 
 @Composable
 fun AlarmScreenRoot(
@@ -58,20 +68,24 @@ private fun AlarmScreen(
     state: AlarmState,
     action: (AlarmAction) -> Unit
 ) {
-    Box {
-        Box(
+    var showTimePicker by remember { mutableStateOf(false) }
+    var pickedTime by remember { mutableStateOf(LocalTime.now()) }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        FloatingActionButton(
+            onClick = {
+                Log.d("Alarm", "Clicked...")
+                showTimePicker = true
+            },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(16.dp)
+                .zIndex(1f)
         ) {
-            FloatingActionButton(
-                onClick = {}
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Add,
-                    contentDescription = "New Alarm"
-                )
-            }
+            Icon(
+                imageVector = Icons.Outlined.Add,
+                contentDescription = "New Alarm"
+            )
         }
         LazyColumn(
             modifier = Modifier
@@ -113,6 +127,45 @@ private fun AlarmScreen(
                 )
             }
             item { Spacer(modifier = Modifier.height(100.dp)) }
+        }
+
+        if (showTimePicker) {
+            val timePickerState = remember {
+                TimePickerState(
+                    initialHour = pickedTime.hour,
+                    initialMinute = pickedTime.minute,
+                    is24Hour = false
+                )
+            }
+
+            TimePickerDialog(
+                onDismissRequest = { showTimePicker = false },
+                title = {
+                    Text(text = "Select Alarm Time")
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            showTimePicker = false
+                            Log.d("Alarm", "Picked time: $pickedTime")
+                        }
+                    ) {
+                        Text(text = "OK")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { showTimePicker = false }
+                    ) {
+                        Text(text = "Cancel")
+                    }
+                }
+            ) {
+                TimePicker(
+                    state = timePickerState,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
         }
     }
 }
