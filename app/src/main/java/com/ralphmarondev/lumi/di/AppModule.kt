@@ -2,6 +2,7 @@ package com.ralphmarondev.lumi.di
 
 import com.ralphmarondev.boot.auth.di.authModule
 import com.ralphmarondev.boot.setup.di.setupModule
+import com.ralphmarondev.calendar.di.calendarModule
 import com.ralphmarondev.clock.di.clockModule
 import com.ralphmarondev.core.di.coreModule
 import com.ralphmarondev.launcher.di.launcherModule
@@ -25,6 +26,7 @@ val appModule = module {
     includes(notesModule)
     includes(weatherModule)
     includes(clockModule)
+    includes(calendarModule)
 
     viewModelOf(::MainViewModel)
 }

@@ -64,6 +64,12 @@
             android:label="@string/title_activity_clock"
             android:theme="@style/Theme.Clock"
             tools:replace="android:theme" />
+        <activity
+            android:name="com.ralphmarondev.calendar.CalendarActivity"
+            android:exported="false"
+            android:label="@string/title_activity_calendar"
+            android:theme="@style/Theme.Calendar"
+            tools:replace="android:theme" />
     </application>
 
 </manifest>

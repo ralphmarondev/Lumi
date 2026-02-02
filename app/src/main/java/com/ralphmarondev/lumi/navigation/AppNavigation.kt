@@ -114,9 +114,7 @@ fun AppNavigation(
                         context.launchMiniApp(MiniApp.Weather)
                     },
                     navigateToCalendar = {
-                        navController.navigate(SystemApp.ComingSoon) {
-                            launchSingleTop = true
-                        }
+                        context.launchMiniApp(MiniApp.Calendar)
                     },
                     navigateToCamera = {
                         context.launchMiniApp(MiniApp.Camera)

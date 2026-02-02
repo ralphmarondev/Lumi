@@ -3,6 +3,7 @@ package com.ralphmarondev.lumi.navigation
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import com.ralphmarondev.calendar.CalendarActivity
 import com.ralphmarondev.clock.ClockActivity
 import com.ralphmarondev.lumi.R
 import com.ralphmarondev.media.camera.CameraActivity
@@ -16,7 +17,8 @@ enum class MiniApp {
     Weather,
     Clock,
     Camera,
-    Photos
+    Photos,
+    Calendar
 }
 
 @Suppress("DEPRECATION")
@@ -27,6 +29,7 @@ fun Context.launchMiniApp(miniApp: MiniApp) {
         MiniApp.Clock -> ClockActivity::class.java
         MiniApp.Camera -> CameraActivity::class.java
         MiniApp.Photos -> PhotosActivity::class.java
+        MiniApp.Calendar -> CalendarActivity::class.java
         MiniApp.Unknown -> return
     }
 
