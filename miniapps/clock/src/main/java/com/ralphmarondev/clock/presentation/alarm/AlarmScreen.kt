@@ -168,8 +168,11 @@ private fun AlarmScreen(
                         }
                         TextButton(
                             onClick = {
-                                pickedTime =
-                                    LocalTime.of(timePickerState.hour, timePickerState.minute)
+                                pickedTime = LocalTime.of(
+                                    timePickerState.hour,
+                                    timePickerState.minute
+                                )
+                                action(AlarmAction.NewAlarm(pickedTime))
                                 showTimePicker = false
                             }
                         ) {

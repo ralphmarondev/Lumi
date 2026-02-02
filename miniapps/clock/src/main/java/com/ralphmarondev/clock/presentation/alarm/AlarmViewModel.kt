@@ -2,6 +2,7 @@ package com.ralphmarondev.clock.presentation.alarm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ralphmarondev.clock.domain.model.Alarm
 import com.ralphmarondev.clock.domain.repository.AlarmRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,6 +29,30 @@ class AlarmViewModel(
 
             is AlarmAction.DeleteAlarm -> {
                 deleteAlarm(action.id)
+            }
+
+            is AlarmAction.NewAlarm -> {
+                viewModelScope.launch {
+                    try {
+                        val time = action.time
+                        repository.insert(
+                            alarm = Alarm(
+                                hour = time.hour,
+                                minute = time.minute,
+                                label = "",
+                                isEnabled = true,
+                                repeatDays = 0,
+                                ringtoneUri = null,
+                                vibrate = true
+                            )
+                        )
+                        loadAlarms()
+                    } catch (e: Exception) {
+                        _state.update {
+                            it.copy(errorMessage = e.message)
+                        }
+                    }
+                }
             }
         }
     }
