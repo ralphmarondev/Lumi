@@ -1,5 +1,6 @@
 package com.ralphmarondev.clock.presentation.alarm
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.ralphmarondev.core.presentation.component.LumiGestureHandler
@@ -101,8 +103,34 @@ private fun AlarmScreen(
         LazyColumn(
             modifier = Modifier
                 .padding(innerPadding)
-                .fillMaxSize()
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = if (state.alarms.isNotEmpty()) {
+                Arrangement.Top
+            } else {
+                Arrangement.Center
+            }
         ) {
+            item {
+                AnimatedVisibility(state.isLoading) {
+                    Text(
+                        text = "Loading alarms...",
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    )
+                }
+            }
+            item {
+                AnimatedVisibility(state.alarms.isEmpty() && !state.isLoading) {
+                    Text(
+                        text = "No Alarms yet.",
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    )
+                }
+            }
             items(state.alarms) { alarm ->
                 AlarmItem(
                     time = alarm.formattedTime,
