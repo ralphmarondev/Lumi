@@ -1,5 +1,6 @@
 package com.ralphmarondev.clock.presentation.alarm
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +21,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -116,11 +118,14 @@ private fun AlarmScreen(
                 }
             }
             items(state.alarms) { alarm ->
-                AlarmItem(
+                AlarmItemCard(
                     time = alarm.formattedTime,
                     label = alarm.label,
                     enabled = alarm.isEnabled,
-                    onToggle = { action(AlarmAction.ToggleAlarm(alarm.id, it)) }
+                    onToggle = { action(AlarmAction.ToggleAlarm(alarm.id, it)) },
+                    onClick = {
+                        Log.d("Alarm", "Update alarm with id: ${alarm.id}")
+                    }
                 )
             }
             item { Spacer(modifier = Modifier.height(100.dp)) }
@@ -186,28 +191,46 @@ private fun AlarmScreen(
 }
 
 @Composable
-private fun AlarmItem(
+private fun AlarmItemCard(
     time: String,
     label: String,
     enabled: Boolean,
-    onToggle: (Boolean) -> Unit
+    onToggle: (Boolean) -> Unit,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
+    OutlinedCard(
+        onClick = onClick,
+        modifier = Modifier.padding(vertical = 4.dp)
     ) {
-        Column {
-            Text(text = time, style = MaterialTheme.typography.headlineMedium)
-            if (label.isNotEmpty()) {
-                Text(text = label, style = MaterialTheme.typography.bodySmall)
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Bottom
+        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    text = label.ifEmpty { "Not Set" },
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                )
+                Text(
+                    text = time,
+                    style = MaterialTheme.typography.headlineLarge.copy(
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                )
             }
-        }
 
-        Switch(
-            checked = enabled,
-            onCheckedChange = onToggle
-        )
+            Switch(
+                checked = enabled,
+                onCheckedChange = onToggle
+            )
+        }
     }
 }
