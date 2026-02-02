@@ -6,6 +6,7 @@ import com.ralphmarondev.clock.data.local.preferences.ClockAppPreferences
 import com.ralphmarondev.clock.data.repository.AlarmRepositoryImpl
 import com.ralphmarondev.clock.domain.repository.AlarmRepository
 import com.ralphmarondev.clock.presentation.alarm.AlarmViewModel
+import com.ralphmarondev.clock.presentation.stopwatch.StopWatchViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
@@ -18,4 +19,5 @@ val clockModule = module {
 
     viewModelOf(::ClockViewModel)
     viewModelOf(::AlarmViewModel)
+    viewModelOf(::StopWatchViewModel)
 }

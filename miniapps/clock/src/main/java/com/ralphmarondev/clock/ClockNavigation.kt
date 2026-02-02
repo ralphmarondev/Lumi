@@ -27,6 +27,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ralphmarondev.clock.presentation.alarm.AlarmScreenRoot
+import com.ralphmarondev.clock.presentation.stopwatch.StopWatchScreenRoot
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -127,12 +128,7 @@ fun ClockNavigation(
                     }
                 }
                 composable<Routes.StopWatch> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(text = "Stopwatch")
-                    }
+                    StopWatchScreenRoot()
                 }
             }
         }
