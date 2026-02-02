@@ -1,7 +1,6 @@
-package com.ralphmarondev
+package com.ralphmarondev.clock
 
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.ralphmarondev.clock.Routes
 import kotlinx.serialization.Serializable
 
 data class ClockState(
