@@ -1,7 +1,7 @@
 package com.ralphmarondev.clock.presentation.alarm
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,7 +24,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
-import androidx.compose.material3.TimePickerDialog
 import androidx.compose.material3.TimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -35,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.ralphmarondev.core.presentation.component.LumiGestureHandler
@@ -73,10 +73,7 @@ private fun AlarmScreen(
 
     Box(modifier = Modifier.fillMaxSize()) {
         FloatingActionButton(
-            onClick = {
-                Log.d("Alarm", "Clicked...")
-                showTimePicker = true
-            },
+            onClick = { showTimePicker = true },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(16.dp)
@@ -137,34 +134,49 @@ private fun AlarmScreen(
                     is24Hour = false
                 )
             }
-
-            TimePickerDialog(
-                onDismissRequest = { showTimePicker = false },
-                title = {
-                    Text(text = "Select Alarm Time")
-                },
-                confirmButton = {
-                    TextButton(
-                        onClick = {
-                            showTimePicker = false
-                            Log.d("Alarm", "Picked time: $pickedTime")
+            Box(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .zIndex(3f)
+                    .padding(24.dp)
+                    .shadow(16.dp, shape = MaterialTheme.shapes.medium)
+                    .background(
+                        MaterialTheme.colorScheme.surface,
+                        shape = MaterialTheme.shapes.medium
+                    )
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Select Alarm Time",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    TimePicker(
+                        state = timePickerState,
+                        modifier = Modifier.padding(horizontal = 8.dp)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.End,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        TextButton(onClick = { showTimePicker = false }) {
+                            Text(text = "Cancel")
                         }
-                    ) {
-                        Text(text = "OK")
-                    }
-                },
-                dismissButton = {
-                    TextButton(
-                        onClick = { showTimePicker = false }
-                    ) {
-                        Text(text = "Cancel")
+                        TextButton(
+                            onClick = {
+                                pickedTime =
+                                    LocalTime.of(timePickerState.hour, timePickerState.minute)
+                                showTimePicker = false
+                            }
+                        ) {
+                            Text(text = "OK")
+                        }
                     }
                 }
-            ) {
-                TimePicker(
-                    state = timePickerState,
-                    modifier = Modifier.padding(16.dp)
-                )
             }
         }
     }
