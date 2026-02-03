@@ -1,5 +1,6 @@
 package com.ralphmarondev.calendar.presentation.overview
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +16,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -26,6 +28,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -96,6 +99,9 @@ private fun MonthView(
     month: YearMonth,
     onDayClick: (LocalDate) -> Unit
 ) {
+    val today = LocalDate.now()
+    var selectedDate: LocalDate? = remember { null }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -125,7 +131,8 @@ private fun MonthView(
             }
         }
 
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(8.dp))
+
         val firstDay = month.atDay(1)
         val totalDays = month.lengthOfMonth()
         val firstWeekDay = if (firstDay.dayOfWeek.value == 7) 0 else firstDay.dayOfWeek.value
@@ -141,16 +148,37 @@ private fun MonthView(
             modifier = Modifier.fillMaxWidth()
         ) {
             items(dayCells) { day ->
-                Box(
-                    modifier = Modifier
-                        .aspectRatio(1f)
-                        .clickable(enabled = day != null) { day?.let { onDayClick(it) } },
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (day != null) Text(
-                        text = "${day.dayOfMonth}",
-                        color = MaterialTheme.colorScheme.secondary
-                    )
+                if (day == null) {
+                    Spacer(modifier = Modifier.aspectRatio(1f))
+                } else {
+                    val isToday = day == today
+                    val isSelected = day == selectedDate
+
+                    Box(
+                        modifier = Modifier
+                            .aspectRatio(1f)
+                            .padding(4.dp)
+                            .background(
+                                color = when {
+                                    isSelected || isToday -> MaterialTheme.colorScheme.primary
+                                    else -> MaterialTheme.colorScheme.onPrimary
+                                },
+                                shape = CircleShape
+                            )
+                            .clickable {
+                                selectedDate = day
+                                onDayClick(day)
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "${day.dayOfMonth}",
+                            color = when {
+                                isSelected || isToday -> MaterialTheme.colorScheme.onPrimary
+                                else -> MaterialTheme.colorScheme.secondary
+                            }
+                        )
+                    }
                 }
             }
         }
