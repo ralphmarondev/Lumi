@@ -13,6 +13,7 @@ import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -49,11 +51,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -120,7 +125,9 @@ private fun CameraScreen(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = {},
+                title = {
+                    Text(text = "Camera")
+                },
                 navigationIcon = {
                     IconButton(onClick = navigateBack) {
                         Icon(
@@ -130,8 +137,8 @@ private fun CameraScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
                     navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-                    actionIconContentColor = MaterialTheme.colorScheme.onPrimary,
                     containerColor = MaterialTheme.colorScheme.primary
                 )
             )
@@ -139,20 +146,50 @@ private fun CameraScreen(
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             if (hasCameraPermission) {
-                key(state.lensFacing) {
-                    CameraPreview(
-                        lifeCycleOwner = lifeCycleOwner,
-                        lensFacing = state.lensFacing,
-                        action = action
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .pointerInput(Unit) {
+                            detectTapGestures { offset ->
+                                action(CameraAction.Focus(x = offset.x, y = offset.y))
+                            }
+                        }
+                ) {
+                    key(state.lensFacing) {
+                        CameraPreview(
+                            lifeCycleOwner = lifeCycleOwner,
+                            lensFacing = state.lensFacing,
+                            action = action,
+                            modifier = Modifier.zIndex(0f)
+                        )
+                    }
+                    state.focusPoint?.let { point ->
+                        Box(
+                            modifier = Modifier
+                                .zIndex(2f)
+                                .offset {
+                                    IntOffset(
+                                        (point.x - 30).toInt(),
+                                        (point.y - 30).toInt()
+                                    )
+                                }
+                                .size(100.dp)
+                                .border(
+                                    2.dp,
+                                    MaterialTheme.colorScheme.primary,
+                                    RoundedCornerShape(16.dp)
+                                )
+                        )
+                    }
+                    CameraControls(
+                        state = state,
+                        onCapture = { action(CameraAction.CaptureImage) },
+                        onSwitchCamera = { action(CameraAction.SwitchCamera) },
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .zIndex(3f)
                     )
                 }
-
-                CameraControls(
-                    state = state,
-                    onCapture = { action(CameraAction.CaptureImage) },
-                    onSwitchCamera = { action(CameraAction.SwitchCamera) },
-                    modifier = Modifier.align(Alignment.BottomCenter)
-                )
             } else {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -182,13 +219,17 @@ private fun CameraScreen(
 private fun CameraPreview(
     lifeCycleOwner: LifecycleOwner,
     lensFacing: Int,
-    action: (CameraAction) -> Unit
+    action: (CameraAction) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     AndroidView(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         factory = { ctx ->
-            val previewView = PreviewView(ctx)
+            val previewView = PreviewView(ctx).apply {
+                scaleType = PreviewView.ScaleType.FILL_CENTER
+            }
             val cameraProviderFuture = ProcessCameraProvider.getInstance(ctx)
+            action(CameraAction.SetPreviewView(previewView))
 
             cameraProviderFuture.addListener({
                 val cameraProvider = cameraProviderFuture.get()
@@ -205,12 +246,13 @@ private fun CameraPreview(
                     .build()
 
                 cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(
+                val camera = cameraProvider.bindToLifecycle(
                     lifeCycleOwner,
                     selector,
                     preview,
                     capture
                 )
+                action(CameraAction.SetCamera(camera))
             }, ContextCompat.getMainExecutor(ctx))
 
             previewView

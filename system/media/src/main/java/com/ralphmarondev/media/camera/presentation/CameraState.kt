@@ -1,11 +1,17 @@
 package com.ralphmarondev.media.camera.presentation
 
+import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
+import androidx.camera.view.PreviewView
+import androidx.compose.ui.geometry.Offset
 
 data class CameraState(
     val imageCapture: ImageCapture? = null,
     val lastSavedImagePath: String? = null,
     val errorMessage: String? = null,
-    val lensFacing: Int = CameraSelector.LENS_FACING_BACK
+    val lensFacing: Int = CameraSelector.LENS_FACING_BACK,
+    val camera: Camera? = null,
+    val previewView: PreviewView? = null,
+    val focusPoint: Offset? = null
 )

@@ -2,8 +2,11 @@ package com.ralphmarondev.media.camera.presentation
 
 import android.app.Application
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.FocusMeteringAction
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.SurfaceOrientedMeteringPointFactory
+import androidx.compose.ui.geometry.Offset
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import com.ralphmarondev.core.common.FileManager
@@ -11,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 class CameraViewModel(
     application: Application
@@ -36,6 +40,39 @@ class CameraViewModel(
             is CameraAction.SetImageCapture -> {
                 _state.update {
                     it.copy(imageCapture = action.imageCapture)
+                }
+            }
+
+            is CameraAction.Focus -> {
+                val camera = _state.value.camera ?: return
+                val previewView = _state.value.previewView ?: return
+
+                val factory = SurfaceOrientedMeteringPointFactory(
+                    previewView.width.toFloat(),
+                    previewView.height.toFloat()
+                )
+                val point = factory.createPoint(action.x, action.y)
+
+                val focusAction = FocusMeteringAction.Builder(
+                    point,
+                    FocusMeteringAction.FLAG_AF
+                ).setAutoCancelDuration(2, TimeUnit.SECONDS).build()
+
+                camera.cameraControl.startFocusAndMetering(focusAction)
+                _state.update {
+                    it.copy(focusPoint = Offset(action.x, action.y))
+                }
+            }
+
+            is CameraAction.SetCamera -> {
+                _state.update {
+                    it.copy(camera = action.camera)
+                }
+            }
+
+            is CameraAction.SetPreviewView -> {
+                _state.update {
+                    it.copy(previewView = action.previewView)
                 }
             }
         }
