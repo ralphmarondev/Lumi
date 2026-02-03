@@ -31,12 +31,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import com.ralphmarondev.core.presentation.component.LumiGestureHandler
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
+import kotlin.math.absoluteValue
 
 @Composable
 fun OverviewScreenRoot(
@@ -87,9 +89,21 @@ private fun OverviewScreen(
             state = pagerState,
             modifier = Modifier.padding(innerPadding)
         ) { page ->
+            val pageOffset = (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
             val monthOffset = page - 1000
             val monthDate = YearMonth.now().plusMonths(monthOffset.toLong())
-            MonthView(month = monthDate, onDayClick = {})
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .graphicsLayer {
+                        val absOffset = pageOffset.absoluteValue
+
+                        alpha = 1f - absOffset.coerceIn(0f, 0.5f)
+                    }
+            ) {
+                MonthView(month = monthDate, onDayClick = {})
+            }
         }
     }
 }
@@ -151,8 +165,8 @@ private fun MonthView(
                 if (day == null) {
                     Spacer(modifier = Modifier.aspectRatio(1f))
                 } else {
-                    val isToday = day == today
                     val isSelected = day == selectedDate
+                    val isToday = day == today && selectedDate != day
 
                     Box(
                         modifier = Modifier
@@ -160,8 +174,9 @@ private fun MonthView(
                             .padding(4.dp)
                             .background(
                                 color = when {
-                                    isSelected || isToday -> MaterialTheme.colorScheme.primary
-                                    else -> MaterialTheme.colorScheme.onPrimary
+                                    isSelected -> MaterialTheme.colorScheme.primary
+                                    isToday -> MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
+                                    else -> MaterialTheme.colorScheme.surface
                                 },
                                 shape = CircleShape
                             )
