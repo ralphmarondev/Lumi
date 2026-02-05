@@ -128,7 +128,16 @@ fun ClockNavigation(
                     }
                 }
                 composable<Routes.StopWatch> {
-                    StopWatchScreenRoot()
+                    StopWatchScreenRoot(
+                        navigateBack = {
+                            navController.navigate(Routes.Alarms) {
+                                popUpTo(0) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
+                            }
+                        }
+                    )
                 }
             }
         }
