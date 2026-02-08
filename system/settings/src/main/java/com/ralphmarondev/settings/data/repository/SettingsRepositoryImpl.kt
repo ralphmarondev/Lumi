@@ -1,5 +1,6 @@
 package com.ralphmarondev.settings.data.repository
 
+import android.util.Log
 import com.ralphmarondev.core.data.local.database.dao.UserDao
 import com.ralphmarondev.core.data.local.database.dao.WallpaperDao
 import com.ralphmarondev.core.data.local.database.mapper.toDomain
@@ -18,7 +19,7 @@ class SettingsRepositoryImpl(
     private val preferences: AppPreferences,
     private val userDao: UserDao,
     private val wallpaperDao: WallpaperDao
-) : com.ralphmarondev.settings.domain.repository.SettingsRepository {
+) : SettingsRepository {
 
     override suspend fun setEnableAuthKey(value: Boolean) {
         preferences.setSystemEnableAuth(value)
@@ -80,5 +81,22 @@ class SettingsRepositoryImpl(
         val wallpaperEntities = wallpaperDao.getAll()
 
         return wallpaperEntities.map { it.toDomain() }
+    }
+
+    override suspend fun updateDisplayName(displayName: String) {
+        try {
+            val username = preferences.getSystemCurrentUser().first()
+            val userEntity = userDao.getByUsername(username)
+                ?: return
+
+            userDao.update(
+                userEntity = userEntity.copy(
+                    displayName = displayName
+                )
+            )
+            Log.d("SettingsRepositoryImpl", "Display name updated successfully.")
+        } catch (e: Exception) {
+            Log.e("SettingsRepositoryImpl", "Error updating display name: ${e.message}")
+        }
     }
 }

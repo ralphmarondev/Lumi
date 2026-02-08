@@ -12,6 +12,7 @@ sealed interface AccountAction {
 
     data object ToggleDisplayNameDialog : AccountAction
     data class DisplayNameChange(val displayName: String) : AccountAction
+    data object UpdateDisplayName : AccountAction
 
     data object ToggleUsernameDialog : AccountAction
     data class UsernameChange(val username: String) : AccountAction

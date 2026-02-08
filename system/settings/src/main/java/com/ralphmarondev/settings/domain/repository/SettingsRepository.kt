@@ -19,4 +19,6 @@ interface SettingsRepository {
     fun getActiveWallpaper(): Flow<Wallpaper>
 
     suspend fun getAllWallpapers(): List<Wallpaper>
+
+    suspend fun updateDisplayName(displayName: String)
 }

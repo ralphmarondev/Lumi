@@ -275,7 +275,7 @@ private fun AccountField(label: String, value: String, onClick: () -> Unit) {
 }
 
 @Composable
-fun DisplayNameDialog(
+private fun DisplayNameDialog(
     state: AccountState,
     action: (AccountAction) -> Unit
 ) {
@@ -303,7 +303,7 @@ fun DisplayNameDialog(
             }
         },
         confirmButton = {
-            Button(onClick = { }) {
+            Button(onClick = { action(AccountAction.UpdateDisplayName) }) {
                 Text(text = "OK")
             }
         },
