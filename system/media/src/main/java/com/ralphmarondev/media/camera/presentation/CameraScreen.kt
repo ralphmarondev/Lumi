@@ -9,6 +9,10 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.video.Quality
+import androidx.camera.video.QualitySelector
+import androidx.camera.video.Recorder
+import androidx.camera.video.VideoCapture
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -109,16 +113,27 @@ private fun CameraScreen(
             ) == PackageManager.PERMISSION_GRANTED
         )
     }
+    var hasAudioPermission by remember {
+        mutableStateOf(
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.RECORD_AUDIO
+            ) == PackageManager.PERMISSION_GRANTED
+        )
+    }
 
     val permissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { granted ->
-        hasCameraPermission = granted
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        hasCameraPermission = permissions[Manifest.permission.CAMERA] == true
+        hasAudioPermission = permissions[Manifest.permission.RECORD_AUDIO] == true
     }
 
     LaunchedEffect(Unit) {
-        if (!hasCameraPermission) {
-            permissionLauncher.launch(Manifest.permission.CAMERA)
+        if (!hasCameraPermission || !hasAudioPermission) {
+            permissionLauncher.launch(
+                arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
+            )
         }
     }
 
@@ -184,6 +199,11 @@ private fun CameraScreen(
                     CameraControls(
                         state = state,
                         onCapture = { action(CameraAction.CaptureImage) },
+                        onRecord = {
+                            if (state.isRecording) action(CameraAction.StopVideoRecording)
+                            else action(CameraAction.StartVideoRecording)
+                        },
+                        onChangeMode = { action(CameraAction.ChangeMode(it)) },
                         onSwitchCamera = { action(CameraAction.SwitchCamera) },
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
@@ -204,7 +224,14 @@ private fun CameraScreen(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Button(
-                            onClick = { permissionLauncher.launch(Manifest.permission.CAMERA) }
+                            onClick = {
+                                permissionLauncher.launch(
+                                    arrayOf(
+                                        Manifest.permission.CAMERA,
+                                        Manifest.permission.RECORD_AUDIO
+                                    )
+                                )
+                            }
                         ) {
                             Text(text = "Grant Permission")
                         }
@@ -245,12 +272,19 @@ private fun CameraPreview(
                     .requireLensFacing(lensFacing)
                     .build()
 
+                val recorder = Recorder.Builder()
+                    .setQualitySelector(QualitySelector.from(Quality.HIGHEST))
+                    .build()
+                val videoCapture = VideoCapture.withOutput(recorder)
+                action(CameraAction.SetVideoCapture(videoCapture))
+
                 cameraProvider.unbindAll()
                 val camera = cameraProvider.bindToLifecycle(
                     lifeCycleOwner,
                     selector,
                     preview,
-                    capture
+                    capture,
+                    videoCapture
                 )
                 action(CameraAction.SetCamera(camera))
             }, ContextCompat.getMainExecutor(ctx))
@@ -264,22 +298,25 @@ private fun CameraPreview(
 private fun CameraControls(
     state: CameraState,
     onCapture: () -> Unit,
+    onRecord: () -> Unit,
     onSwitchCamera: () -> Unit,
+    onChangeMode: (CameraMode) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(120.dp)
-            .background(Color.Black.copy(alpha = 0.6f))
-            .padding(horizontal = 24.dp),
-        contentAlignment = Alignment.Center
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(120.dp)
+                .background(Color.Black.copy(alpha = 0.6f))
+                .padding(horizontal = 24.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // Thumbnail
             Box(
                 modifier = Modifier
                     .size(56.dp)
@@ -295,6 +332,8 @@ private fun CameraControls(
                     )
                 }
             }
+
+            // Capture Button
             Box(
                 modifier = Modifier
                     .size(76.dp)
@@ -310,11 +349,47 @@ private fun CameraControls(
                         .background(Color.White)
                 )
             }
+
+            // Record Button
+            Box(
+                modifier = Modifier
+                    .size(76.dp)
+                    .clip(CircleShape)
+                    .border(4.dp, if (state.isRecording) Color.Red else Color.White, CircleShape)
+                    .clickable { onRecord() },
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(60.dp)
+                        .clip(CircleShape)
+                        .background(if (state.isRecording) Color.Red else Color.White)
+                )
+            }
+
+            // Switch Camera
             IconButton(onClick = onSwitchCamera) {
                 Icon(
-                    imageVector = Icons.Outlined.Cameraswitch,
+                    Icons.Outlined.Cameraswitch,
                     contentDescription = "Switch Camera",
                     tint = Color.White
+                )
+            }
+        }
+
+        // Mode selector row
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 12.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            CameraMode.entries.forEach { mode ->
+                Text(
+                    text = mode.name.lowercase(),
+                    color = if (state.mode == mode) Color.White else Color.Gray,
+                    modifier = Modifier.clickable { onChangeMode(mode) }
                 )
             }
         }
