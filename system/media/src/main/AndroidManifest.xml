@@ -3,15 +3,20 @@
 
     <application>
         <activity
+            android:name=".videos.VideosActivity"
+            android:exported="false"
+            android:label="@string/title_activity_videos"
+            android:theme="@style/Theme.Videos" />
+        <activity
             android:name=".photos.PhotosActivity"
             android:exported="false"
             android:label="@string/title_activity_photos"
-            android:theme="@style/Theme.Lumi" />
+            android:theme="@style/Theme.Photos" />
         <activity
             android:name=".camera.CameraActivity"
             android:exported="false"
             android:label="@string/title_activity_camera"
-            android:theme="@style/Theme.Lumi" />
+            android:theme="@style/Theme.Camera" />
     </application>
 
 </manifest>

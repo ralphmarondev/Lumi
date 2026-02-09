@@ -2,5 +2,8 @@
 <resources>
 
     <style name="Theme.Camera" parent="android:Theme.Material.Light.NoActionBar" />
+
     <style name="Theme.Photos" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.Videos" parent="android:Theme.Material.Light.NoActionBar" />
 </resources>
