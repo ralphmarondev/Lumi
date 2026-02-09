@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ralphmarondev.core.presentation.theme.LocalThemeState
+import com.ralphmarondev.telephony.contacts.presentation.component.ContactCard
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -164,11 +165,10 @@ private fun ContactListScreen(
                     }
                 }
                 items(state.contacts) { contact ->
-                    Text(
-                        text = "${contact.firstName} ${contact.lastName}",
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            color = MaterialTheme.colorScheme.secondary
-                        )
+                    ContactCard(
+                        contact = contact,
+                        onClick = {},
+                        modifier = Modifier.padding(vertical = 4.dp)
                     )
                 }
             }
