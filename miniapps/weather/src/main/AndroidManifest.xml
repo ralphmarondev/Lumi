@@ -6,7 +6,7 @@
             android:name=".WeatherActivity"
             android:exported="false"
             android:label="@string/title_activity_weather"
-            android:theme="@style/Theme.Lumi" />
+            android:theme="@style/Theme.Weather" />
     </application>
 
 </manifest>
