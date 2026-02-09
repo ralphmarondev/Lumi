@@ -1,17 +1,12 @@
 package com.ralphmarondev.telephony.contacts
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.ralphmarondev.telephony.contacts.presentation.contact_list.ContactListScreenRoot
+import com.ralphmarondev.telephony.contacts.presentation.new_contact.NewContactScreenRoot
 
 @Composable
 fun ContactsNavigation(
@@ -34,17 +29,11 @@ fun ContactsNavigation(
             )
         }
         composable<ContactsRoute.NewContact> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "New Contact",
-                    style = MaterialTheme.typography.bodyLarge.copy(
-                        color = MaterialTheme.colorScheme.secondary
-                    )
-                )
-            }
+            NewContactScreenRoot(
+                navigateBack = {
+                    navController.navigateUp()
+                }
+            )
         }
     }
 }

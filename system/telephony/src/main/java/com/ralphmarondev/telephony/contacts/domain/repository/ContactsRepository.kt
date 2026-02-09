@@ -4,4 +4,5 @@ import com.ralphmarondev.core.domain.model.Contact
 
 interface ContactsRepository {
     suspend fun getAllContact(): List<Contact>
+    suspend fun create(contact: Contact)
 }
