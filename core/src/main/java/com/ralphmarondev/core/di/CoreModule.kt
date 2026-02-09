@@ -11,4 +11,5 @@ val coreModule = module {
     single { get<AppDatabase>().userDao }
     single { get<AppDatabase>().wallpaperDao }
     single { get<AppDatabase>().appsDao }
+    single { get<AppDatabase>().contactDao }
 }
