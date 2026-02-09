@@ -17,7 +17,7 @@ interface AppsDao {
     @Query("SELECT COUNT(*) FROM apps")
     suspend fun count(): Int
 
-    @Query("SELECT * FROM apps")
+    @Query("SELECT * FROM apps ORDER BY name ASC")
     suspend fun getAll(): List<AppsEntity>
 
     @Query("SELECT * FROM apps WHERE isDocked = 1 LIMIT :limit")
