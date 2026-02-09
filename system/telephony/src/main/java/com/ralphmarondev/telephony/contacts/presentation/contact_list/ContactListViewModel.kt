@@ -60,7 +60,9 @@ class ContactListViewModel(
                     )
                 }
                 val contacts = repository.getAllContact()
-                delay(2000)
+                if (isUserRefreshing) {
+                    delay(1000)
+                }
                 _state.update {
                     it.copy(
                         isLoading = false,
