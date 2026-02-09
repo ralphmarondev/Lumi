@@ -23,6 +23,7 @@ class CalendarActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        enableFullScreen()
         setContent {
             LumiShell {
                 ThemeProvider(preferences = preferences) {
