@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -121,37 +122,55 @@ private fun ContactListScreen(
             }
         }
     ) { innerPadding ->
-        LazyColumn(
+        PullToRefreshBox(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
-            contentPadding = PaddingValues(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = if (state.contacts.isEmpty()) {
-                Arrangement.Center
-            } else {
-                Arrangement.spacedBy(8.dp)
-            }
+            isRefreshing = state.isRefreshing,
+            onRefresh = { action(ContactListAction.Refresh) }
         ) {
-            item {
-                AnimatedVisibility(visible = state.contacts.isEmpty()) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = if (state.contacts.isEmpty()) {
+                    Arrangement.Center
+                } else {
+                    Arrangement.spacedBy(8.dp)
+                }
+            ) {
+                item {
+                    AnimatedVisibility(state.isLoading && !state.isRefreshing) {
+                        Text(
+                            text = "Loading Contacts...",
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                color = MaterialTheme.colorScheme.secondary
+                            ),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    }
+                }
+                item {
+                    AnimatedVisibility(visible = state.contacts.isEmpty() && !state.isLoading) {
+                        Text(
+                            text = "Your contacts list is empty!",
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                color = MaterialTheme.colorScheme.secondary
+                            ),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    }
+                }
+                items(state.contacts) { contact ->
                     Text(
-                        text = "Your contacts list is empty!",
+                        text = "${contact.firstName} ${contact.lastName}",
                         style = MaterialTheme.typography.bodyMedium.copy(
                             color = MaterialTheme.colorScheme.secondary
-                        ),
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(16.dp)
+                        )
                     )
                 }
-            }
-            items(state.contacts) { contact ->
-                Text(
-                    text = "${contact.firstName} ${contact.lastName}",
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        color = MaterialTheme.colorScheme.secondary
-                    )
-                )
             }
         }
     }

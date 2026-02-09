@@ -3,6 +3,7 @@ package com.ralphmarondev.telephony.contacts.presentation.contact_list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ralphmarondev.telephony.contacts.domain.repository.ContactsRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -43,27 +44,27 @@ class ContactListViewModel(
             }
 
             ContactListAction.Refresh -> {
-                _state.update {
-                    it.copy(isRefreshing = true)
-                }
-                loadContacts()
-                _state.update {
-                    it.copy(isRefreshing = false)
-                }
+                loadContacts(isUserRefreshing = true)
             }
         }
     }
 
-    private fun loadContacts() {
+    private fun loadContacts(isUserRefreshing: Boolean = false) {
         viewModelScope.launch {
             try {
                 _state.update {
-                    it.copy(isLoading = true, errorMessage = null)
+                    it.copy(
+                        isLoading = true,
+                        isRefreshing = isUserRefreshing,
+                        errorMessage = null
+                    )
                 }
                 val contacts = repository.getAllContact()
+                delay(2000)
                 _state.update {
                     it.copy(
                         isLoading = false,
+                        isRefreshing = false,
                         contacts = contacts
                     )
                 }
@@ -71,6 +72,7 @@ class ContactListViewModel(
                 _state.update {
                     it.copy(
                         isLoading = false,
+                        isRefreshing = false,
                         errorMessage = "Error: ${e.message}"
                     )
                 }
