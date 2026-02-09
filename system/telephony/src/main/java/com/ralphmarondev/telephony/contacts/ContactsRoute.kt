@@ -7,4 +7,7 @@ sealed interface ContactsRoute {
 
     @Serializable
     data object ContactList : ContactsRoute
+
+    @Serializable
+    data object NewContact : ContactsRoute
 }
