@@ -6,7 +6,7 @@
             android:name=".NoteActivity"
             android:exported="false"
             android:label="@string/title_activity_note"
-            android:theme="@style/Theme.Lumi" />
+            android:theme="@style/Theme.Notes" />
     </application>
 
 </manifest>
