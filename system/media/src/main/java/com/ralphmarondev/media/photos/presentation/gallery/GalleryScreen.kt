@@ -26,6 +26,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.ralphmarondev.core.presentation.component.LumiGestureHandler
@@ -98,7 +100,15 @@ fun GalleryScreen(
                     .padding(paddingValues),
                 contentAlignment = androidx.compose.ui.Alignment.Center
             ) {
-                Text("No images found", style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    text = "No images found",
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        color = MaterialTheme.colorScheme.secondary
+                    ),
+                    textAlign = TextAlign.Center,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(16.dp)
+                )
             }
         } else {
             LazyVerticalGrid(
