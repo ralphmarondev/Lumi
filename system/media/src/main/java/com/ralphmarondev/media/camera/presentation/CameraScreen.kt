@@ -198,10 +198,16 @@ private fun CameraScreen(
                     }
                     CameraControls(
                         state = state,
-                        onCapture = { action(CameraAction.CaptureImage) },
-                        onRecord = {
-                            if (state.isRecording) action(CameraAction.StopVideoRecording)
-                            else action(CameraAction.StartVideoRecording)
+                        onMainAction = {
+                            when (state.mode) {
+                                CameraMode.PHOTO, CameraMode.PORTRAIT -> action(CameraAction.CaptureImage)
+                                CameraMode.VIDEO -> {
+                                    if (state.isRecording) action(CameraAction.StopVideoRecording)
+                                    else action(CameraAction.StartVideoRecording)
+                                }
+
+                                CameraMode.MORE -> Unit
+                            }
                         },
                         onChangeMode = { action(CameraAction.ChangeMode(it)) },
                         onSwitchCamera = { action(CameraAction.SwitchCamera) },
@@ -297,26 +303,40 @@ private fun CameraPreview(
 @Composable
 private fun CameraControls(
     state: CameraState,
-    onCapture: () -> Unit,
-    onRecord: () -> Unit,
+    onMainAction: () -> Unit,
     onSwitchCamera: () -> Unit,
     onChangeMode: (CameraMode) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .background(Color.Black.copy(alpha = 0.6f))
+            .padding(horizontal = 24.dp, vertical = 12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            CameraMode.entries.forEach { mode ->
+                Text(
+                    text = mode.name.lowercase(),
+                    color = if (state.mode == mode) Color.White else Color.Gray,
+                    modifier = Modifier.clickable { onChangeMode(mode) }
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(120.dp)
-                .background(Color.Black.copy(alpha = 0.6f))
-                .padding(horizontal = 24.dp),
+                .height(120.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Thumbnail
             Box(
                 modifier = Modifier
                     .size(56.dp)
@@ -333,63 +353,39 @@ private fun CameraControls(
                 }
             }
 
-            // Capture Button
             Box(
                 modifier = Modifier
                     .size(76.dp)
                     .clip(CircleShape)
-                    .border(4.dp, Color.White, CircleShape)
-                    .clickable { onCapture() },
+                    .border(
+                        4.dp,
+                        when (state.mode) {
+                            CameraMode.VIDEO -> if (state.isRecording) Color.Red else Color.White
+                            else -> Color.White
+                        },
+                        CircleShape
+                    )
+                    .clickable { onMainAction() },
                 contentAlignment = Alignment.Center
             ) {
                 Box(
                     modifier = Modifier
                         .size(60.dp)
                         .clip(CircleShape)
-                        .background(Color.White)
+                        .background(
+                            when (state.mode) {
+                                CameraMode.VIDEO -> if (state.isRecording) Color.Red else Color.White
+                                else -> Color.White
+                            }
+                        )
                 )
             }
 
-            // Record Button
-            Box(
-                modifier = Modifier
-                    .size(76.dp)
-                    .clip(CircleShape)
-                    .border(4.dp, if (state.isRecording) Color.Red else Color.White, CircleShape)
-                    .clickable { onRecord() },
-                contentAlignment = Alignment.Center
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(60.dp)
-                        .clip(CircleShape)
-                        .background(if (state.isRecording) Color.Red else Color.White)
-                )
-            }
-
-            // Switch Camera
             IconButton(onClick = onSwitchCamera) {
                 Icon(
                     Icons.Outlined.Cameraswitch,
                     contentDescription = "Switch Camera",
                     tint = Color.White
-                )
-            }
-        }
-
-        // Mode selector row
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 12.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            CameraMode.entries.forEach { mode ->
-                Text(
-                    text = mode.name.lowercase(),
-                    color = if (state.mode == mode) Color.White else Color.Gray,
-                    modifier = Modifier.clickable { onChangeMode(mode) }
                 )
             }
         }
