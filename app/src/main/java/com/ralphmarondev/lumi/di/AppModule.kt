@@ -10,6 +10,7 @@ import com.ralphmarondev.lumi.MainViewModel
 import com.ralphmarondev.media.di.mediaModule
 import com.ralphmarondev.notes.di.notesModule
 import com.ralphmarondev.settings.di.settingsModule
+import com.ralphmarondev.telephony.di.telephonyModule
 import com.ralphmarondev.weather.di.weatherModule
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
@@ -22,6 +23,7 @@ val appModule = module {
     includes(launcherModule)
     includes(settingsModule)
     includes(mediaModule)
+    includes(telephonyModule)
     // miniapps
     includes(notesModule)
     includes(weatherModule)

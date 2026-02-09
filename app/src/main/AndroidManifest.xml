@@ -70,6 +70,11 @@
             android:label="@string/title_activity_calendar"
             android:theme="@style/Theme.Calendar"
             tools:replace="android:theme" />
+        <activity
+            android:name="com.ralphmarondev.telephony.contacts.ContactsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_contacts"
+            android:theme="@style/Theme.Contacts" />
     </application>
 
 </manifest>
