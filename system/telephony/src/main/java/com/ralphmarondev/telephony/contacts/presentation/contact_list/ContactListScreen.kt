@@ -136,7 +136,7 @@ private fun ContactListScreen(
                 verticalArrangement = if (state.contacts.isEmpty()) {
                     Arrangement.Center
                 } else {
-                    Arrangement.spacedBy(8.dp)
+                    Arrangement.Top
                 }
             ) {
                 item {
