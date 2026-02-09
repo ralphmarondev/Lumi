@@ -126,9 +126,7 @@ fun AppNavigation(
                         context.launchMiniApp(MiniApp.Photos)
                     },
                     navigateToVideos = {
-                        navController.navigate(SystemApp.ComingSoon) {
-                            launchSingleTop = true
-                        }
+                        context.launchMiniApp(MiniApp.Videos)
                     }
                 )
             }

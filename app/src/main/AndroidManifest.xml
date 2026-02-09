@@ -47,6 +47,12 @@
             android:theme="@style/Theme.Photos"
             tools:replace="android:theme" />
         <activity
+            android:name="com.ralphmarondev.media.videos.VideosActivity"
+            android:exported="false"
+            android:label="@string/title_activity_videos"
+            android:theme="@style/Theme.Videos"
+            tools:replace="android:theme" />
+        <activity
             android:name="com.ralphmarondev.notes.NoteActivity"
             android:exported="false"
             android:label="@string/title_activity_note"

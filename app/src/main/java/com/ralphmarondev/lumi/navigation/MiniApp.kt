@@ -8,6 +8,7 @@ import com.ralphmarondev.clock.ClockActivity
 import com.ralphmarondev.lumi.R
 import com.ralphmarondev.media.camera.CameraActivity
 import com.ralphmarondev.media.photos.PhotosActivity
+import com.ralphmarondev.media.videos.VideosActivity
 import com.ralphmarondev.notes.NoteActivity
 import com.ralphmarondev.telephony.contacts.ContactsActivity
 import com.ralphmarondev.weather.WeatherActivity
@@ -19,6 +20,7 @@ enum class MiniApp {
     Clock,
     Camera,
     Photos,
+    Videos,
     Calendar,
     Contacts
 }
@@ -31,6 +33,7 @@ fun Context.launchMiniApp(miniApp: MiniApp) {
         MiniApp.Clock -> ClockActivity::class.java
         MiniApp.Camera -> CameraActivity::class.java
         MiniApp.Photos -> PhotosActivity::class.java
+        MiniApp.Videos -> VideosActivity::class.java
         MiniApp.Calendar -> CalendarActivity::class.java
         MiniApp.Contacts -> ContactsActivity::class.java
         MiniApp.Unknown -> return
