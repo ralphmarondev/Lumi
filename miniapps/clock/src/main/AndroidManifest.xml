@@ -6,7 +6,7 @@
             android:name=".ClockActivity"
             android:exported="false"
             android:label="@string/title_activity_clock"
-            android:theme="@style/Theme.Lumi" />
+            android:theme="@style/Theme.Clock" />
     </application>
 
 </manifest>
