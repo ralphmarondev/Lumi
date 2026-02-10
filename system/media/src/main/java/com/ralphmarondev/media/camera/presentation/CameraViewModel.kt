@@ -11,7 +11,6 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.SurfaceOrientedMeteringPointFactory
 import androidx.camera.video.FileOutputOptions
-import androidx.camera.video.PendingRecording
 import androidx.camera.video.Recorder
 import androidx.camera.video.Recording
 import androidx.camera.video.VideoRecordEvent
@@ -145,8 +144,6 @@ class CameraViewModel(
         )
     }
 
-    private var currentPendingRecording: PendingRecording? = null
-
     @SuppressLint("CheckResult")
     @RequiresPermission(Manifest.permission.RECORD_AUDIO)
     private fun startVideoRecording() {
@@ -155,13 +152,13 @@ class CameraViewModel(
 
         val videosDir = File(context.filesDir, "user/videos").apply { if (!exists()) mkdirs() }
         val videoFile = File(videosDir, "video_${System.currentTimeMillis()}.mp4")
-        val recorder = videoCapture.output as? Recorder ?: return
 
-        currentPendingRecording = recorder
-            .prepareRecording(context, FileOutputOptions.Builder(videoFile).build())
-            .withAudioEnabled(true)
+        val pendingRecording = (videoCapture.output as? Recorder)?.prepareRecording(
+            context,
+            FileOutputOptions.Builder(videoFile).build()
+        )?.withAudioEnabled(true) ?: return
 
-        currentPendingRecording?.start(ContextCompat.getMainExecutor(context)) { event ->
+        currentRecording = pendingRecording.start(ContextCompat.getMainExecutor(context)) { event ->
             when (event) {
                 is VideoRecordEvent.Start -> _state.update { it.copy(isRecording = true) }
                 is VideoRecordEvent.Finalize -> _state.update {
