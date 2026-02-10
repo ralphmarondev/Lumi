@@ -5,7 +5,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.ralphmarondev.media.videos.presentation.video_list.VideoListScreenRoot
+import com.ralphmarondev.media.videos.presentation.video_player.VideoPlayerScreenRoot
 
 @Composable
 fun VideoNavigation(
@@ -19,11 +21,20 @@ fun VideoNavigation(
     ) {
         composable<VideoRoutes.VideoList> {
             VideoListScreenRoot(
-                navigateBack = finishActivity
+                navigateBack = finishActivity,
+                playVideo = { videoPath ->
+                    navController.navigate(VideoRoutes.VideoPlayer(videoPath))
+                }
             )
         }
         composable<VideoRoutes.VideoPlayer> {
-
+            val videoPath = it.toRoute<VideoRoutes.VideoPlayer>().videoPath
+            VideoPlayerScreenRoot(
+                videoPath = videoPath,
+                navigateBack = {
+                    navController.navigateUp()
+                }
+            )
         }
     }
 }

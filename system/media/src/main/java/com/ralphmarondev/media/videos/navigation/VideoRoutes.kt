@@ -9,5 +9,5 @@ sealed interface VideoRoutes {
     data object VideoList : VideoRoutes
 
     @Serializable
-    data object VideoPlayer : VideoRoutes
+    data class VideoPlayer(val videoPath: String) : VideoRoutes
 }

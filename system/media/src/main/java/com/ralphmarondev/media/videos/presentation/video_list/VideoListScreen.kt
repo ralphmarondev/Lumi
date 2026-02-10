@@ -48,13 +48,20 @@ import java.util.Date
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VideoListScreenRoot(
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
+    playVideo: (String) -> Unit
 ) {
     val viewModel: VideoListViewModel = koinViewModel()
     val state = viewModel.state.collectAsState().value
 
     LaunchedEffect(Unit) {
         viewModel.onAction(VideoListAction.LoadVideos)
+    }
+
+    LaunchedEffect(state.playVideo) {
+        if (state.playVideo && !state.selectedVideoPath.isNullOrBlank()) {
+            playVideo(state.selectedVideoPath)
+        }
     }
 
     Scaffold(

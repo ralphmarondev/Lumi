@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -45,6 +46,11 @@ class VideoListViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     private fun playVideo(video: VideoItem) {
-        // TODO: navigate to video player screen with video.file
+        _state.update {
+            it.copy(
+                selectedVideoPath = video.file.absolutePath,
+                playVideo = true
+            )
+        }
     }
 }
