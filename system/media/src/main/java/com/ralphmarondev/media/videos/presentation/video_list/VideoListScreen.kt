@@ -61,6 +61,7 @@ fun VideoListScreenRoot(
     LaunchedEffect(state.playVideo) {
         if (state.playVideo && !state.selectedVideoPath.isNullOrBlank()) {
             playVideo(state.selectedVideoPath)
+            viewModel.onAction(VideoListAction.ResetNavigation)
         }
     }
 
