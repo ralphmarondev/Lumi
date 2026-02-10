@@ -5,13 +5,15 @@ import android.media.MediaMetadataRetriever
 import android.text.format.DateFormat
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -20,13 +22,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -40,6 +41,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import java.io.File
@@ -68,7 +70,7 @@ fun VideoListScreenRoot(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Videos") },
+                title = { Text(text = "Videos") },
                 navigationIcon = {
                     IconButton(onClick = navigateBack) {
                         Icon(
@@ -103,34 +105,37 @@ fun VideoListScreenRoot(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding)
+                    .padding(innerPadding),
+                contentPadding = PaddingValues(16.dp)
             ) {
                 items(state.videos) { video ->
-                    VideoListItem(video = video, onClick = {
-                        viewModel.onAction(VideoListAction.PlayVideo(video))
-                    })
+                    VideoListItemCard(
+                        video = video,
+                        onClick = { viewModel.onAction(VideoListAction.PlayVideo(video)) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
+                    )
                 }
+                item { Spacer(modifier = Modifier.height(100.dp)) }
             }
         }
     }
 }
 
 @Composable
-fun VideoListItem(
+private fun VideoListItemCard(
     video: VideoItem,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val thumbnail = remember(video.file) {
         getVideoThumbnail(video.file)
     }
 
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .clickable { onClick() },
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(4.dp)
+    OutlinedCard(
+        modifier = modifier,
+        onClick = onClick
     ) {
         Row(
             modifier = Modifier
@@ -138,10 +143,9 @@ fun VideoListItem(
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Left preview (thumbnail)
             Box(
                 modifier = Modifier
-                    .size(80.dp)
+                    .size(height = 68.dp, width = 114.dp)
                     .clip(RoundedCornerShape(8.dp))
                     .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)),
                 contentAlignment = Alignment.Center
@@ -163,27 +167,31 @@ fun VideoListItem(
             }
             Spacer(modifier = Modifier.width(12.dp))
 
-            // Right info
             Column(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
                     text = video.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    maxLines = 1
+                    style = MaterialTheme.typography.titleMedium
+                        .copy(color = MaterialTheme.colorScheme.secondary),
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
                 Text(
                     text = DateFormat.format("dd MMM yyyy HH:mm", Date(video.dateCaptured))
                         .toString(),
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
     }
 }
 
-fun getVideoThumbnail(file: File): Bitmap? {
+private fun getVideoThumbnail(file: File): Bitmap? {
     val retriever = MediaMetadataRetriever()
     return try {
         retriever.setDataSource(file.absolutePath)
