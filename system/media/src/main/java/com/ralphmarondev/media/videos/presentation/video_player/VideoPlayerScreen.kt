@@ -13,11 +13,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
 import androidx.compose.material.icons.outlined.Pause
 import androidx.compose.material.icons.outlined.PlayArrow
+import androidx.compose.material.icons.outlined.Replay
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -36,10 +37,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
+import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import kotlinx.coroutines.delay
@@ -56,9 +60,10 @@ fun VideoPlayerScreenRoot(
     val state by viewModel.state.collectAsState()
 
     var controlsVisible by remember { mutableStateOf(true) }
+    var isFinished by remember { mutableStateOf(false) }
 
     LaunchedEffect(controlsVisible) {
-        if (controlsVisible) {
+        if (controlsVisible && !isFinished) {
             delay(3000)
             controlsVisible = false
         }
@@ -68,10 +73,20 @@ fun VideoPlayerScreenRoot(
         viewModel.onAction(VideoPlayerAction.LoadVideo(videoPath.toUri()))
     }
 
+    LaunchedEffect(state.player) {
+        state.player?.addListener(object : Player.Listener {
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                isFinished = playbackState == Player.STATE_ENDED
+            }
+        })
+    }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Video Player") },
+                title = {
+                    Text(text = "Video Player")
+                },
                 navigationIcon = {
                     IconButton(
                         onClick = {
@@ -105,10 +120,19 @@ fun VideoPlayerScreenRoot(
         ) {
             state.player?.let { player ->
                 VideoPlayerView(player)
+
                 ControlsOverlay(
-                    isVisible = controlsVisible,
+                    isVisible = controlsVisible || isFinished,
                     isPlaying = state.isPlaying,
-                    onPlayPause = { viewModel.onAction(VideoPlayerAction.PlayPause) },
+                    isFinished = isFinished,
+                    onPlayPause = {
+                        if (isFinished) {
+                            player.seekTo(0)
+                            player.play()
+                        } else {
+                            viewModel.onAction(VideoPlayerAction.PlayPause)
+                        }
+                    },
                     onSeekForward = { viewModel.onAction(VideoPlayerAction.SeekForward) },
                     onSeekBackward = { viewModel.onAction(VideoPlayerAction.SeekBackward) }
                 )
@@ -139,6 +163,7 @@ private fun VideoPlayerView(player: ExoPlayer) {
 private fun ControlsOverlay(
     isVisible: Boolean,
     isPlaying: Boolean,
+    isFinished: Boolean,
     onPlayPause: () -> Unit,
     onSeekForward: () -> Unit,
     onSeekBackward: () -> Unit
@@ -155,43 +180,46 @@ private fun ControlsOverlay(
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth(0.7f)
-                    .background(
-                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f),
-                        shape = RoundedCornerShape(24.dp)
-                    )
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                modifier = Modifier.fillMaxWidth(0.7f)
             ) {
-                IconButton(onClick = onSeekBackward) {
-                    Icon(
-                        imageVector = Icons.Outlined.PlayArrow,
-                        contentDescription = "Rewind 10s",
-                        modifier = Modifier
-                            .rotate(180f)
-                            .size(32.dp),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-
-                IconButton(onClick = onPlayPause) {
-                    Icon(
-                        imageVector = if (isPlaying) Icons.Outlined.Pause else Icons.Outlined.PlayArrow,
-                        contentDescription = "Play/Pause",
-                        modifier = Modifier.size(48.dp),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-
-                IconButton(onClick = onSeekForward) {
-                    Icon(
-                        imageVector = Icons.Outlined.PlayArrow,
-                        contentDescription = "Forward 10s",
-                        modifier = Modifier.size(32.dp),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
+                CircularControl(
+                    icon = Icons.Outlined.PlayArrow,
+                    onClick = onSeekBackward,
+                    modifier = Modifier.rotate(180f)
+                )
+                CircularControl(
+                    icon = if (isFinished) Icons.Outlined.Replay
+                    else if (isPlaying) Icons.Outlined.Pause
+                    else Icons.Outlined.PlayArrow,
+                    onClick = onPlayPause,
+                    size = 64.dp
+                )
+                CircularControl(icon = Icons.Outlined.PlayArrow, onClick = onSeekForward)
             }
         }
+    }
+}
+
+@Composable
+private fun CircularControl(
+    icon: ImageVector,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    size: Dp = 48.dp
+) {
+    IconButton(
+        onClick = onClick,
+        modifier = modifier
+            .size(size)
+            .background(
+                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f),
+                shape = CircleShape
+            )
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary
+        )
     }
 }
