@@ -22,6 +22,11 @@ class VideoListViewModel(application: Application) : AndroidViewModel(applicatio
         when (action) {
             is VideoListAction.LoadVideos -> loadVideos()
             is VideoListAction.PlayVideo -> playVideo(action.video)
+            VideoListAction.ResetNavigation -> {
+                _state.update {
+                    it.copy(playVideo = false)
+                }
+            }
         }
     }
 
