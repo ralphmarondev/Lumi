@@ -2,4 +2,5 @@
     <string name="title_activity_camera">CameraActivity</string>
     <string name="title_activity_photos">PhotosActivity</string>
     <string name="title_activity_videos">VideosActivity</string>
+    <string name="delete_photo">Photo will be deleted from this device. Backed-up photos stay in \"Recently deleted\" for 60 days; photos that have not been backed up stay for 30 days.</string>
 </resources>
