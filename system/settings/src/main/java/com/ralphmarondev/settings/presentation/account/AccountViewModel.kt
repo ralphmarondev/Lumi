@@ -90,14 +90,18 @@ class AccountViewModel(
                 _state.update { it.copy(showBirthdayDialog = action.value) }
             }
 
-            is AccountAction.UpdateBirthday -> {}
+            is AccountAction.UpdateBirthday -> {
+                updateBirthday(action.updatedBirthday.trim())
+            }
 
             // USERNAME
             is AccountAction.SetUsernameDialogValue -> {
                 _state.update { it.copy(showUsernameDialog = action.value) }
             }
 
-            is AccountAction.UpdateUsername -> {}
+            is AccountAction.UpdateUsername -> {
+                updateUsername(action.updatedUsername.trim())
+            }
         }
     }
 
@@ -198,7 +202,10 @@ class AccountViewModel(
 
                 repository.updateDisplayName(displayName = updatedDisplayName)
                 _state.update {
-                    it.copy(showDisplayNameDialog = false)
+                    it.copy(
+                        showDisplayNameDialog = false,
+                        displayName = updatedDisplayName
+                    )
                 }
             } catch (e: Exception) {
                 _state.update {
@@ -213,15 +220,198 @@ class AccountViewModel(
         }
     }
 
-    private fun updateEmail(updatedEmail: String) {
+    private fun updateUsername(updatedUsername: String) {
+        viewModelScope.launch {
+            try {
+                _state.update {
+                    it.copy(
+                        isLoading = true,
+                        errorMessage = null,
+                        showErrorMessage = false
+                    )
+                }
 
+                if (updatedUsername.isBlank()) {
+                    _state.update {
+                        it.copy(
+                            errorMessage = "Username cannot be updated with blank value.",
+                            showErrorMessage = true
+                        )
+                    }
+                    return@launch
+                }
+
+                repository.updateUsername(updatedUsername)
+                _state.update {
+                    it.copy(
+                        showUsernameDialog = false,
+                        username = updatedUsername
+                    )
+                }
+            } catch (e: Exception) {
+                _state.update {
+                    it.copy(
+                        errorMessage = "Failed updating username. Error: ${e.message}",
+                        showErrorMessage = true
+                    )
+                }
+            } finally {
+                _state.update { it.copy(isLoading = false) }
+            }
+        }
+    }
+
+    private fun updateEmail(updatedEmail: String) {
+        viewModelScope.launch {
+            try {
+                _state.update {
+                    it.copy(
+                        isLoading = true,
+                        errorMessage = null,
+                        showErrorMessage = false
+                    )
+                }
+
+                if (updatedEmail.isBlank()) {
+                    _state.update {
+                        it.copy(
+                            errorMessage = "Email cannot be updated with blank value.",
+                            showErrorMessage = true
+                        )
+                    }
+                    return@launch
+                }
+
+                repository.updateEmail(updatedEmail)
+                _state.update {
+                    it.copy(
+                        showEmailDialog = false,
+                        email = updatedEmail
+                    )
+                }
+            } catch (e: Exception) {
+                _state.update {
+                    it.copy(
+                        errorMessage = "Failed updating email. Error: ${e.message}",
+                        showErrorMessage = true
+                    )
+                }
+            } finally {
+                _state.update { it.copy(isLoading = false) }
+            }
+        }
     }
 
     private fun updatePhoneNumber(updatedPhoneNumber: String) {
+        viewModelScope.launch {
+            try {
+                _state.update {
+                    it.copy(
+                        isLoading = true,
+                        errorMessage = null,
+                        showErrorMessage = false
+                    )
+                }
 
+                if (updatedPhoneNumber.isBlank()) {
+                    _state.update {
+                        it.copy(
+                            errorMessage = "Phone number cannot be updated with blank value.",
+                            showErrorMessage = true
+                        )
+                    }
+                    return@launch
+                }
+
+                repository.updatePhoneNumber(updatedPhoneNumber)
+                _state.update {
+                    it.copy(
+                        showPhoneNumberDialog = false,
+                        phoneNumber = updatedPhoneNumber
+                    )
+                }
+            } catch (e: Exception) {
+                _state.update {
+                    it.copy(
+                        errorMessage = "Failed updating display name. Error: ${e.message}",
+                        showErrorMessage = true
+                    )
+                }
+            } finally {
+                _state.update { it.copy(isLoading = false) }
+            }
+        }
     }
 
     private fun updateGender(updatedGender: Gender) {
+        viewModelScope.launch {
+            try {
+                _state.update {
+                    it.copy(
+                        isLoading = true,
+                        errorMessage = null,
+                        showErrorMessage = false
+                    )
+                }
 
+                repository.updateGender(updatedGender)
+                _state.update {
+                    it.copy(
+                        showGenderDialog = false,
+                        gender = updatedGender
+                    )
+                }
+            } catch (e: Exception) {
+                _state.update {
+                    it.copy(
+                        errorMessage = "Failed updating gender. Error: ${e.message}",
+                        showErrorMessage = true
+                    )
+                }
+            } finally {
+                _state.update { it.copy(isLoading = false) }
+            }
+        }
+    }
+
+    private fun updateBirthday(updatedBirthday: String) {
+        viewModelScope.launch {
+            try {
+                _state.update {
+                    it.copy(
+                        isLoading = true,
+                        errorMessage = null,
+                        showErrorMessage = false
+                    )
+                }
+
+                if (updatedBirthday.isBlank()) {
+                    _state.update {
+                        it.copy(
+                            errorMessage = "Birthday cannot be updated with blank value.",
+                            showErrorMessage = true
+                        )
+                    }
+                    return@launch
+                }
+
+                repository.updateBirthday(updatedBirthday)
+                _state.update {
+                    it.copy(
+                        showBirthdayDialog = false,
+                        birthday = updatedBirthday
+                    )
+                }
+            } catch (e: Exception) {
+                _state.update {
+                    it.copy(
+                        errorMessage = "Failed updating birthday. Error: ${e.message}",
+                        showErrorMessage = true
+                    )
+                }
+            } finally {
+                _state.update { it.copy(isLoading = false) }
+            }
+        }
     }
 }

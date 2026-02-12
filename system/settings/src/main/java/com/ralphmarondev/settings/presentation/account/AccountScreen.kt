@@ -25,7 +25,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AccountTree
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
+import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.ContactPhone
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.ManageAccounts
@@ -235,6 +237,16 @@ private fun AccountScreen(
                     )
                 }
 
+                if (state.showUsernameDialog) {
+                    UsernameDialog(
+                        username = state.username,
+                        onCancel = { action(AccountAction.SetUsernameDialogValue(false)) },
+                        onUpdate = { updatedUsername ->
+                            action(AccountAction.UpdateUsername(updatedUsername))
+                        }
+                    )
+                }
+
                 if (state.showEmailDialog) {
                     EmailDialog(
                         email = state.email ?: "",
@@ -261,6 +273,16 @@ private fun AccountScreen(
                         onCancel = { action(AccountAction.SetGenderDialogValue(false)) },
                         onUpdate = { updatedGender ->
                             action(AccountAction.UpdateGender(updatedGender))
+                        }
+                    )
+                }
+
+                if (state.showBirthdayDialog) {
+                    BirthdayDialog(
+                        birthday = state.birthday ?: "",
+                        onCancel = { action(AccountAction.SetBirthdayDialogValue(false)) },
+                        onUpdate = { updatedBirthday ->
+                            action(AccountAction.UpdateBirthday(updatedBirthday))
                         }
                     )
                 }
@@ -401,6 +423,64 @@ private fun BoxScope.DisplayNameDialog(
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 TextButton(onClick = { onUpdate(newDisplayName) }) {
+                    Text(text = "Update")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun BoxScope.UsernameDialog(
+    username: String,
+    onCancel: () -> Unit,
+    onUpdate: (String) -> Unit
+) {
+    var newUsername by rememberSaveable { mutableStateOf(username) }
+
+    Box(
+        modifier = Modifier
+            .align(Alignment.Center)
+            .zIndex(3f)
+            .padding(24.dp)
+            .shadow(16.dp, shape = MaterialTheme.shapes.medium)
+            .background(
+                MaterialTheme.colorScheme.surface,
+                shape = MaterialTheme.shapes.medium
+            )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 240.dp)
+                .padding(24.dp)
+        ) {
+            Text(
+                text = "Display Name",
+                style = MaterialTheme.typography.titleLarge.copy(
+                    color = MaterialTheme.colorScheme.primary
+                )
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            LumiTextField(
+                value = newUsername,
+                onValueChange = { newUsername = it },
+                placeHolderText = "ralphmaron",
+                labelText = "Username",
+                leadingIconImageVector = Icons.Outlined.AccountTree,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.End),
+                horizontalArrangement = Arrangement.End
+            ) {
+                TextButton(onClick = onCancel) {
+                    Text(text = "Cancel")
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                TextButton(onClick = { onUpdate(newUsername) }) {
                     Text(text = "Update")
                 }
             }
@@ -586,6 +666,64 @@ private fun BoxScope.GenderDialog(
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 TextButton(onClick = { onUpdate(newGender) }) {
+                    Text(text = "Update")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun BoxScope.BirthdayDialog(
+    birthday: String,
+    onCancel: () -> Unit,
+    onUpdate: (String) -> Unit
+) {
+    var newBirthday by rememberSaveable { mutableStateOf(birthday) }
+
+    Box(
+        modifier = Modifier
+            .align(Alignment.Center)
+            .zIndex(3f)
+            .padding(24.dp)
+            .shadow(16.dp, shape = MaterialTheme.shapes.medium)
+            .background(
+                MaterialTheme.colorScheme.surface,
+                shape = MaterialTheme.shapes.medium
+            )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 240.dp)
+                .padding(24.dp)
+        ) {
+            Text(
+                text = "Birthday",
+                style = MaterialTheme.typography.titleLarge.copy(
+                    color = MaterialTheme.colorScheme.primary
+                )
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            LumiTextField(
+                value = newBirthday,
+                onValueChange = { newBirthday = it },
+                placeHolderText = "Feb 12, 2026",
+                labelText = "Birthday",
+                leadingIconImageVector = Icons.Outlined.CalendarMonth,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.End),
+                horizontalArrangement = Arrangement.End
+            ) {
+                TextButton(onClick = onCancel) {
+                    Text(text = "Cancel")
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                TextButton(onClick = { onUpdate(newBirthday) }) {
                     Text(text = "Update")
                 }
             }

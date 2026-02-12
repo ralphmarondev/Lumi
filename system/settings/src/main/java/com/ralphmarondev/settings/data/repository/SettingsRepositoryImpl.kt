@@ -5,6 +5,7 @@ import com.ralphmarondev.core.data.local.database.dao.UserDao
 import com.ralphmarondev.core.data.local.database.dao.WallpaperDao
 import com.ralphmarondev.core.data.local.database.mapper.toDomain
 import com.ralphmarondev.core.data.local.preferences.AppPreferences
+import com.ralphmarondev.core.domain.model.Gender
 import com.ralphmarondev.core.domain.model.Result
 import com.ralphmarondev.core.domain.model.User
 import com.ralphmarondev.core.domain.model.Wallpaper
@@ -98,5 +99,63 @@ class SettingsRepositoryImpl(
         } catch (e: Exception) {
             Log.e("SettingsRepositoryImpl", "Error updating display name: ${e.message}")
         }
+    }
+
+    override suspend fun updateUsername(username: String) {
+        val username = preferences.getSystemCurrentUser().first()
+        val userEntity = userDao.getByUsername(username)
+            ?: return
+        // TODO:
+        //  CHECK IF USERNAME EXISTS
+        //  UPDATE USERNAME REFERENCES
+//        userDao.update(
+//            userEntity = userEntity.copy(
+//                username = username
+//            )
+//        )
+    }
+
+    override suspend fun updateEmail(email: String) {
+        val username = preferences.getSystemCurrentUser().first()
+        val userEntity = userDao.getByUsername(username)
+            ?: return
+        userDao.update(
+            userEntity = userEntity.copy(
+                email = email
+            )
+        )
+    }
+
+    override suspend fun updatePhoneNumber(phoneNumber: String) {
+        val username = preferences.getSystemCurrentUser().first()
+        val userEntity = userDao.getByUsername(username)
+            ?: return
+        userDao.update(
+            userEntity = userEntity.copy(
+                phoneNumber = phoneNumber
+            )
+        )
+    }
+
+    override suspend fun updateGender(gender: Gender) {
+        val username = preferences.getSystemCurrentUser().first()
+        val userEntity = userDao.getByUsername(username)
+            ?: return
+        userDao.update(
+            userEntity = userEntity.copy(
+                gender = gender
+            )
+        )
+    }
+
+    override suspend fun updateBirthday(birthday: String) {
+        val username = preferences.getSystemCurrentUser().first()
+        val userEntity = userDao.getByUsername(username)
+            ?: return
+        userDao.update(
+            userEntity = userEntity.copy(
+                birthday = birthday
+            )
+        )
     }
 }

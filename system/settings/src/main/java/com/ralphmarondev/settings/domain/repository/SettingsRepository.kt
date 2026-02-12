@@ -1,5 +1,6 @@
 package com.ralphmarondev.settings.domain.repository
 
+import com.ralphmarondev.core.domain.model.Gender
 import com.ralphmarondev.core.domain.model.Result
 import com.ralphmarondev.core.domain.model.User
 import com.ralphmarondev.core.domain.model.Wallpaper
@@ -21,4 +22,10 @@ interface SettingsRepository {
     suspend fun getAllWallpapers(): List<Wallpaper>
 
     suspend fun updateDisplayName(displayName: String)
+
+    suspend fun updateUsername(username: String)
+    suspend fun updateEmail(email: String)
+    suspend fun updatePhoneNumber(phoneNumber: String)
+    suspend fun updateGender(gender: Gender)
+    suspend fun updateBirthday(birthday: String)
 }
