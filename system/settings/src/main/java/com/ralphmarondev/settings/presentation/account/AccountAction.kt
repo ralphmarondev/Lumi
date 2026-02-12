@@ -10,7 +10,7 @@ sealed interface AccountAction {
 
     data class ProfileImageChange(val path: Uri) : AccountAction
 
-    data object ToggleDisplayNameDialog : AccountAction
+    data class SetDisplayNameDialogValue(val value: Boolean) : AccountAction
     data class DisplayNameChange(val displayName: String) : AccountAction
     data object UpdateDisplayName : AccountAction
 

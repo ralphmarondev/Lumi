@@ -5,8 +5,8 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.ralphmarondev.core.domain.model.Gender
 import com.ralphmarondev.core.domain.model.Result
-import com.ralphmarondev.core.domain.model.User
 import com.ralphmarondev.settings.domain.repository.SettingsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,34 +25,14 @@ class AccountViewModel(
     private val _state = MutableStateFlow(AccountState())
     val state = _state.asStateFlow()
 
-    private val _initialUserData = MutableStateFlow(User())
-
     init {
-        viewModelScope.launch {
-            loadUserInformation()
-            _initialUserData.update {
-                it.copy(
-                    displayName = _state.value.displayName,
-                    username = _state.value.username,
-                    email = _state.value.email,
-                    profileImagePath = _state.value.profileImagePath
-                )
-            }
-        }
+        loadUserInformation()
     }
 
     fun onAction(action: AccountAction) {
         when (action) {
             AccountAction.Refresh -> {
-                viewModelScope.launch {
-                    _state.update {
-                        it.copy(isRefreshing = true)
-                    }
-                    loadUserInformation()
-                    _state.update {
-                        it.copy(isRefreshing = false)
-                    }
-                }
+                loadUserInformation(isRefreshing = true)
             }
 
             AccountAction.NavigateBack -> {
@@ -67,34 +47,21 @@ class AccountViewModel(
                 }
             }
 
-            is AccountAction.ProfileImageChange -> {
-                viewModelScope.launch {
-                    val imagePath = saveImageToInternalStorage(action.path)
+            is AccountAction.ProfileImageChange -> {}
 
-                    if (imagePath != null) {
-                        val updatedUser = _initialUserData.value.copy(
-                            profileImagePath = imagePath
-                        )
-
-                        when (repository.updateUserInformation(updatedUser)) {
-                            is Result.Success -> {
-                                _state.update {
-                                    it.copy(profileImagePath = imagePath)
-                                }
-                            }
-
-                            else -> Unit
-                        }
-                    }
-                }
-            }
-
+            // DISPLAY NAME
             is AccountAction.DisplayNameChange -> {
-                Log.d("Account", "DisplayName: ${action.displayName}")
-                _state.update {
-                    it.copy(displayName = action.displayName)
-                }
+                _state.update { it.copy(displayName = action.displayName) }
             }
+
+            is AccountAction.SetDisplayNameDialogValue -> {
+                _state.update { it.copy(showDisplayNameDialog = action.value) }
+            }
+
+            AccountAction.UpdateDisplayName -> {
+                updateDisplayName(_state.value.displayName.trim())
+            }
+            // END DISPLAY NAME
 
             is AccountAction.UsernameChange -> {}
             is AccountAction.EmailChange -> {}
@@ -103,67 +70,47 @@ class AccountViewModel(
             is AccountAction.BirthdayChange -> {}
 
             AccountAction.ToggleBirthdayDialog -> {}
-            AccountAction.ToggleDisplayNameDialog -> {
-                _state.update {
-                    it.copy(showDisplayNameDialog = !_state.value.showDisplayNameDialog)
-                }
-            }
-
             AccountAction.ToggleEmailDialog -> {}
             AccountAction.ToggleGenderDialog -> {}
             AccountAction.TogglePhoneNumberDialog -> {}
             AccountAction.ToggleUsernameDialog -> {}
-            AccountAction.UpdateDisplayName -> {
-                viewModelScope.launch {
-                    Log.d("Account", "Updating display name...")
-                    if (_state.value.displayName.trim() == _initialUserData.value.displayName) {
-                        Log.d("Account", "Display name did not changed.")
-                        return@launch
-                    }
-                    if (_state.value.displayName.isBlank()) {
-                        Log.d("Account", "Display name is blank.")
-                        _state.update {
-                            it.copy(errorMessage = "Display name is empty.")
-                        }
-                        return@launch
-                    }
-
-                    repository.updateDisplayName(displayName = _state.value.displayName.trim())
-                    Log.d("Account", "Done...")
-                    _state.update {
-                        it.copy(showDisplayNameDialog = false)
-                    }
-                }
-            }
         }
     }
 
-    private suspend fun loadUserInformation() {
-        _state.update { it.copy(isLoading = true) }
-        val result = repository.getUserInformation()
+    private fun loadUserInformation(isRefreshing: Boolean = false) {
+        viewModelScope.launch {
+            _state.update { it.copy(isLoading = true, isRefreshing = isRefreshing) }
 
-        when (result) {
-            is Result.Success -> {
-                _state.update {
-                    it.copy(
-                        displayName = it.displayName,
-                        username = it.username,
-                        email = it.email,
-                        phoneNumber = it.phoneNumber,
-                        gender = it.gender,
-                        birthday = it.birthday,
-                        profileImagePath = it.profileImagePath
-                    )
+            when (val result = repository.getUserInformation()) {
+                is Result.Success -> {
+                    val genderString = when (result.data.gender) {
+                        Gender.NotSet -> "Not set"
+                        Gender.Male -> "Male"
+                        Gender.Female -> "Female"
+                    }
+                    _state.update {
+                        it.copy(
+                            displayName = result.data.displayName,
+                            username = result.data.username,
+                            email = result.data.email,
+                            phoneNumber = result.data.phoneNumber,
+                            gender = result.data.gender,
+                            birthday = result.data.birthday,
+                            profileImagePath = result.data.profileImagePath,
+                            genderString = genderString
+                        )
+                    }
                 }
-            }
 
-            is Result.Error -> {
-                _state.update {
-                    it.copy(errorMessage = it.errorMessage, isLoading = false)
+                is Result.Error -> {
+                    _state.update {
+                        it.copy(errorMessage = it.errorMessage)
+                    }
                 }
-            }
 
-            Result.Loading -> Unit
+                Result.Loading -> Unit
+            }
+            _state.update { it.copy(isLoading = false, isRefreshing = false) }
         }
     }
 
@@ -183,6 +130,32 @@ class AccountViewModel(
         } catch (e: Exception) {
             Log.e("Account", "Error saving image to internal storage.", e)
             null
+        }
+    }
+
+    private fun updateDisplayName(updatedDisplayName: String) {
+        viewModelScope.launch {
+            try {
+                _state.update { it.copy(isLoading = true, errorMessage = null) }
+
+                if (updatedDisplayName.isBlank()) {
+                    _state.update {
+                        it.copy(errorMessage = "Display name cannot be updated with blank value.")
+                    }
+                    return@launch
+                }
+
+                repository.updateDisplayName(displayName = updatedDisplayName)
+                _state.update {
+                    it.copy(showDisplayNameDialog = false)
+                }
+            } catch (e: Exception) {
+                _state.update {
+                    it.copy(errorMessage = "Failed updating display name. Error: ${e.message}")
+                }
+            } finally {
+                _state.update { it.copy(isLoading = false) }
+            }
         }
     }
 }

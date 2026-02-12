@@ -4,8 +4,11 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,6 +16,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -21,8 +25,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.outlined.ManageAccounts
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -31,7 +34,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -45,11 +47,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import coil.compose.rememberAsyncImagePainter
 import com.ralphmarondev.core.presentation.component.LumiGestureHandler
+import com.ralphmarondev.core.presentation.component.LumiTextField
 import com.ralphmarondev.settings.R
 import org.koin.compose.viewmodel.koinViewModel
 import java.io.File
@@ -113,93 +118,95 @@ private fun AccountScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                item {
-                    UserImage(
-                        imagePath = state.profileImagePath,
-                        onImageSelected = { path ->
-                            action(AccountAction.ProfileImageChange(path))
-                        },
-                        modifier = Modifier
-                            .padding(bottom = 16.dp)
+            Box(modifier = Modifier.fillMaxSize()) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    item {
+                        UserImage(
+                            imagePath = state.profileImagePath,
+                            onImageSelected = { path ->
+                                action(AccountAction.ProfileImageChange(path))
+                            },
+                            modifier = Modifier
+                                .padding(bottom = 16.dp)
+                        )
+                    }
+
+                    item {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+                            )
+                        ) {
+                            Column {
+                                AccountField(
+                                    label = "Display Name",
+                                    value = state.displayName,
+                                    onClick = { action(AccountAction.SetDisplayNameDialogValue(true)) }
+                                )
+                                HorizontalDivider(thickness = 0.3.dp)
+                                AccountField(
+                                    label = "Username",
+                                    value = state.username,
+                                    onClick = { action(AccountAction.ToggleUsernameDialog) }
+                                )
+                            }
+                        }
+                    }
+
+                    item {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+                            )
+                        ) {
+                            Column {
+                                AccountField(
+                                    label = "Email",
+                                    value = state.email ?: "Not set",
+                                    onClick = { action(AccountAction.ToggleEmailDialog) }
+                                )
+                                HorizontalDivider(thickness = 0.3.dp)
+                                AccountField(
+                                    label = "Phone Number",
+                                    value = state.phoneNumber ?: "Not set",
+                                    onClick = { action(AccountAction.TogglePhoneNumberDialog) }
+                                )
+                                HorizontalDivider(thickness = 0.3.dp)
+                                AccountField(
+                                    label = "Gender",
+                                    value = state.genderString,
+                                    onClick = { action(AccountAction.ToggleGenderDialog) }
+                                )
+                                HorizontalDivider(thickness = 0.3.dp)
+                                AccountField(
+                                    label = "Birthday",
+                                    value = state.birthday ?: "Not set",
+                                    onClick = { action(AccountAction.ToggleBirthdayDialog) }
+                                )
+                            }
+                        }
+                    }
+                }
+
+                if (state.showDisplayNameDialog) {
+                    DisplayNameDialog(
+                        state = state,
+                        action = action
                     )
                 }
-
-                item {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
-                        )
-                    ) {
-                        Column {
-                            AccountField(
-                                label = "Display Name",
-                                value = state.displayName,
-                                onClick = { action(AccountAction.ToggleDisplayNameDialog) }
-                            )
-                            HorizontalDivider(thickness = 0.3.dp)
-                            AccountField(
-                                label = "Username",
-                                value = state.username,
-                                onClick = { action(AccountAction.ToggleUsernameDialog) }
-                            )
-                        }
-                    }
-                }
-
-                item {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
-                        )
-                    ) {
-                        Column {
-                            AccountField(
-                                label = "Email",
-                                value = state.email,
-                                onClick = { action(AccountAction.ToggleEmailDialog) }
-                            )
-                            HorizontalDivider(thickness = 0.3.dp)
-                            AccountField(
-                                label = "Phone Number",
-                                value = state.phoneNumber,
-                                onClick = { action(AccountAction.TogglePhoneNumberDialog) }
-                            )
-                            HorizontalDivider(thickness = 0.3.dp)
-                            AccountField(
-                                label = "Gender",
-                                value = state.gender,
-                                onClick = { action(AccountAction.ToggleGenderDialog) }
-                            )
-                            HorizontalDivider(thickness = 0.3.dp)
-                            AccountField(
-                                label = "Birthday",
-                                value = state.birthday,
-                                onClick = { action(AccountAction.ToggleBirthdayDialog) }
-                            )
-                        }
-                    }
-                }
             }
-        }
-
-        if (state.showDisplayNameDialog) {
-            DisplayNameDialog(
-                state = state,
-                action = action
-            )
         }
     }
 }
@@ -274,43 +281,65 @@ private fun AccountField(label: String, value: String, onClick: () -> Unit) {
     }
 }
 
+// Note: If we use Alert dialog or dialog, the status bar shows.
 @Composable
-private fun DisplayNameDialog(
+private fun BoxScope.DisplayNameDialog(
     state: AccountState,
     action: (AccountAction) -> Unit
 ) {
-    AlertDialog(
-        onDismissRequest = { action(AccountAction.ToggleDisplayNameDialog) },
-        title = {
+    Box(
+        modifier = Modifier
+            .align(Alignment.Center)
+            .zIndex(3f)
+            .padding(24.dp)
+            .shadow(16.dp, shape = MaterialTheme.shapes.medium)
+            .background(
+                MaterialTheme.colorScheme.surface,
+                shape = MaterialTheme.shapes.medium
+            )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 240.dp)
+                .padding(24.dp)
+        ) {
             Text(
                 text = "Display Name",
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleLarge.copy(
+                    color = MaterialTheme.colorScheme.primary
+                )
             )
-        },
-        text = {
-            Column {
-                Text(
-                    text = "Enter your display name.",
-                    style = MaterialTheme.typography.bodyMedium
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "This name will be displayed when you post comments on 'Community' and other apps.",
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = MaterialTheme.colorScheme.secondary
                 )
-                Spacer(modifier = Modifier.height(12.dp))
-                OutlinedTextField(
-                    value = state.displayName,
-                    onValueChange = { action(AccountAction.DisplayNameChange(it)) },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        },
-        confirmButton = {
-            Button(onClick = { action(AccountAction.UpdateDisplayName) }) {
-                Text(text = "OK")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = { action(AccountAction.ToggleDisplayNameDialog) }) {
-                Text(text = "Cancel")
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            LumiTextField(
+                value = state.displayName,
+                onValueChange = { action(AccountAction.DisplayNameChange(it)) },
+                placeHolderText = "Lumi User",
+                labelText = "Display Name",
+                leadingIconImageVector = Icons.Outlined.ManageAccounts,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.End),
+                horizontalArrangement = Arrangement.End
+            ) {
+                TextButton(onClick = { action(AccountAction.SetDisplayNameDialogValue(false)) }) {
+                    Text(text = "Cancel")
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                TextButton(onClick = { action(AccountAction.UpdateDisplayName) }) {
+                    Text(text = "Update")
+                }
             }
         }
-    )
+    }
 }
