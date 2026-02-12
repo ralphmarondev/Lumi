@@ -31,6 +31,8 @@ fun LumiTextField(
     singleLine: Boolean = true,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
+    prefix: @Composable (() -> Unit)? = null,
+    suffix: @Composable (() -> Unit)? = null,
 ) {
     OutlinedTextField(
         value = value,
@@ -80,6 +82,8 @@ fun LumiTextField(
             )
         },
         keyboardActions = keyboardActions,
-        keyboardOptions = keyboardOptions
+        keyboardOptions = keyboardOptions,
+        prefix = prefix,
+        suffix = suffix
     )
 }
