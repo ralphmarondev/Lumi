@@ -71,6 +71,10 @@ fun GalleryScreen(
     action: (GalleryAction) -> Unit,
     navigateBack: () -> Unit
 ) {
+    LaunchedEffect(Unit) {
+        action(GalleryAction.LoadImages)
+    }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
