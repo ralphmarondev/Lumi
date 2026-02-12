@@ -3,18 +3,23 @@ app (kernel):
     Main Navigation of Lumi OS
 
 core (included in all modules):
+    System app database and preferences lives here.
+    Mini apps have their own database and preferences on their own module.
+
     data:
         database for user and os (user, wallpaper)
         preferences for user and os itself (user, wallpaper, darkTheme, firstLaunch, etc.)
 
     domain:
         Result wrapper
-        User, Weather (domain - business logic)
+        User, Apps, Wallpaper, Contact (domain - business logic)
 
     presentation:
         Lumi OS theme, system components, shell
 
 system:
+    - Apps (or features that lives here) are the one that are expected to exists on all phones.
+
     boot:
         Setup and Auth
 
@@ -24,5 +29,27 @@ system:
     settings:
         System configurations (user level)
 
+    media:
+        - camera    (capture images and videos)
+        - gallery   (display images captured using our app camera)
+        - videos    (display and play captured videos)
+
+    telephony:
+        - contacts  (list of contacts isolated to the host)
+        - call      (not implemented yet)
+
 miniapps:
-    Consists of different miniapps, just like what a real os have.
+    Consists of different optional apps (that can be uninstalled later), just like what a real os
+    have.
+
+    notes:
+        Note application.
+
+    weather:
+        Weather application.
+
+    calendar:
+        Calendar application.
+
+    clock:
+        Clock application to setup alarm, set timer, and stopwatch.
