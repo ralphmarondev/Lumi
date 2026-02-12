@@ -7,6 +7,7 @@ data class AccountState(
     val navigateBack: Boolean = false,
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
+    val showErrorMessage: Boolean = false,
 
     val displayName: String = "",
     val username: String = "",

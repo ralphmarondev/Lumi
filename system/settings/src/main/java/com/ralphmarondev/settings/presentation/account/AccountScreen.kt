@@ -23,9 +23,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
+import androidx.compose.material.icons.outlined.ContactPhone
+import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.ManageAccounts
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -35,6 +39,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
@@ -43,6 +49,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,9 +60,11 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil.compose.rememberAsyncImagePainter
+import com.ralphmarondev.core.domain.model.Gender
 import com.ralphmarondev.core.presentation.component.LumiGestureHandler
 import com.ralphmarondev.core.presentation.component.LumiTextField
 import com.ralphmarondev.settings.R
@@ -87,6 +99,16 @@ private fun AccountScreen(
     state: AccountState,
     action: (AccountAction) -> Unit
 ) {
+    val snackbar = remember { SnackbarHostState() }
+
+    LaunchedEffect(state.showErrorMessage) {
+        if (state.showErrorMessage) {
+            snackbar.showSnackbar(
+                message = state.errorMessage ?: "An error occurred."
+            )
+        }
+    }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -109,6 +131,9 @@ private fun AccountScreen(
                     containerColor = MaterialTheme.colorScheme.primary
                 )
             )
+        },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbar)
         }
     ) { innerPadding ->
         PullToRefreshBox(
@@ -155,7 +180,7 @@ private fun AccountScreen(
                                 AccountField(
                                     label = "Username",
                                     value = state.username,
-                                    onClick = { action(AccountAction.ToggleUsernameDialog) }
+                                    onClick = { action(AccountAction.SetUsernameDialogValue(true)) }
                                 )
                             }
                         }
@@ -175,25 +200,25 @@ private fun AccountScreen(
                                 AccountField(
                                     label = "Email",
                                     value = state.email ?: "Not set",
-                                    onClick = { action(AccountAction.ToggleEmailDialog) }
+                                    onClick = { action(AccountAction.SetEmailDialogValue(true)) }
                                 )
                                 HorizontalDivider(thickness = 0.3.dp)
                                 AccountField(
                                     label = "Phone Number",
                                     value = state.phoneNumber ?: "Not set",
-                                    onClick = { action(AccountAction.TogglePhoneNumberDialog) }
+                                    onClick = { action(AccountAction.SetPhoneNumberDialogValue(true)) }
                                 )
                                 HorizontalDivider(thickness = 0.3.dp)
                                 AccountField(
                                     label = "Gender",
                                     value = state.genderString,
-                                    onClick = { action(AccountAction.ToggleGenderDialog) }
+                                    onClick = { action(AccountAction.SetGenderDialogValue(true)) }
                                 )
                                 HorizontalDivider(thickness = 0.3.dp)
                                 AccountField(
                                     label = "Birthday",
                                     value = state.birthday ?: "Not set",
-                                    onClick = { action(AccountAction.ToggleBirthdayDialog) }
+                                    onClick = { action(AccountAction.SetBirthdayDialogValue(true)) }
                                 )
                             }
                         }
@@ -202,8 +227,41 @@ private fun AccountScreen(
 
                 if (state.showDisplayNameDialog) {
                     DisplayNameDialog(
-                        state = state,
-                        action = action
+                        displayName = state.displayName,
+                        onCancel = { action(AccountAction.SetDisplayNameDialogValue(false)) },
+                        onUpdate = { updatedDisplayName ->
+                            action(AccountAction.UpdateDisplayName(updatedDisplayName))
+                        }
+                    )
+                }
+
+                if (state.showEmailDialog) {
+                    EmailDialog(
+                        email = state.email ?: "",
+                        onCancel = { action(AccountAction.SetEmailDialogValue(false)) },
+                        onUpdate = { updatedEmail ->
+                            action(AccountAction.UpdateEmail(updatedEmail))
+                        }
+                    )
+                }
+
+                if (state.showPhoneNumberDialog) {
+                    PhoneNumberDialog(
+                        phoneNumber = state.phoneNumber ?: "",
+                        onCancel = { action(AccountAction.SetPhoneNumberDialogValue(false)) },
+                        onUpdate = { updatedPhoneNumber ->
+                            action(AccountAction.UpdatePhoneNumber(updatedPhoneNumber))
+                        }
+                    )
+                }
+
+                if (state.showGenderDialog) {
+                    GenderDialog(
+                        gender = state.gender,
+                        onCancel = { action(AccountAction.SetGenderDialogValue(false)) },
+                        onUpdate = { updatedGender ->
+                            action(AccountAction.UpdateGender(updatedGender))
+                        }
                     )
                 }
             }
@@ -257,20 +315,23 @@ private fun AccountField(label: String, value: String, onClick: () -> Unit) {
         ) {
             Text(
                 text = label,
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = MaterialTheme.colorScheme.secondary
+                )
             )
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = value,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.primary
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = MaterialTheme.colorScheme.primary
+                    )
                 )
                 Spacer(modifier = Modifier.width(2.dp))
                 Icon(
                     imageVector = Icons.Outlined.ArrowBackIosNew,
-                    contentDescription = "Edit",
+                    contentDescription = null,
                     modifier = Modifier
                         .size(18.dp)
                         .rotate(180f),
@@ -284,9 +345,12 @@ private fun AccountField(label: String, value: String, onClick: () -> Unit) {
 // Note: If we use Alert dialog or dialog, the status bar shows.
 @Composable
 private fun BoxScope.DisplayNameDialog(
-    state: AccountState,
-    action: (AccountAction) -> Unit
+    displayName: String,
+    onCancel: () -> Unit,
+    onUpdate: (String) -> Unit
 ) {
+    var newDisplayName by rememberSaveable { mutableStateOf(displayName) }
+
     Box(
         modifier = Modifier
             .align(Alignment.Center)
@@ -319,8 +383,8 @@ private fun BoxScope.DisplayNameDialog(
             )
             Spacer(modifier = Modifier.height(16.dp))
             LumiTextField(
-                value = state.displayName,
-                onValueChange = { action(AccountAction.DisplayNameChange(it)) },
+                value = newDisplayName,
+                onValueChange = { newDisplayName = it },
                 placeHolderText = "Lumi User",
                 labelText = "Display Name",
                 leadingIconImageVector = Icons.Outlined.ManageAccounts,
@@ -332,11 +396,196 @@ private fun BoxScope.DisplayNameDialog(
                     .align(Alignment.End),
                 horizontalArrangement = Arrangement.End
             ) {
-                TextButton(onClick = { action(AccountAction.SetDisplayNameDialogValue(false)) }) {
+                TextButton(onClick = onCancel) {
                     Text(text = "Cancel")
                 }
                 Spacer(modifier = Modifier.width(8.dp))
-                TextButton(onClick = { action(AccountAction.UpdateDisplayName) }) {
+                TextButton(onClick = { onUpdate(newDisplayName) }) {
+                    Text(text = "Update")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun BoxScope.EmailDialog(
+    email: String,
+    onCancel: () -> Unit,
+    onUpdate: (String) -> Unit
+) {
+    var newEmail by rememberSaveable { mutableStateOf(email) }
+
+    Box(
+        modifier = Modifier
+            .align(Alignment.Center)
+            .zIndex(3f)
+            .padding(24.dp)
+            .shadow(16.dp, shape = MaterialTheme.shapes.medium)
+            .background(
+                MaterialTheme.colorScheme.surface,
+                shape = MaterialTheme.shapes.medium
+            )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 240.dp)
+                .padding(24.dp)
+        ) {
+            Text(
+                text = "Set Email",
+                style = MaterialTheme.typography.titleLarge.copy(
+                    color = MaterialTheme.colorScheme.primary
+                )
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            LumiTextField(
+                value = newEmail,
+                onValueChange = { newEmail = it },
+                placeHolderText = "user@lumi.org",
+                labelText = "Email",
+                leadingIconImageVector = Icons.Outlined.Email,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TextButton(onClick = onCancel) {
+                    Text(text = "Cancel")
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                TextButton(onClick = { onUpdate(newEmail) }) {
+                    Text(text = "Update")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun BoxScope.PhoneNumberDialog(
+    phoneNumber: String,
+    onCancel: () -> Unit,
+    onUpdate: (String) -> Unit
+) {
+    var newPhoneNumber by rememberSaveable { mutableStateOf(phoneNumber) }
+
+    Box(
+        modifier = Modifier
+            .align(Alignment.Center)
+            .zIndex(3f)
+            .padding(24.dp)
+            .shadow(16.dp, shape = MaterialTheme.shapes.medium)
+            .background(
+                MaterialTheme.colorScheme.surface,
+                shape = MaterialTheme.shapes.medium
+            )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 240.dp)
+                .padding(24.dp)
+        ) {
+            Text(
+                text = "Set Phone Number",
+                style = MaterialTheme.typography.titleLarge.copy(
+                    color = MaterialTheme.colorScheme.primary
+                )
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            LumiTextField(
+                value = newPhoneNumber,
+                onValueChange = { newPhoneNumber = it },
+                placeHolderText = "9617******",
+                labelText = "Phone Number",
+                leadingIconImageVector = Icons.Outlined.ContactPhone,
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number
+                ),
+                prefix = {
+                    Text(
+                        text = "+63",
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    )
+                }
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TextButton(onClick = onCancel) {
+                    Text(text = "Cancel")
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                TextButton(onClick = { onUpdate(newPhoneNumber) }) {
+                    Text(text = "Update")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun BoxScope.GenderDialog(
+    gender: Gender,
+    onCancel: () -> Unit,
+    onUpdate: (Gender) -> Unit
+) {
+    var newGender by rememberSaveable { mutableStateOf(gender) }
+
+    Box(
+        modifier = Modifier
+            .align(Alignment.Center)
+            .zIndex(3f)
+            .padding(24.dp)
+            .shadow(16.dp, shape = MaterialTheme.shapes.medium)
+            .background(
+                MaterialTheme.colorScheme.surface,
+                shape = MaterialTheme.shapes.medium
+            )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 240.dp)
+                .padding(24.dp)
+        ) {
+            Text(
+                text = "Set Gender",
+                style = MaterialTheme.typography.titleLarge.copy(
+                    color = MaterialTheme.colorScheme.primary
+                )
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            LumiTextField(
+                value = newGender.name,
+                onValueChange = { },
+                placeHolderText = "Not Set",
+                labelText = "Gender",
+                leadingIconImageVector = Icons.Outlined.Person,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TextButton(onClick = onCancel) {
+                    Text(text = "Cancel")
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                TextButton(onClick = { onUpdate(newGender) }) {
                     Text(text = "Update")
                 }
             }

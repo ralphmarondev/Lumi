@@ -50,67 +50,109 @@ class AccountViewModel(
             is AccountAction.ProfileImageChange -> {}
 
             // DISPLAY NAME
-            is AccountAction.DisplayNameChange -> {
-                _state.update { it.copy(displayName = action.displayName) }
-            }
-
             is AccountAction.SetDisplayNameDialogValue -> {
                 _state.update { it.copy(showDisplayNameDialog = action.value) }
             }
 
-            AccountAction.UpdateDisplayName -> {
-                updateDisplayName(_state.value.displayName.trim())
+            is AccountAction.UpdateDisplayName -> {
+                updateDisplayName(action.updatedDisplayName.trim())
             }
-            // END DISPLAY NAME
 
-            is AccountAction.UsernameChange -> {}
-            is AccountAction.EmailChange -> {}
-            is AccountAction.PhoneNumberChange -> {}
-            is AccountAction.GenderChange -> {}
-            is AccountAction.BirthdayChange -> {}
+            // EMAIL
+            is AccountAction.SetEmailDialogValue -> {
+                _state.update { it.copy(showEmailDialog = action.value) }
+            }
 
-            AccountAction.ToggleBirthdayDialog -> {}
-            AccountAction.ToggleEmailDialog -> {}
-            AccountAction.ToggleGenderDialog -> {}
-            AccountAction.TogglePhoneNumberDialog -> {}
-            AccountAction.ToggleUsernameDialog -> {}
+            is AccountAction.UpdateEmail -> {
+                updateEmail(updatedEmail = action.updatedEmail.trim())
+            }
+
+            // PHONE NUMBER
+            is AccountAction.SetPhoneNumberDialogValue -> {
+                _state.update { it.copy(showPhoneNumberDialog = action.value) }
+            }
+
+            is AccountAction.UpdatePhoneNumber -> {
+                updatePhoneNumber(action.updatedPhoneNumber.trim())
+            }
+
+            // GENDER
+            is AccountAction.SetGenderDialogValue -> {
+                _state.update { it.copy(showGenderDialog = action.value) }
+            }
+
+            is AccountAction.UpdateGender -> {
+                updateGender(action.updatedGender)
+            }
+
+            // BIRTHDAY
+            is AccountAction.SetBirthdayDialogValue -> {
+                _state.update { it.copy(showBirthdayDialog = action.value) }
+            }
+
+            is AccountAction.UpdateBirthday -> {}
+
+            // USERNAME
+            is AccountAction.SetUsernameDialogValue -> {
+                _state.update { it.copy(showUsernameDialog = action.value) }
+            }
+
+            is AccountAction.UpdateUsername -> {}
         }
     }
 
     private fun loadUserInformation(isRefreshing: Boolean = false) {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, isRefreshing = isRefreshing) }
-
-            when (val result = repository.getUserInformation()) {
-                is Result.Success -> {
-                    val genderString = when (result.data.gender) {
-                        Gender.NotSet -> "Not set"
-                        Gender.Male -> "Male"
-                        Gender.Female -> "Female"
-                    }
-                    _state.update {
-                        it.copy(
-                            displayName = result.data.displayName,
-                            username = result.data.username,
-                            email = result.data.email,
-                            phoneNumber = result.data.phoneNumber,
-                            gender = result.data.gender,
-                            birthday = result.data.birthday,
-                            profileImagePath = result.data.profileImagePath,
-                            genderString = genderString
-                        )
-                    }
+            try {
+                _state.update {
+                    it.copy(
+                        isLoading = true,
+                        isRefreshing = isRefreshing,
+                        errorMessage = null,
+                        showErrorMessage = false
+                    )
                 }
 
-                is Result.Error -> {
-                    _state.update {
-                        it.copy(errorMessage = it.errorMessage)
+                when (val result = repository.getUserInformation()) {
+                    is Result.Success -> {
+                        val genderString = when (result.data.gender) {
+                            Gender.NotSet -> "Not set"
+                            Gender.Male -> "Male"
+                            Gender.Female -> "Female"
+                        }
+                        _state.update {
+                            it.copy(
+                                displayName = result.data.displayName,
+                                username = result.data.username,
+                                email = result.data.email,
+                                phoneNumber = result.data.phoneNumber,
+                                gender = result.data.gender,
+                                birthday = result.data.birthday,
+                                profileImagePath = result.data.profileImagePath,
+                                genderString = genderString
+                            )
+                        }
                     }
-                }
 
-                Result.Loading -> Unit
+                    is Result.Error -> {
+                        _state.update {
+                            it.copy(errorMessage = it.errorMessage)
+                        }
+                    }
+
+                    Result.Loading -> Unit
+                }
+                _state.update { it.copy(isRefreshing = false) }
+            } catch (e: Exception) {
+                _state.update {
+                    it.copy(
+                        errorMessage = "Error: ${e.message}",
+                        showErrorMessage = true
+                    )
+                }
+            } finally {
+                _state.update { it.copy(isLoading = false) }
             }
-            _state.update { it.copy(isLoading = false, isRefreshing = false) }
         }
     }
 
@@ -136,11 +178,20 @@ class AccountViewModel(
     private fun updateDisplayName(updatedDisplayName: String) {
         viewModelScope.launch {
             try {
-                _state.update { it.copy(isLoading = true, errorMessage = null) }
+                _state.update {
+                    it.copy(
+                        isLoading = true,
+                        errorMessage = null,
+                        showErrorMessage = false
+                    )
+                }
 
                 if (updatedDisplayName.isBlank()) {
                     _state.update {
-                        it.copy(errorMessage = "Display name cannot be updated with blank value.")
+                        it.copy(
+                            errorMessage = "Display name cannot be updated with blank value.",
+                            showErrorMessage = true
+                        )
                     }
                     return@launch
                 }
@@ -151,11 +202,26 @@ class AccountViewModel(
                 }
             } catch (e: Exception) {
                 _state.update {
-                    it.copy(errorMessage = "Failed updating display name. Error: ${e.message}")
+                    it.copy(
+                        errorMessage = "Failed updating display name. Error: ${e.message}",
+                        showErrorMessage = true
+                    )
                 }
             } finally {
                 _state.update { it.copy(isLoading = false) }
             }
         }
+    }
+
+    private fun updateEmail(updatedEmail: String) {
+
+    }
+
+    private fun updatePhoneNumber(updatedPhoneNumber: String) {
+
+    }
+
+    private fun updateGender(updatedGender: Gender) {
+
     }
 }
