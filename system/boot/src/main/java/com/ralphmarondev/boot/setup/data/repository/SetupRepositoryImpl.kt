@@ -194,6 +194,36 @@ class SetupRepositoryImpl(
                 order = 9,
                 tag = ApplicationTag.Contacts.name,
                 resId = R.drawable.contacts
+            ),
+            AppsEntity(
+                name = "Phone",
+                versionName = "1.0 Phone",
+                versionCode = 1,
+                isSystemApp = true,
+                isDocked = false,
+                order = 10,
+                tag = ApplicationTag.Phone.name,
+                resId = R.drawable.phone_call
+            ),
+            AppsEntity(
+                name = "Community",
+                versionName = "1.0 Community",
+                versionCode = 1,
+                isSystemApp = true,
+                isDocked = false,
+                order = 11,
+                tag = ApplicationTag.Community.name,
+                resId = R.drawable.community
+            ),
+            AppsEntity(
+                name = "Calculator",
+                versionName = "1.0 Calculator",
+                versionCode = 1,
+                isSystemApp = false,
+                isDocked = false,
+                order = 12,
+                tag = ApplicationTag.Calculator.name,
+                resId = R.drawable.calculator
             )
         )
 
