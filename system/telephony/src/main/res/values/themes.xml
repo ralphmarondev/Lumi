@@ -2,4 +2,6 @@
 <resources>
 
     <style name="Theme.Contacts" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.Phone" parent="android:Theme.Material.Light.NoActionBar" />
 </resources>

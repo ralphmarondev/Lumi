@@ -3,6 +3,11 @@
 
     <application>
         <activity
+            android:name=".phone.PhoneActivity"
+            android:exported="false"
+            android:label="@string/title_activity_phone"
+            android:theme="@style/Theme.Phone" />
+        <activity
             android:name=".contacts.ContactsActivity"
             android:exported="false"
             android:label="@string/title_activity_contacts"
