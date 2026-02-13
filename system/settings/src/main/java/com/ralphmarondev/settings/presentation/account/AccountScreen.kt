@@ -21,17 +21,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountTree
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
-import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.ContactPhone
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.ManageAccounts
-import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -40,6 +39,9 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -51,6 +53,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -64,6 +67,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil.compose.rememberAsyncImagePainter
@@ -73,6 +77,9 @@ import com.ralphmarondev.core.presentation.component.LumiTextField
 import com.ralphmarondev.settings.R
 import org.koin.compose.viewmodel.koinViewModel
 import java.io.File
+import java.time.LocalDate
+import java.time.Year
+import java.time.YearMonth
 
 @Composable
 fun AccountScreenRoot(
@@ -469,9 +476,16 @@ private fun BoxScope.UsernameDialog(
                 .padding(24.dp)
         ) {
             Text(
-                text = "Display Name",
+                text = "Username",
                 style = MaterialTheme.typography.titleLarge.copy(
                     color = MaterialTheme.colorScheme.primary
+                )
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "This is your unique username. Others will use this to mention you or search for you in the system.",
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = MaterialTheme.colorScheme.secondary
                 )
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -537,6 +551,13 @@ private fun BoxScope.EmailDialog(
                     color = MaterialTheme.colorScheme.primary
                 )
             )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "Your email is used for account recovery, notifications, and signing in.",
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = MaterialTheme.colorScheme.secondary
+                )
+            )
             Spacer(modifier = Modifier.height(16.dp))
             LumiTextField(
                 value = newEmail,
@@ -546,7 +567,6 @@ private fun BoxScope.EmailDialog(
                 leadingIconImageVector = Icons.Outlined.Email,
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(32.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End,
@@ -600,6 +620,13 @@ private fun BoxScope.PhoneNumberDialog(
                     color = MaterialTheme.colorScheme.primary
                 )
             )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "Add your phone number to help secure your account and enable two-factor authentication.",
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = MaterialTheme.colorScheme.secondary
+                )
+            )
             Spacer(modifier = Modifier.height(16.dp))
             LumiTextField(
                 value = newPhoneNumber,
@@ -620,7 +647,6 @@ private fun BoxScope.PhoneNumberDialog(
                     )
                 }
             )
-            Spacer(modifier = Modifier.height(32.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End,
@@ -644,7 +670,13 @@ private fun BoxScope.GenderDialog(
     onCancel: () -> Unit,
     onUpdate: (Gender) -> Unit
 ) {
-    var newGender by rememberSaveable { mutableStateOf(gender) }
+    val currentGender = when (gender) {
+        Gender.NotSet -> Gender.Male
+        Gender.Male -> Gender.Male
+        Gender.Female -> Gender.Female
+    }
+    var selectedGender by rememberSaveable { mutableStateOf(currentGender) }
+    val genderOptions = listOf(Gender.Male, Gender.Female)
 
     Box(
         modifier = Modifier
@@ -674,16 +706,49 @@ private fun BoxScope.GenderDialog(
                     color = MaterialTheme.colorScheme.primary
                 )
             )
-            Spacer(modifier = Modifier.height(16.dp))
-            LumiTextField(
-                value = newGender.name,
-                onValueChange = { },
-                placeHolderText = "Not Set",
-                labelText = "Gender",
-                leadingIconImageVector = Icons.Outlined.Person,
-                modifier = Modifier.fillMaxWidth()
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "Select your gender. This information can be used for personalization across apps.",
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = MaterialTheme.colorScheme.secondary
+                )
             )
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(16.dp))
+
+            genderOptions.forEach { option ->
+                OutlinedCard(
+                    onClick = { selectedGender = option },
+                    modifier = Modifier.padding(vertical = 2.dp)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = selectedGender == option,
+                            onClick = {},
+                            enabled = false,
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = MaterialTheme.colorScheme.primary,
+                                unselectedColor = MaterialTheme.colorScheme.secondary,
+                                disabledSelectedColor = MaterialTheme.colorScheme.primary,
+                                disabledUnselectedColor = MaterialTheme.colorScheme.secondary
+                            )
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = option.name,
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                color = MaterialTheme.colorScheme.secondary
+                            )
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End,
@@ -693,7 +758,7 @@ private fun BoxScope.GenderDialog(
                     Text(text = "Cancel")
                 }
                 Spacer(modifier = Modifier.width(8.dp))
-                TextButton(onClick = { onUpdate(newGender) }) {
+                TextButton(onClick = { onUpdate(selectedGender) }) {
                     Text(text = "Update")
                 }
             }
@@ -708,6 +773,30 @@ private fun BoxScope.BirthdayDialog(
     onUpdate: (String) -> Unit
 ) {
     var newBirthday by rememberSaveable { mutableStateOf(birthday) }
+
+    val months =
+        listOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+    val currentYear = Year.now().value
+    val years = (currentYear downTo currentYear - 100).toList()
+
+    val initialDate = runCatching { LocalDate.parse(birthday) }.getOrNull()
+    var selectedMonth by rememberSaveable {
+        mutableIntStateOf(
+            initialDate?.monthValue?.minus(1) ?: 0
+        )
+    }
+    var selectedYear by rememberSaveable { mutableIntStateOf(initialDate?.year ?: currentYear) }
+
+    val daysInMonth = remember(selectedMonth, selectedYear) {
+        YearMonth.of(selectedYear, selectedMonth + 1).lengthOfMonth()
+    }
+    var selectedDay by rememberSaveable {
+        mutableIntStateOf(
+            initialDate?.dayOfMonth?.coerceAtMost(
+                daysInMonth
+            ) ?: 1
+        )
+    }
 
     Box(
         modifier = Modifier
@@ -732,20 +821,71 @@ private fun BoxScope.BirthdayDialog(
                 .padding(24.dp)
         ) {
             Text(
-                text = "Birthday",
+                text = "Select Birthday",
                 style = MaterialTheme.typography.titleLarge.copy(
                     color = MaterialTheme.colorScheme.primary
                 )
             )
-            Spacer(modifier = Modifier.height(16.dp))
-            LumiTextField(
-                value = newBirthday,
-                onValueChange = { newBirthday = it },
-                placeHolderText = "Feb 12, 2026",
-                labelText = "Birthday",
-                leadingIconImageVector = Icons.Outlined.CalendarMonth,
-                modifier = Modifier.fillMaxWidth()
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "Your birthday helps us personalize your experience and is used for age verification.",
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = MaterialTheme.colorScheme.secondary
+                )
             )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(150.dp)
+            ) {
+                val days = (1..daysInMonth).toList()
+
+                WheelPicker(
+                    items = months,
+                    selectedItem = months[selectedMonth],
+                    onItemSelected = { selectedMonth = months.indexOf(it) },
+                    modifier = Modifier.weight(1f)
+                ) { month, isSelected ->
+                    Text(
+                        text = month,
+                        color = if (isSelected) MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+
+                WheelPicker(
+                    items = days,
+                    selectedItem = selectedDay,
+                    onItemSelected = { selectedDay = it },
+                    modifier = Modifier.weight(1f)
+                ) { day, isSelected ->
+                    Text(
+                        text = day.toString(),
+                        color = if (isSelected) MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+
+                WheelPicker(
+                    items = years,
+                    selectedItem = selectedYear,
+                    onItemSelected = { selectedYear = it },
+                    modifier = Modifier.weight(1f)
+                ) { year, isSelected ->
+                    Text(
+                        text = year.toString(),
+                        color = if (isSelected) MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -761,5 +901,43 @@ private fun BoxScope.BirthdayDialog(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun <T> WheelPicker(
+    items: List<T>,
+    selectedItem: T,
+    onItemSelected: (T) -> Unit,
+    modifier: Modifier = Modifier,
+    rowHeight: Dp = 50.dp,
+    content: @Composable (item: T, isSelected: Boolean) -> Unit
+) {
+    Box(modifier = modifier.height(rowHeight * 3)) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            contentPadding = PaddingValues(vertical = rowHeight)
+        ) {
+            items(items) { item ->
+                Box(
+                    modifier = Modifier
+                        .height(rowHeight)
+                        .fillMaxWidth()
+                        .clickable { onItemSelected(item) },
+                    contentAlignment = Alignment.Center
+                ) {
+                    val isSelected = item == selectedItem
+                    content(item, isSelected)
+                }
+            }
+        }
+        Box(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .height(rowHeight)
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
+        )
     }
 }

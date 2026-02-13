@@ -9,6 +9,7 @@ import com.ralphmarondev.core.domain.model.Gender
 import com.ralphmarondev.core.domain.model.Result
 import com.ralphmarondev.settings.domain.repository.SettingsRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -100,7 +101,7 @@ class AccountViewModel(
             }
 
             is AccountAction.UpdatePhoneNumber -> {
-                updatePhoneNumber(action.updatedPhoneNumber.trim())
+                updatePhoneNumber("+63${action.updatedPhoneNumber.trim()}")
             }
 
             // GENDER
@@ -200,7 +201,10 @@ class AccountViewModel(
 
                     Result.Loading -> Unit
                 }
-                _state.update { it.copy(isRefreshing = false) }
+
+                if (isRefreshing) {
+                    delay(1000)
+                }
             } catch (e: Exception) {
                 _state.update {
                     it.copy(
@@ -209,7 +213,7 @@ class AccountViewModel(
                     )
                 }
             } finally {
-                _state.update { it.copy(isLoading = false) }
+                _state.update { it.copy(isLoading = false, isRefreshing = false) }
             }
         }
     }
@@ -255,6 +259,7 @@ class AccountViewModel(
                 }
 
                 repository.updateDisplayName(displayName = updatedDisplayName)
+                loadUserInformation()
                 _state.update {
                     it.copy(
                         showDisplayNameDialog = false,
@@ -296,6 +301,7 @@ class AccountViewModel(
                 }
 
                 repository.updateUsername(updatedUsername)
+                loadUserInformation()
                 _state.update {
                     it.copy(
                         showUsernameDialog = false,
@@ -337,6 +343,7 @@ class AccountViewModel(
                 }
 
                 repository.updateEmail(updatedEmail)
+                loadUserInformation()
                 _state.update {
                     it.copy(
                         showEmailDialog = false,
@@ -378,6 +385,7 @@ class AccountViewModel(
                 }
 
                 repository.updatePhoneNumber(updatedPhoneNumber)
+                loadUserInformation()
                 _state.update {
                     it.copy(
                         showPhoneNumberDialog = false,
@@ -409,6 +417,7 @@ class AccountViewModel(
                 }
 
                 repository.updateGender(updatedGender)
+                loadUserInformation()
                 _state.update {
                     it.copy(
                         showGenderDialog = false,
@@ -450,6 +459,7 @@ class AccountViewModel(
                 }
 
                 repository.updateBirthday(updatedBirthday)
+                loadUserInformation()
                 _state.update {
                     it.copy(
                         showBirthdayDialog = false,
