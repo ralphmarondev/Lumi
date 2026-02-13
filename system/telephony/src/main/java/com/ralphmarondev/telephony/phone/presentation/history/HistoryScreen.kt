@@ -163,7 +163,7 @@ private fun HistoryScreen(
                         }
                     }
                     items(state.callHistory) { history ->
-                        Text(text = history)
+                        Text(text = "Name: ${history.name}, Number: ${history.number}")
                     }
                 }
             }
@@ -201,7 +201,8 @@ private fun DialPad(
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp))
                 .background(MaterialTheme.colorScheme.surface)
-                .padding(16.dp),
+                .padding(16.dp)
+                .pointerInput(Unit) {},
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AnimatedVisibility(state.dialedNumber.isNotBlank()) {
