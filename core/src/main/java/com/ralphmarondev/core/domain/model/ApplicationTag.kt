@@ -9,5 +9,8 @@ enum class ApplicationTag {
     Camera,
     Photos,
     Videos,
-    Contacts
+    Contacts,
+    Phone,
+    Community,
+    Calculator
 }

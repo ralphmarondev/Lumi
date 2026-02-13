@@ -8,6 +8,7 @@ data class Apps(
     val versionCode: Int = 0,
     val isSystemApp: Boolean = false,
     val isDocked: Boolean = false,
+    val isInstalled: Boolean = true,
     val order: Int = 0,
     val tag: String = ""
 )

@@ -11,6 +11,7 @@ fun Apps.toEntity(): AppsEntity {
         versionName = versionName,
         versionCode = versionCode,
         isSystemApp = isSystemApp,
+        isInstalled = isInstalled,
         isDocked = isDocked,
         order = order,
         tag = tag
@@ -25,6 +26,7 @@ fun AppsEntity.toDomain(): Apps {
         versionName = versionName,
         versionCode = versionCode,
         isSystemApp = isSystemApp,
+        isInstalled = isInstalled,
         isDocked = isDocked,
         order = order,
         tag = tag
