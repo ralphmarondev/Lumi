@@ -6,5 +6,7 @@ data class HistoryState(
     val isLoading: Boolean = false,
     val callHistory: List<String> = emptyList(),
     val errorMessage: String? = null,
-    val showErrorMessage: Boolean = false
+    val showErrorMessage: Boolean = false,
+    val showDialPad: Boolean = false,
+    val dialedNumber: String = ""
 )

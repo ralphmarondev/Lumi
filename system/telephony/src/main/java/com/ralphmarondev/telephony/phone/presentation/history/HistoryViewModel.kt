@@ -27,6 +27,28 @@ class HistoryViewModel : ViewModel() {
             HistoryAction.Refresh -> {
                 loadCallHistory(isRefreshing = true)
             }
+
+            is HistoryAction.DialKey -> {
+                _state.update {
+                    it.copy(dialedNumber = it.dialedNumber + action.key)
+                }
+            }
+
+            HistoryAction.DeleteKey -> {
+//                _state.update {
+//                    it.copy(dialedNumber = it.dialedNumber.dropLast(_state.value.dialedNumber.length))
+//                }
+            }
+
+            HistoryAction.HideDialPad -> {
+                _state.update { it.copy(showDialPad = false) }
+            }
+
+            HistoryAction.ShowDialPad -> {
+                _state.update { it.copy(showDialPad = true) }
+            }
+
+            HistoryAction.CallNumber -> {}
         }
     }
 
