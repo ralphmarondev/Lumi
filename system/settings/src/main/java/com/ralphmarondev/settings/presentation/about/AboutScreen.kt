@@ -154,13 +154,17 @@ private fun AppDescription() {
     Text(
         text = "Lumi is a virtual operating system experience built inside a single Android app. " +
                 "It brings system-style features together in one clean, simple interface.",
-        style = MaterialTheme.typography.bodyLarge,
+        style = MaterialTheme.typography.bodyLarge.copy(
+            color = MaterialTheme.colorScheme.secondary
+        ),
         textAlign = TextAlign.Justify
     )
     Spacer(modifier = Modifier.height(12.dp))
     Text(
         text = "Lumi is not a launcher. It’s a small OS-inspired space made for clarity, consistency, and experimentation.",
-        style = MaterialTheme.typography.bodyLarge,
+        style = MaterialTheme.typography.bodyLarge.copy(
+            color = MaterialTheme.colorScheme.secondary
+        ),
         textAlign = TextAlign.Justify
     )
 }
@@ -178,8 +182,8 @@ private fun SystemInfoCard() {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             InfoRow(label = "System Version", value = BuildConfig.LUMI_VERSION_NAME)
-            InfoRow(label = "Build", value = BuildConfig.LUMI_VERSION_NAME)
-            InfoRow(label = "Built with", value = "Jetpack Compose")
+            InfoRow(label = "Build", value = BuildConfig.LUMI_VERSION_NAME.split(' ')[0])
+            InfoRow(label = "Codename", value = BuildConfig.LUMI_VERSION_NAME.split(' ')[1])
         }
     }
 }
@@ -298,7 +302,7 @@ private fun InfoRow(label: String, value: String) {
         Text(
             text = value,
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onBackground
+            color = MaterialTheme.colorScheme.primary
         )
     }
 }
