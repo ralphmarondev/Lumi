@@ -35,9 +35,14 @@ class HistoryViewModel : ViewModel() {
             }
 
             HistoryAction.DeleteKey -> {
-//                _state.update {
-//                    it.copy(dialedNumber = it.dialedNumber.dropLast(_state.value.dialedNumber.length))
-//                }
+                _state.update {
+                    val currentNumber = it.dialedNumber
+                    if (currentNumber.isNotEmpty()) {
+                        it.copy(dialedNumber = currentNumber.dropLast(1))
+                    } else {
+                        it
+                    }
+                }
             }
 
             HistoryAction.HideDialPad -> {
