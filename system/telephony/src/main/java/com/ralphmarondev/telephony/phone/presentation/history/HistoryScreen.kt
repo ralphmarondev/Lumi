@@ -28,19 +28,25 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -172,7 +178,7 @@ private fun HistoryScreen(
 }
 
 @Composable
-fun DialPad(
+private fun DialPad(
     state: HistoryState,
     action: (HistoryAction) -> Unit,
     modifier: Modifier = Modifier
@@ -193,14 +199,38 @@ fun DialPad(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AnimatedVisibility(state.dialedNumber.isNotBlank()) {
-                Text(
-                    text = state.dialedNumber,
-                    fontSize = 32.sp,
-                    maxLines = 1
+                val textFieldValue = remember(state.dialedNumber) {
+                    TextFieldValue(
+                        text = state.dialedNumber,
+                        selection = TextRange(state.dialedNumber.length)
+                    )
+                }
+
+                OutlinedTextField(
+                    value = textFieldValue,
+                    onValueChange = {},
+                    readOnly = true,
+                    textStyle = LocalTextStyle.current.copy(
+                        fontSize = 32.sp,
+                        color = MaterialTheme.colorScheme.secondary,
+                        textAlign = TextAlign.Center
+                    ),
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        cursorColor = MaterialTheme.colorScheme.secondary,
+                        focusedTextColor = MaterialTheme.colorScheme.secondary,
+                        unfocusedTextColor = MaterialTheme.colorScheme.secondary,
+                        disabledTextColor = MaterialTheme.colorScheme.secondary,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent
+                    )
                 )
             }
             Spacer(modifier = Modifier.height(24.dp))
-
             val keys = listOf(
                 listOf("1", "2", "3"),
                 listOf("4", "5", "6"),
@@ -219,14 +249,15 @@ fun DialPad(
                             modifier = Modifier
                                 .size(72.dp)
                                 .background(
-                                    color = MaterialTheme.colorScheme.primary,
+                                    color = MaterialTheme.colorScheme.secondary,
                                     shape = CircleShape
-                                )
+                                ),
+                            shape = CircleShape
                         ) {
                             Text(
                                 text = key,
-                                color = MaterialTheme.colorScheme.onPrimary,
-                                fontSize = 24.sp
+                                color = MaterialTheme.colorScheme.onSecondary,
+                                fontSize = 32.sp
                             )
                         }
                     }
@@ -240,24 +271,20 @@ fun DialPad(
             ) {
                 IconButton(
                     onClick = { action(HistoryAction.HideDialPad) },
-                    modifier = Modifier
-                        .size(72.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.7f),
-                            shape = CircleShape
-                        )
+                    modifier = Modifier.size(72.dp),
+                    shape = CircleShape
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Dialpad,
                         contentDescription = "Hide dial pad",
-                        tint = Color.White
+                        tint = MaterialTheme.colorScheme.secondary
                     )
                 }
 
                 IconButton(
                     onClick = { action(HistoryAction.CallNumber) },
                     modifier = Modifier
-                        .size(88.dp)
+                        .size(82.dp)
                         .background(
                             color = Color(0xFF4CAF50),
                             shape = CircleShape
@@ -266,23 +293,20 @@ fun DialPad(
                     Icon(
                         imageVector = Icons.Outlined.Call,
                         contentDescription = "Call",
-                        tint = Color.White
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.size(32.dp)
                     )
                 }
 
                 IconButton(
                     onClick = { action(HistoryAction.DeleteKey) },
-                    modifier = Modifier
-                        .size(72.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.error.copy(alpha = 0.7f),
-                            shape = CircleShape
-                        )
+                    modifier = Modifier.size(72.dp),
+                    shape = CircleShape
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Outlined.Backspace,
                         contentDescription = "Delete",
-                        tint = Color.White
+                        tint = MaterialTheme.colorScheme.secondary
                     )
                 }
             }
