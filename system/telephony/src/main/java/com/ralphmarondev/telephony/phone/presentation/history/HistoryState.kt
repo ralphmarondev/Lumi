@@ -4,5 +4,7 @@ data class HistoryState(
     val navigateBack: Boolean = false,
     val isRefreshing: Boolean = false,
     val isLoading: Boolean = false,
-    val callHistory: List<String> = emptyList()
+    val callHistory: List<String> = emptyList(),
+    val errorMessage: String? = null,
+    val showErrorMessage: Boolean = false
 )
