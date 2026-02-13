@@ -1,5 +1,7 @@
 package com.ralphmarondev.weather.presentation.home
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,9 +12,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Air
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
+import androidx.compose.material.icons.outlined.Cloud
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.LightMode
+import androidx.compose.material.icons.outlined.WaterDrop
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -20,14 +26,19 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.ralphmarondev.core.presentation.component.LumiGestureHandler
 import com.ralphmarondev.weather.theme.LocalThemeState
@@ -62,6 +73,15 @@ private fun HomeScreen(
     action: (HomeAction) -> Unit
 ) {
     val themeState = LocalThemeState.current
+    val snackbar = remember { SnackbarHostState() }
+
+    LaunchedEffect(state.showErrorMessage) {
+        if (state.showErrorMessage) {
+            snackbar.showSnackbar(
+                message = state.errorMessage ?: "Unknown error."
+            )
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -96,42 +116,51 @@ private fun HomeScreen(
                     navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
-        }
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbar) }
     ) { innerPadding ->
-        LazyColumn(
+        PullToRefreshBox(
+            isRefreshing = state.isRefreshing,
+            onRefresh = { action(HomeAction.Refresh) },
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
-            contentPadding = PaddingValues(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(innerPadding)
         ) {
-            item {
-                Text(
-                    text = "${state.weather?.temperature} degree C",
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        color = MaterialTheme.colorScheme.secondary
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                item {
+                    Text(
+                        text = "${state.weather?.temperature ?: "--"}°C",
+                        style = MaterialTheme.typography.displayMedium.copy(
+                            color = MaterialTheme.colorScheme.secondary
+                        )
                     )
-                )
-                Text(
-                    text = state.weather?.location?.name ?: "Cagayan Philippines",
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        color = MaterialTheme.colorScheme.secondary
-                    )
-                )
-                Text(
-                    text = state.weather?.condition?.name ?: "Sunny",
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        color = MaterialTheme.colorScheme.secondary
-                    )
-                )
 
-                Spacer(modifier = Modifier.height(16.dp))
-                CurrentCondition(
-                    state = state,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                )
+                    Text(
+                        text = state.weather?.location?.name ?: "Cagayan, Philippines",
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+                        )
+                    )
+
+                    Text(
+                        text = state.weather?.condition?.name ?: "Sunny",
+                        style = MaterialTheme.typography.titleSmall.copy(
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+                    CurrentCondition(
+                        state = state,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(220.dp)
+                    )
+                }
             }
         }
     }
@@ -146,34 +175,64 @@ private fun CurrentCondition(
         columns = GridCells.Fixed(3),
         modifier = modifier
     ) {
-        item {
-            OutlinedCard {
-                Text(
-                    text = "${state.weather?.windDirection ?: 0}"
-                )
-                Text(
-                    text = "Wind Flow"
-                )
-            }
-        }
-        item {
-            OutlinedCard {
-                Text(
-                    text = "${state.weather?.precipitationChance ?: 0}"
-                )
-                Text(
-                    text = "Precipitation"
-                )
-            }
-        }
-        item {
-            OutlinedCard {
-                Text(
-                    text = "${state.weather?.humidity ?: 0}"
-                )
-                Text(
-                    text = "Humidity"
-                )
+        val conditions = listOf(
+            Triple(
+                "Wind Flow",
+                "${state.weather?.windDirection ?: 0} km/h",
+                Icons.Outlined.WaterDrop
+            ),
+            Triple(
+                "Precipitation",
+                "${state.weather?.precipitationChance ?: 0}%",
+                Icons.Outlined.Air
+            ),
+            Triple(
+                "Humidity",
+                "${state.weather?.humidity ?: 0}%",
+                Icons.Outlined.Cloud
+            )
+        )
+
+        items(conditions.size) { index ->
+            val (label, value, icon) = conditions[index]
+            OutlinedCard(
+                modifier = Modifier
+                    .padding(4.dp)
+                    .fillMaxWidth(),
+                colors = CardDefaults.outlinedCardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                ),
+                shape = MaterialTheme.shapes.medium
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = label,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.height(24.dp)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = value,
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    )
+                    Text(
+                        text = label,
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             }
         }
     }

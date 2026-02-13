@@ -4,7 +4,9 @@ import com.ralphmarondev.weather.domain.model.Weather
 
 data class HomeState(
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val weather: Weather? = null,
     val errorMessage: String? = null,
+    val showErrorMessage: Boolean = false,
     val navigateBack: Boolean = false
 )

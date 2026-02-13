@@ -23,7 +23,10 @@ class HomeViewModel : ViewModel() {
 
     fun onAction(action: HomeAction) {
         when (action) {
-            HomeAction.Refresh -> loadWeather()
+            HomeAction.Refresh -> {
+                loadWeather(isRefreshing = true)
+            }
+
             HomeAction.NavigateBack -> {
                 _state.update {
                     it.copy(navigateBack = true)
@@ -38,18 +41,17 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    private fun loadWeather() {
+    private fun loadWeather(isRefreshing: Boolean = false) {
         viewModelScope.launch {
-            _state.update {
-                it.copy(
-                    isLoading = true,
-                    errorMessage = null
-                )
-            }
-
             try {
-                delay(2000)
-
+                _state.update {
+                    it.copy(
+                        isLoading = true,
+                        errorMessage = null,
+                        showErrorMessage = false,
+                        isRefreshing = isRefreshing
+                    )
+                }
                 val weather = Weather(
                     location = WeatherLocation.HOME,
                     temperature = 31.5,
@@ -65,18 +67,20 @@ class HomeViewModel : ViewModel() {
                         HourlyWeather(18, 29.0, WeatherCondition.ClearNight, 8.0)
                     )
                 )
-                _state.update {
-                    it.copy(
-                        weather = weather,
-                        isLoading = false
-                    )
+                if (isRefreshing) {
+                    delay(1000)
                 }
+                _state.update { it.copy(weather = weather) }
             } catch (e: Exception) {
                 _state.update {
                     it.copy(
-                        isLoading = false,
-                        errorMessage = e.message ?: "Failed to load weather."
+                        errorMessage = e.message ?: "Failed to load weather.",
+                        showErrorMessage = true
                     )
+                }
+            } finally {
+                _state.update {
+                    it.copy(isLoading = false, isRefreshing = false)
                 }
             }
         }
