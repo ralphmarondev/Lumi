@@ -7,10 +7,12 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.ralphmarondev.core.data.local.database.converters.EnumConverters
 import com.ralphmarondev.core.data.local.database.dao.AppsDao
+import com.ralphmarondev.core.data.local.database.dao.CallHistoryDao
 import com.ralphmarondev.core.data.local.database.dao.ContactDao
 import com.ralphmarondev.core.data.local.database.dao.UserDao
 import com.ralphmarondev.core.data.local.database.dao.WallpaperDao
 import com.ralphmarondev.core.data.local.database.entities.AppsEntity
+import com.ralphmarondev.core.data.local.database.entities.CallHistoryEntity
 import com.ralphmarondev.core.data.local.database.entities.ContactEntity
 import com.ralphmarondev.core.data.local.database.entities.UserEntity
 import com.ralphmarondev.core.data.local.database.entities.WallpaperEntity
@@ -20,7 +22,8 @@ import com.ralphmarondev.core.data.local.database.entities.WallpaperEntity
         UserEntity::class,
         WallpaperEntity::class,
         AppsEntity::class,
-        ContactEntity::class
+        ContactEntity::class,
+        CallHistoryEntity::class
     ],
     version = 2,
     exportSchema = false
@@ -32,6 +35,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract val wallpaperDao: WallpaperDao
     abstract val appsDao: AppsDao
     abstract val contactDao: ContactDao
+    abstract val callHistoryDao: CallHistoryDao
 
     companion object {
         private const val DATABASE_NAME = "lumi_os_database"
