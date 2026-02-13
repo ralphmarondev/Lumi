@@ -88,6 +88,24 @@ class LauncherViewModel(
                             it.copy(navigationTarget = NavigationTarget.Contacts)
                         }
                     }
+
+                    ApplicationTag.Phone.name -> {
+                        _state.update {
+                            it.copy(navigationTarget = NavigationTarget.Phone)
+                        }
+                    }
+
+                    ApplicationTag.Calculator.name -> {
+                        _state.update {
+                            it.copy(navigationTarget = NavigationTarget.Calculator)
+                        }
+                    }
+
+                    ApplicationTag.Community.name -> {
+                        _state.update {
+                            it.copy(navigationTarget = NavigationTarget.Community)
+                        }
+                    }
                 }
             }
 

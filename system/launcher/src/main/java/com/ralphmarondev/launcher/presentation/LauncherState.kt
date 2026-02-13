@@ -13,6 +13,9 @@ sealed class NavigationTarget {
     object Photos : NavigationTarget()
     object Videos : NavigationTarget()
     object Contacts : NavigationTarget()
+    object Phone : NavigationTarget()
+    object Calculator : NavigationTarget()
+    object Community : NavigationTarget()
 }
 
 data class LauncherState(

@@ -49,9 +49,12 @@ fun LauncherScreenRoot(
     navigateToWeather: () -> Unit,
     navigateToCalendar: () -> Unit,
     navigateToCamera: () -> Unit,
-    navigateToContacts: () -> Unit,
     navigateToPhotos: () -> Unit,
-    navigateToVideos: () -> Unit
+    navigateToVideos: () -> Unit,
+    navigateToContacts: () -> Unit,
+    navigateToPhone: () -> Unit,
+    navigateToCalculator: () -> Unit,
+    navigateToCommunity: () -> Unit
 ) {
     val viewModel: LauncherViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
@@ -94,11 +97,6 @@ fun LauncherScreenRoot(
                 viewModel.onAction(LauncherAction.ResetNavigation)
             }
 
-            NavigationTarget.Contacts -> {
-                navigateToContacts()
-                viewModel.onAction(LauncherAction.ResetNavigation)
-            }
-
             NavigationTarget.Photos -> {
                 navigateToPhotos()
                 viewModel.onAction(LauncherAction.ResetNavigation)
@@ -106,6 +104,26 @@ fun LauncherScreenRoot(
 
             NavigationTarget.Videos -> {
                 navigateToVideos()
+                viewModel.onAction(LauncherAction.ResetNavigation)
+            }
+
+            NavigationTarget.Contacts -> {
+                navigateToContacts()
+                viewModel.onAction(LauncherAction.ResetNavigation)
+            }
+
+            NavigationTarget.Phone -> {
+                navigateToPhone()
+                viewModel.onAction(LauncherAction.ResetNavigation)
+            }
+
+            NavigationTarget.Calculator -> {
+                navigateToCalculator()
+                viewModel.onAction(LauncherAction.ResetNavigation)
+            }
+
+            NavigationTarget.Community -> {
+                navigateToCommunity()
                 viewModel.onAction(LauncherAction.ResetNavigation)
             }
         }
