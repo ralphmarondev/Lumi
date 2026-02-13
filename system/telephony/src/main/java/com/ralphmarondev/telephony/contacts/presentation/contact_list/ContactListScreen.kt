@@ -10,8 +10,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
-import androidx.compose.material.icons.outlined.DarkMode
-import androidx.compose.material.icons.outlined.LightMode
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -30,7 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.ralphmarondev.core.presentation.theme.LocalThemeState
 import com.ralphmarondev.telephony.contacts.presentation.component.ContactCard
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -68,29 +65,11 @@ private fun ContactListScreen(
     state: ContactListState,
     action: (ContactListAction) -> Unit
 ) {
-    val themeState = LocalThemeState.current
-
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
                     Text(text = "Contacts")
-                },
-                actions = {
-                    IconButton(onClick = themeState::toggleTheme) {
-                        Icon(
-                            imageVector = if (themeState.darkTheme.value) {
-                                Icons.Outlined.LightMode
-                            } else {
-                                Icons.Outlined.DarkMode
-                            },
-                            contentDescription = if (themeState.darkTheme.value) {
-                                "Switch to light mode"
-                            } else {
-                                "Switch to dark mode"
-                            }
-                        )
-                    }
                 },
                 navigationIcon = {
                     IconButton(
@@ -107,7 +86,6 @@ private fun ContactListScreen(
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                    actionIconContentColor = MaterialTheme.colorScheme.onPrimary,
                     navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
