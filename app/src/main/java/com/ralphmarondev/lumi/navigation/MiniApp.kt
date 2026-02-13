@@ -11,6 +11,7 @@ import com.ralphmarondev.media.photos.PhotosActivity
 import com.ralphmarondev.media.videos.VideosActivity
 import com.ralphmarondev.notes.NoteActivity
 import com.ralphmarondev.telephony.contacts.ContactsActivity
+import com.ralphmarondev.telephony.phone.PhoneActivity
 import com.ralphmarondev.weather.WeatherActivity
 
 enum class MiniApp {
@@ -22,7 +23,8 @@ enum class MiniApp {
     Photos,
     Videos,
     Calendar,
-    Contacts
+    Contacts,
+    Phone
 }
 
 @Suppress("DEPRECATION")
@@ -36,6 +38,7 @@ fun Context.launchMiniApp(miniApp: MiniApp) {
         MiniApp.Videos -> VideosActivity::class.java
         MiniApp.Calendar -> CalendarActivity::class.java
         MiniApp.Contacts -> ContactsActivity::class.java
+        MiniApp.Phone -> PhoneActivity::class.java
         MiniApp.Unknown -> return
     }
 

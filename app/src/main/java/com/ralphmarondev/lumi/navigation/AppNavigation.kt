@@ -1,5 +1,6 @@
 package com.ralphmarondev.lumi.navigation
 
+import android.util.Log
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
@@ -119,14 +120,28 @@ fun AppNavigation(
                     navigateToCamera = {
                         context.launchMiniApp(MiniApp.Camera)
                     },
-                    navigateToContacts = {
-                        context.launchMiniApp(MiniApp.Contacts)
-                    },
                     navigateToPhotos = {
                         context.launchMiniApp(MiniApp.Photos)
                     },
                     navigateToVideos = {
                         context.launchMiniApp(MiniApp.Videos)
+                    },
+                    navigateToContacts = {
+                        context.launchMiniApp(MiniApp.Contacts)
+                    },
+                    navigateToPhone = {
+                        Log.d("AppNavigation", "Opening phone activity...")
+                        context.launchMiniApp(MiniApp.Phone)
+                    },
+                    navigateToCalculator = {
+                        navController.navigate(SystemApp.ComingSoon) {
+                            launchSingleTop = true
+                        }
+                    },
+                    navigateToCommunity = {
+                        navController.navigate(SystemApp.ComingSoon) {
+                            launchSingleTop = true
+                        }
                     }
                 )
             }
