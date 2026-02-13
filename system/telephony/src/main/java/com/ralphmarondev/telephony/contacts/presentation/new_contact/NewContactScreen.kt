@@ -33,6 +33,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.ralphmarondev.core.presentation.component.LumiButton
+import com.ralphmarondev.core.presentation.component.LumiGestureHandler
 import com.ralphmarondev.core.presentation.component.LumiTextField
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -50,10 +51,12 @@ fun NewContactScreenRoot(
         }
     }
 
-    NewContactScreen(
-        state = state,
-        action = viewModel::onAction
-    )
+    LumiGestureHandler(onBackSwipe = navigateBack) {
+        NewContactScreen(
+            state = state,
+            action = viewModel::onAction
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

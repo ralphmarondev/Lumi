@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.ralphmarondev.core.presentation.component.LumiGestureHandler
 import com.ralphmarondev.telephony.contacts.presentation.component.ContactCard
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -52,11 +53,12 @@ fun ContactListScreenRoot(
             viewModel.onAction(ContactListAction.ResetNavigation)
         }
     }
-
-    ContactListScreen(
-        state = state,
-        action = viewModel::onAction
-    )
+    LumiGestureHandler(onBackSwipe = navigateBack) {
+        ContactListScreen(
+            state = state,
+            action = viewModel::onAction
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
