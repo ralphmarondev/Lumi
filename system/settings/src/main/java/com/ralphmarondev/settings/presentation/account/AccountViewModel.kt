@@ -51,6 +51,15 @@ class AccountViewModel(
 
             // DISPLAY NAME
             is AccountAction.SetDisplayNameDialogValue -> {
+                if (
+                    _state.value.showUsernameDialog ||
+                    _state.value.showEmailDialog ||
+                    _state.value.showPhoneNumberDialog ||
+                    _state.value.showGenderDialog ||
+                    _state.value.showBirthdayDialog
+                ) {
+                    return
+                }
                 _state.update { it.copy(showDisplayNameDialog = action.value) }
             }
 
@@ -60,6 +69,15 @@ class AccountViewModel(
 
             // EMAIL
             is AccountAction.SetEmailDialogValue -> {
+                if (
+                    _state.value.showUsernameDialog ||
+                    _state.value.showDisplayNameDialog ||
+                    _state.value.showPhoneNumberDialog ||
+                    _state.value.showGenderDialog ||
+                    _state.value.showBirthdayDialog
+                ) {
+                    return
+                }
                 _state.update { it.copy(showEmailDialog = action.value) }
             }
 
@@ -69,6 +87,15 @@ class AccountViewModel(
 
             // PHONE NUMBER
             is AccountAction.SetPhoneNumberDialogValue -> {
+                if (
+                    _state.value.showUsernameDialog ||
+                    _state.value.showEmailDialog ||
+                    _state.value.showDisplayNameDialog ||
+                    _state.value.showGenderDialog ||
+                    _state.value.showBirthdayDialog
+                ) {
+                    return
+                }
                 _state.update { it.copy(showPhoneNumberDialog = action.value) }
             }
 
@@ -78,6 +105,15 @@ class AccountViewModel(
 
             // GENDER
             is AccountAction.SetGenderDialogValue -> {
+                if (
+                    _state.value.showUsernameDialog ||
+                    _state.value.showEmailDialog ||
+                    _state.value.showPhoneNumberDialog ||
+                    _state.value.showDisplayNameDialog ||
+                    _state.value.showBirthdayDialog
+                ) {
+                    return
+                }
                 _state.update { it.copy(showGenderDialog = action.value) }
             }
 
@@ -87,6 +123,15 @@ class AccountViewModel(
 
             // BIRTHDAY
             is AccountAction.SetBirthdayDialogValue -> {
+                if (
+                    _state.value.showUsernameDialog ||
+                    _state.value.showEmailDialog ||
+                    _state.value.showPhoneNumberDialog ||
+                    _state.value.showGenderDialog ||
+                    _state.value.showDisplayNameDialog
+                ) {
+                    return
+                }
                 _state.update { it.copy(showBirthdayDialog = action.value) }
             }
 
@@ -96,6 +141,15 @@ class AccountViewModel(
 
             // USERNAME
             is AccountAction.SetUsernameDialogValue -> {
+                if (
+                    _state.value.showDisplayNameDialog ||
+                    _state.value.showEmailDialog ||
+                    _state.value.showPhoneNumberDialog ||
+                    _state.value.showGenderDialog ||
+                    _state.value.showBirthdayDialog
+                ) {
+                    return
+                }
                 _state.update { it.copy(showUsernameDialog = action.value) }
             }
 

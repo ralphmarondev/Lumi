@@ -60,6 +60,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -138,14 +139,16 @@ private fun AccountScreen(
             SnackbarHost(hostState = snackbar)
         }
     ) { innerPadding ->
-        PullToRefreshBox(
-            isRefreshing = state.isRefreshing,
-            onRefresh = { action(AccountAction.Refresh) },
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            Box(modifier = Modifier.fillMaxSize()) {
+            PullToRefreshBox(
+                isRefreshing = state.isRefreshing,
+                onRefresh = { action(AccountAction.Refresh) },
+                modifier = Modifier.fillMaxSize()
+            ) {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(16.dp),
@@ -226,66 +229,66 @@ private fun AccountScreen(
                         }
                     }
                 }
+            }
 
-                if (state.showDisplayNameDialog) {
-                    DisplayNameDialog(
-                        displayName = state.displayName,
-                        onCancel = { action(AccountAction.SetDisplayNameDialogValue(false)) },
-                        onUpdate = { updatedDisplayName ->
-                            action(AccountAction.UpdateDisplayName(updatedDisplayName))
-                        }
-                    )
-                }
+            if (state.showDisplayNameDialog) {
+                DisplayNameDialog(
+                    displayName = state.displayName,
+                    onCancel = { action(AccountAction.SetDisplayNameDialogValue(false)) },
+                    onUpdate = { updatedDisplayName ->
+                        action(AccountAction.UpdateDisplayName(updatedDisplayName))
+                    }
+                )
+            }
 
-                if (state.showUsernameDialog) {
-                    UsernameDialog(
-                        username = state.username,
-                        onCancel = { action(AccountAction.SetUsernameDialogValue(false)) },
-                        onUpdate = { updatedUsername ->
-                            action(AccountAction.UpdateUsername(updatedUsername))
-                        }
-                    )
-                }
+            if (state.showUsernameDialog) {
+                UsernameDialog(
+                    username = state.username,
+                    onCancel = { action(AccountAction.SetUsernameDialogValue(false)) },
+                    onUpdate = { updatedUsername ->
+                        action(AccountAction.UpdateUsername(updatedUsername))
+                    }
+                )
+            }
 
-                if (state.showEmailDialog) {
-                    EmailDialog(
-                        email = state.email ?: "",
-                        onCancel = { action(AccountAction.SetEmailDialogValue(false)) },
-                        onUpdate = { updatedEmail ->
-                            action(AccountAction.UpdateEmail(updatedEmail))
-                        }
-                    )
-                }
+            if (state.showEmailDialog) {
+                EmailDialog(
+                    email = state.email ?: "",
+                    onCancel = { action(AccountAction.SetEmailDialogValue(false)) },
+                    onUpdate = { updatedEmail ->
+                        action(AccountAction.UpdateEmail(updatedEmail))
+                    }
+                )
+            }
 
-                if (state.showPhoneNumberDialog) {
-                    PhoneNumberDialog(
-                        phoneNumber = state.phoneNumber ?: "",
-                        onCancel = { action(AccountAction.SetPhoneNumberDialogValue(false)) },
-                        onUpdate = { updatedPhoneNumber ->
-                            action(AccountAction.UpdatePhoneNumber(updatedPhoneNumber))
-                        }
-                    )
-                }
+            if (state.showPhoneNumberDialog) {
+                PhoneNumberDialog(
+                    phoneNumber = state.phoneNumber ?: "",
+                    onCancel = { action(AccountAction.SetPhoneNumberDialogValue(false)) },
+                    onUpdate = { updatedPhoneNumber ->
+                        action(AccountAction.UpdatePhoneNumber(updatedPhoneNumber))
+                    }
+                )
+            }
 
-                if (state.showGenderDialog) {
-                    GenderDialog(
-                        gender = state.gender,
-                        onCancel = { action(AccountAction.SetGenderDialogValue(false)) },
-                        onUpdate = { updatedGender ->
-                            action(AccountAction.UpdateGender(updatedGender))
-                        }
-                    )
-                }
+            if (state.showGenderDialog) {
+                GenderDialog(
+                    gender = state.gender,
+                    onCancel = { action(AccountAction.SetGenderDialogValue(false)) },
+                    onUpdate = { updatedGender ->
+                        action(AccountAction.UpdateGender(updatedGender))
+                    }
+                )
+            }
 
-                if (state.showBirthdayDialog) {
-                    BirthdayDialog(
-                        birthday = state.birthday ?: "",
-                        onCancel = { action(AccountAction.SetBirthdayDialogValue(false)) },
-                        onUpdate = { updatedBirthday ->
-                            action(AccountAction.UpdateBirthday(updatedBirthday))
-                        }
-                    )
-                }
+            if (state.showBirthdayDialog) {
+                BirthdayDialog(
+                    birthday = state.birthday ?: "",
+                    onCancel = { action(AccountAction.SetBirthdayDialogValue(false)) },
+                    onUpdate = { updatedBirthday ->
+                        action(AccountAction.UpdateBirthday(updatedBirthday))
+                    }
+                )
             }
         }
     }
@@ -375,6 +378,11 @@ private fun BoxScope.DisplayNameDialog(
 
     Box(
         modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.4f))
+    )
+    Box(
+        modifier = Modifier
             .align(Alignment.Center)
             .zIndex(3f)
             .padding(24.dp)
@@ -440,6 +448,11 @@ private fun BoxScope.UsernameDialog(
 
     Box(
         modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.4f))
+    )
+    Box(
+        modifier = Modifier
             .align(Alignment.Center)
             .zIndex(3f)
             .padding(24.dp)
@@ -498,6 +511,11 @@ private fun BoxScope.EmailDialog(
 
     Box(
         modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.4f))
+    )
+    Box(
+        modifier = Modifier
             .align(Alignment.Center)
             .zIndex(3f)
             .padding(24.dp)
@@ -554,6 +572,11 @@ private fun BoxScope.PhoneNumberDialog(
 ) {
     var newPhoneNumber by rememberSaveable { mutableStateOf(phoneNumber) }
 
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.4f))
+    )
     Box(
         modifier = Modifier
             .align(Alignment.Center)
@@ -625,6 +648,11 @@ private fun BoxScope.GenderDialog(
 
     Box(
         modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.4f))
+    )
+    Box(
+        modifier = Modifier
             .align(Alignment.Center)
             .zIndex(3f)
             .padding(24.dp)
@@ -681,6 +709,11 @@ private fun BoxScope.BirthdayDialog(
 ) {
     var newBirthday by rememberSaveable { mutableStateOf(birthday) }
 
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.4f))
+    )
     Box(
         modifier = Modifier
             .align(Alignment.Center)
