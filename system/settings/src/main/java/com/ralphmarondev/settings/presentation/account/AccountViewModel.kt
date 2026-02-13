@@ -101,7 +101,7 @@ class AccountViewModel(
             }
 
             is AccountAction.UpdatePhoneNumber -> {
-                updatePhoneNumber("+63${action.updatedPhoneNumber.trim()}")
+                updatePhoneNumber(action.updatedPhoneNumber.trim())
             }
 
             // GENDER
@@ -384,7 +384,8 @@ class AccountViewModel(
                     return@launch
                 }
 
-                repository.updatePhoneNumber(updatedPhoneNumber)
+                val newPhoneNumber = "+63${updatedPhoneNumber}"
+                repository.updatePhoneNumber(newPhoneNumber)
                 loadUserInformation()
                 _state.update {
                     it.copy(
