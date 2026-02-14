@@ -5,15 +5,15 @@ import android.util.Log
 import com.ralphmarondev.boot.R
 import com.ralphmarondev.boot.setup.domain.repository.SetupRepository
 import com.ralphmarondev.core.common.FileManager
-import com.ralphmarondev.core.data.local.database.dao.AppsDao
+import com.ralphmarondev.core.data.local.database.dao.LumiAppDao
 import com.ralphmarondev.core.data.local.database.dao.UserDao
 import com.ralphmarondev.core.data.local.database.dao.WallpaperDao
-import com.ralphmarondev.core.data.local.database.entities.AppsEntity
+import com.ralphmarondev.core.data.local.database.entities.LumiAppEntity
 import com.ralphmarondev.core.data.local.database.entities.WallpaperEntity
 import com.ralphmarondev.core.data.local.database.mapper.toDomain
 import com.ralphmarondev.core.data.local.database.mapper.toEntity
-import com.ralphmarondev.core.data.local.preferences.AppPreferences
-import com.ralphmarondev.core.domain.model.ApplicationTag
+import com.ralphmarondev.core.data.local.preferences.LumiPreferences
+import com.ralphmarondev.core.domain.model.LumiAppTag
 import com.ralphmarondev.core.domain.model.Language
 import com.ralphmarondev.core.domain.model.Result
 import com.ralphmarondev.core.domain.model.User
@@ -21,8 +21,8 @@ import com.ralphmarondev.core.domain.model.User
 class SetupRepositoryImpl(
     private val userDao: UserDao,
     private val wallpaperDao: WallpaperDao,
-    private val appsDao: AppsDao,
-    private val preferences: AppPreferences,
+    private val lumiAppDao: LumiAppDao,
+    private val preferences: LumiPreferences,
     private val context: Context
 ) : SetupRepository {
 
@@ -105,124 +105,124 @@ class SetupRepositoryImpl(
 
     private suspend fun saveDefaultApps() {
         val apps = listOf(
-            AppsEntity(
+            LumiAppEntity(
                 name = "Settings",
                 versionName = "1.0 Settings",
                 versionCode = 1,
                 isSystemApp = true,
                 isDocked = true,
                 order = 1,
-                tag = ApplicationTag.Settings.name,
+                tag = LumiAppTag.Settings.name,
                 resId = R.drawable.setting
             ),
-            AppsEntity(
+            LumiAppEntity(
                 name = "Notes",
                 versionName = "1.0 Notes",
                 versionCode = 1,
                 isSystemApp = false,
                 isDocked = true,
                 order = 2,
-                tag = ApplicationTag.Notes.name,
+                tag = LumiAppTag.Notes.name,
                 resId = R.drawable.notepad
             ),
-            AppsEntity(
+            LumiAppEntity(
                 name = "Clock",
                 versionName = "1.0 Clock",
                 versionCode = 1,
                 isSystemApp = false,
                 isDocked = true,
                 order = 3,
-                tag = ApplicationTag.Clock.name,
+                tag = LumiAppTag.Clock.name,
                 resId = R.drawable.clock
             ),
-            AppsEntity(
+            LumiAppEntity(
                 name = "Weather",
                 versionName = "1.0 Weather",
                 versionCode = 1,
                 isSystemApp = false,
                 isDocked = true,
                 order = 4,
-                tag = ApplicationTag.Weather.name,
+                tag = LumiAppTag.Weather.name,
                 resId = R.drawable.weather
             ),
-            AppsEntity(
+            LumiAppEntity(
                 name = "Calendar",
                 versionName = "1.0 Calendar",
                 versionCode = 1,
                 isSystemApp = false,
                 isDocked = false,
                 order = 5,
-                tag = ApplicationTag.Calendar.name,
+                tag = LumiAppTag.Calendar.name,
                 resId = R.drawable.calendar
             ),
-            AppsEntity(
+            LumiAppEntity(
                 name = "Camera",
                 versionName = "1.0 Camera",
                 versionCode = 1,
                 isSystemApp = false,
                 isDocked = false,
                 order = 6,
-                tag = ApplicationTag.Camera.name,
+                tag = LumiAppTag.Camera.name,
                 resId = R.drawable.camera
             ),
-            AppsEntity(
+            LumiAppEntity(
                 name = "Photos",
                 versionName = "1.0 Photos",
                 versionCode = 1,
                 isSystemApp = false,
                 isDocked = false,
                 order = 7,
-                tag = ApplicationTag.Photos.name,
+                tag = LumiAppTag.Photos.name,
                 resId = R.drawable.photos
             ),
-            AppsEntity(
+            LumiAppEntity(
                 name = "Videos",
                 versionName = "1.0 Videos",
                 versionCode = 1,
                 isSystemApp = false,
                 isDocked = false,
                 order = 8,
-                tag = ApplicationTag.Videos.name,
+                tag = LumiAppTag.Videos.name,
                 resId = R.drawable.video
             ),
-            AppsEntity(
+            LumiAppEntity(
                 name = "Contacts",
                 versionName = "1.0 Contacts",
                 versionCode = 1,
                 isSystemApp = false,
                 isDocked = false,
                 order = 9,
-                tag = ApplicationTag.Contacts.name,
+                tag = LumiAppTag.Contacts.name,
                 resId = R.drawable.contacts
             ),
-            AppsEntity(
+            LumiAppEntity(
                 name = "Phone",
                 versionName = "1.0 Phone",
                 versionCode = 1,
                 isSystemApp = true,
                 isDocked = false,
                 order = 10,
-                tag = ApplicationTag.Phone.name,
+                tag = LumiAppTag.Phone.name,
                 resId = R.drawable.phone_call
             ),
-            AppsEntity(
+            LumiAppEntity(
                 name = "Community",
                 versionName = "1.0 Community",
                 versionCode = 1,
                 isSystemApp = true,
                 isDocked = false,
                 order = 11,
-                tag = ApplicationTag.Community.name,
+                tag = LumiAppTag.Community.name,
                 resId = R.drawable.community
             ),
-            AppsEntity(
+            LumiAppEntity(
                 name = "Calculator",
                 versionName = "1.0 Calculator",
                 versionCode = 1,
                 isSystemApp = false,
                 isDocked = false,
                 order = 12,
-                tag = ApplicationTag.Calculator.name,
+                tag = LumiAppTag.Calculator.name,
                 resId = R.drawable.calculator
             )
         )
@@ -238,7 +238,7 @@ class SetupRepositoryImpl(
             val newApp = app.copy(
                 icon = iconPath
             )
-            appsDao.create(newApp)
+            lumiAppDao.create(newApp)
         }
         Log.d("Setup", "Default apps installed.")
     }

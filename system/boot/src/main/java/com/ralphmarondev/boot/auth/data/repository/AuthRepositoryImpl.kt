@@ -3,13 +3,13 @@ package com.ralphmarondev.boot.auth.data.repository
 import com.ralphmarondev.boot.auth.domain.repository.AuthRepository
 import com.ralphmarondev.core.data.local.database.dao.UserDao
 import com.ralphmarondev.core.data.local.database.mapper.toDomain
-import com.ralphmarondev.core.data.local.preferences.AppPreferences
+import com.ralphmarondev.core.data.local.preferences.LumiPreferences
 import com.ralphmarondev.core.domain.model.Result
 import com.ralphmarondev.core.domain.model.User
 
 class AuthRepositoryImpl(
     private val userDao: UserDao,
-    private val preferences: AppPreferences
+    private val preferences: LumiPreferences
 ) : AuthRepository {
     override suspend fun login(
         username: String,
