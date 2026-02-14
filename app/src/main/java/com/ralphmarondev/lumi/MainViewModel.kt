@@ -2,7 +2,7 @@ package com.ralphmarondev.lumi
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ralphmarondev.core.data.local.preferences.AppPreferences
+import com.ralphmarondev.core.data.local.preferences.LumiPreferences
 import com.ralphmarondev.lumi.navigation.SystemApp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class MainViewModel(
-    private val preferences: AppPreferences
+    private val preferences: LumiPreferences
 ) : ViewModel() {
 
     private val _startApp = MutableStateFlow<SystemApp?>(null)

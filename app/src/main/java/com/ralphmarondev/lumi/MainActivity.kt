@@ -9,7 +9,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.core.view.WindowCompat
-import com.ralphmarondev.core.data.local.preferences.AppPreferences
+import com.ralphmarondev.core.data.local.preferences.LumiPreferences
 import com.ralphmarondev.core.presentation.component.LumiSplash
 import com.ralphmarondev.core.presentation.theme.LocalThemeState
 import com.ralphmarondev.core.presentation.theme.LumiTheme
@@ -20,7 +20,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
 
-    private val preferences: AppPreferences by inject()
+    private val preferences: LumiPreferences by inject()
     private val viewModel: MainViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
