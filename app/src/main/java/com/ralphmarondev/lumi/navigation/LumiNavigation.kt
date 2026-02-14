@@ -9,7 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.ralphmarondev.boot.auth.presentation.login.LoginScreenRoot
-import com.ralphmarondev.boot.setup.presentation.SetupScreenRoot
+import com.ralphmarondev.boot.setup.SetupNavigation
 import com.ralphmarondev.core.domain.model.LumiAppTag
 import com.ralphmarondev.core.presentation.coming_soon.ComingSoonScreen
 import com.ralphmarondev.core.presentation.shell.LumiShell
@@ -54,7 +54,7 @@ fun LumiNavigation(
                     )
                 }
             ) {
-                SetupScreenRoot(
+                SetupNavigation(
                     onCompleted = {
                         navController.navigate(LumiApp.Login) {
                             popUpTo(0) { inclusive = true }
