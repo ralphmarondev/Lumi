@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -32,8 +30,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -41,7 +37,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -53,6 +48,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ralphmarondev.boot.R
 import com.ralphmarondev.boot.setup.presentation.component.LanguageCard
+import com.ralphmarondev.core.domain.model.Language
 import com.ralphmarondev.core.presentation.component.LumiButton
 import com.ralphmarondev.core.presentation.component.LumiLottie
 import com.ralphmarondev.core.presentation.component.LumiOutlineButton
@@ -71,10 +67,15 @@ fun SetupScreenRoot(
     val viewModel: SetupViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
 
-    LaunchedEffect(state.completed) {
-        if (state.completed) {
+    LaunchedEffect(state.completeSetup) {
+        if (state.completeSetup && state.installLumi == InstallMode.InstallLumi) {
             installLumi()
-            viewModel.onAction(SetupAction.ResetNavigation)
+        }
+    }
+
+    LaunchedEffect(state.installLumi) {
+        if (state.installLumi == InstallMode.TryLumi) {
+            tryLumi()
         }
     }
 
@@ -92,10 +93,9 @@ private fun SetupScreen(
 ) {
     val themeState = LocalThemeState.current
     val shellState = LocalLumiShellState.current
-    val snackbarState = remember { SnackbarHostState() }
     val darkMode = themeState.darkTheme.value
 
-    val pagerState = rememberPagerState { 2 }
+    val pagerState = rememberPagerState { state.screenCount }
 
     LaunchedEffect(state.currentScreen) {
         pagerState.animateScrollToPage(state.currentScreen)
@@ -106,13 +106,6 @@ private fun SetupScreen(
             if (darkMode) LumiShellStyle.WhiteOnTransparent
             else LumiShellStyle.BlackOnTransparent
         )
-    }
-
-    LaunchedEffect(state.message) {
-        state.message?.let { msg ->
-            snackbarState.showSnackbar(message = msg)
-            action(SetupAction.ResetMessage)
-        }
     }
 
     Scaffold(
@@ -167,15 +160,13 @@ private fun SetupScreen(
                 ) {
                     LumiOutlineButton(
                         text = "Back",
-                        onClick = { action(SetupAction.Previous) },
-                        modifier = Modifier,
-                        enabled = state.enableContinueButton
+                        onClick = { action(SetupAction.Previous) }
                     )
 
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        repeat(2) { index ->
+                        repeat(state.screenCount) { index ->
                             Box(
                                 modifier = Modifier
                                     .size(if (index == state.currentScreen) 18.dp else 12.dp)
@@ -190,51 +181,26 @@ private fun SetupScreen(
                     }
 
                     LumiButton(
-                        text = if (state.currentScreen == 2) "Finish" else "Next",
-                        onClick = {
-                            if (state.currentScreen < 2) {
-                                action(SetupAction.Continue)
-                            } else {
-                                action(SetupAction.Complete)
-                            }
-                        },
-                        modifier = Modifier,
-                        enabled = state.enableContinueButton
+                        text = if (state.currentScreen == state.screenCount) "Finish" else "Next",
+                        onClick = { action(SetupAction.Continue) }
                     )
                 }
             }
-        },
-        snackbarHost = { SnackbarHost(snackbarState) }
+        }
     ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            AnimatedVisibility(visible = state.currentPage == Page.Setup) {
-                HorizontalPager(
-                    state = pagerState,
-                    userScrollEnabled = false,
-                    modifier = Modifier.fillMaxSize()
-                ) { page ->
-                    when (page) {
-                        0 -> ChooseLanguage(state, action)
-                        1 -> CreateAccount(state, action)
-                    }
-                }
-            }
-
-            AnimatedVisibility(visible = state.currentPage == Page.Finalizing) {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                    contentPadding = PaddingValues(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    item {
-                        Text(text = "Finalizing")
-                    }
+            HorizontalPager(
+                state = pagerState,
+                userScrollEnabled = false,
+                modifier = Modifier.fillMaxSize()
+            ) { page ->
+                when (page) {
+                    0 -> ChooseLanguage(state, action)
+                    1 -> CreateAccount(state, action)
                 }
             }
         }
@@ -279,15 +245,15 @@ private fun ChooseLanguage(
         Spacer(modifier = Modifier.height(32.dp))
         LanguageCard(
             text = "English",
-            onClick = { action(SetupAction.SetLanguage(0)) },
+            onClick = { action(SetupAction.SetLanguage(Language.ENGLISH)) },
             modifier = Modifier.padding(vertical = 4.dp),
-            selected = state.selectedLanguage == 0
+            selected = state.selectedLanguage == Language.ENGLISH
         )
         LanguageCard(
             text = "Filipino",
-            onClick = { action(SetupAction.SetLanguage(1)) },
+            onClick = { action(SetupAction.SetLanguage(Language.FILIPINO)) },
             modifier = Modifier.padding(vertical = 4.dp),
-            selected = state.selectedLanguage == 1
+            selected = state.selectedLanguage == Language.FILIPINO
         )
     }
 }
@@ -387,39 +353,4 @@ private fun CreateAccount(
             )
         )
     }
-}
-
-@Composable
-private fun InstallingLumiOS(
-    state: SetupState,
-    action: (SetupAction) -> Unit
-) {
-
-}
-
-@Composable
-private fun AllSet() {
-    LumiLottie(
-        animatedResId = R.raw.success,
-        modifier = Modifier
-            .size(240.dp)
-    )
-
-    Spacer(modifier = Modifier.height(8.dp))
-    Text(
-        text = "All Set",
-        style = MaterialTheme.typography.titleLarge.copy(
-            color = MaterialTheme.colorScheme.primary,
-            textAlign = TextAlign.Center
-        )
-    )
-    Spacer(modifier = Modifier.height(4.dp))
-    Text(
-        text = "Your system is ready.",
-        style = MaterialTheme.typography.titleMedium.copy(
-            color = MaterialTheme.colorScheme.secondary,
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Normal
-        )
-    )
 }

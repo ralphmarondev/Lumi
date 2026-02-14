@@ -1,22 +1,20 @@
 package com.ralphmarondev.boot.setup.presentation.setup
 
+import com.ralphmarondev.core.domain.model.Language
+
 data class SetupState(
+    val screenCount: Int = 2,
     val currentScreen: Int = 0,
-    val selectedLanguage: Int = 0,
+    val selectedLanguage: Language = Language.ENGLISH,
     val displayName: String = "",
     val username: String = "",
     val password: String = "",
     val confirmPassword: String = "",
-    val message: String? = null,
-    val completed: Boolean = false,
-    val isError: Boolean = false,
-    val isLoading: Boolean = false,
-    val enableContinueButton: Boolean = true,
-    val currentPage: Page = Page.Setup
+    val completeSetup: Boolean = false,
+    val installLumi: InstallMode = InstallMode.InstallLumi
 )
 
-enum class Page {
-    Setup,
-    Finalizing,
-    AllSet
+enum class InstallMode {
+    TryLumi,
+    InstallLumi
 }
