@@ -14,7 +14,7 @@ import com.ralphmarondev.core.presentation.component.LumiSplash
 import com.ralphmarondev.core.presentation.theme.LocalThemeState
 import com.ralphmarondev.core.presentation.theme.LumiTheme
 import com.ralphmarondev.core.presentation.theme.ThemeProvider
-import com.ralphmarondev.lumi.navigation.AppNavigation
+import com.ralphmarondev.lumi.navigation.LumiNavigation
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
                     ) { app ->
                         when (app) {
                             null -> LumiSplash()
-                            else -> AppNavigation(startApp = app)
+                            else -> LumiNavigation(startApp = app)
                         }
                     }
                 }

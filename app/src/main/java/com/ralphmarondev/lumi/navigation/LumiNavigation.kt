@@ -1,6 +1,5 @@
 package com.ralphmarondev.lumi.navigation
 
-import android.util.Log
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
@@ -11,14 +10,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.ralphmarondev.boot.auth.presentation.login.LoginScreenRoot
 import com.ralphmarondev.boot.setup.presentation.SetupScreenRoot
+import com.ralphmarondev.core.domain.model.LumiAppTag
 import com.ralphmarondev.core.presentation.coming_soon.ComingSoonScreen
 import com.ralphmarondev.core.presentation.shell.LumiShell
 import com.ralphmarondev.launcher.presentation.LauncherScreenRoot
 import com.ralphmarondev.settings.navigation.SettingsNavigation
 
 @Composable
-fun AppNavigation(
-    startApp: SystemApp = SystemApp.Setup,
+fun LumiNavigation(
+    startApp: LumiApp = LumiApp.Setup,
     navController: NavHostController = rememberNavController()
 ) {
     val context = LocalContext.current
@@ -28,7 +28,7 @@ fun AppNavigation(
             navController = navController,
             startDestination = startApp
         ) {
-            composable<SystemApp.Setup>(
+            composable<LumiApp.Setup>(
                 enterTransition = {
                     slideIntoContainer(
                         AnimatedContentTransitionScope.SlideDirection.Left,
@@ -56,14 +56,14 @@ fun AppNavigation(
             ) {
                 SetupScreenRoot(
                     onCompleted = {
-                        navController.navigate(SystemApp.Login) {
+                        navController.navigate(LumiApp.Login) {
                             popUpTo(0) { inclusive = true }
                             launchSingleTop = true
                         }
                     }
                 )
             }
-            composable<SystemApp.Login>(
+            composable<LumiApp.Login>(
                 enterTransition = {
                     slideIntoContainer(
                         AnimatedContentTransitionScope.SlideDirection.Left,
@@ -91,61 +91,60 @@ fun AppNavigation(
             ) {
                 LoginScreenRoot(
                     onSuccess = {
-                        navController.navigate(SystemApp.Launcher) {
+                        navController.navigate(LumiApp.Launcher) {
                             popUpTo(0) { inclusive = true }
                             launchSingleTop = true
                         }
                     }
                 )
             }
-            composable<SystemApp.Launcher> {
+            composable<LumiApp.Launcher> {
                 LauncherScreenRoot(
                     navigateToSettings = {
-                        navController.navigate(SystemApp.Settings) {
+                        navController.navigate(LumiApp.Settings) {
                             launchSingleTop = true
                         }
                     },
                     navigateToNotes = {
-                        context.launchMiniApp(MiniApp.Notes)
+                        context.launchLumiApp(LumiAppTag.Notes)
                     },
                     navigateToClock = {
-                        context.launchMiniApp(MiniApp.Clock)
+                        context.launchLumiApp(LumiAppTag.Clock)
                     },
                     navigateToWeather = {
-                        context.launchMiniApp(MiniApp.Weather)
+                        context.launchLumiApp(LumiAppTag.Weather)
                     },
                     navigateToCalendar = {
-                        context.launchMiniApp(MiniApp.Calendar)
+                        context.launchLumiApp(LumiAppTag.Calendar)
                     },
                     navigateToCamera = {
-                        context.launchMiniApp(MiniApp.Camera)
+                        context.launchLumiApp(LumiAppTag.Camera)
                     },
                     navigateToPhotos = {
-                        context.launchMiniApp(MiniApp.Photos)
+                        context.launchLumiApp(LumiAppTag.Photos)
                     },
                     navigateToVideos = {
-                        context.launchMiniApp(MiniApp.Videos)
+                        context.launchLumiApp(LumiAppTag.Videos)
                     },
                     navigateToContacts = {
-                        context.launchMiniApp(MiniApp.Contacts)
+                        context.launchLumiApp(LumiAppTag.Contacts)
                     },
                     navigateToPhone = {
-                        Log.d("AppNavigation", "Opening phone activity...")
-                        context.launchMiniApp(MiniApp.Phone)
+                        context.launchLumiApp(LumiAppTag.Phone)
                     },
                     navigateToCalculator = {
-                        navController.navigate(SystemApp.ComingSoon) {
+                        navController.navigate(LumiApp.ComingSoon) {
                             launchSingleTop = true
                         }
                     },
                     navigateToCommunity = {
-                        navController.navigate(SystemApp.ComingSoon) {
+                        navController.navigate(LumiApp.ComingSoon) {
                             launchSingleTop = true
                         }
                     }
                 )
             }
-            composable<SystemApp.Settings>(
+            composable<LumiApp.Settings>(
                 enterTransition = {
                     slideIntoContainer(
                         AnimatedContentTransitionScope.SlideDirection.Left,
@@ -177,7 +176,7 @@ fun AppNavigation(
                     }
                 )
             }
-            composable<SystemApp.ComingSoon>(
+            composable<LumiApp.ComingSoon>(
                 enterTransition = {
                     slideIntoContainer(
                         AnimatedContentTransitionScope.SlideDirection.Left,
