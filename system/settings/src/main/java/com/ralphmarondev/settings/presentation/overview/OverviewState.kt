@@ -11,5 +11,6 @@ data class OverviewState(
     val user: User = User(),
     val isRefreshing: Boolean = false,
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val showErrorMessage: Boolean = false
 )

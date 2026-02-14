@@ -8,4 +8,5 @@ sealed interface OverviewAction {
     data object NavigateBack : OverviewAction
     data object ResetNavigation : OverviewAction
     data object Refresh : OverviewAction
+    data object LoadInformation : OverviewAction
 }

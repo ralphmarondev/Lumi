@@ -1,6 +1,5 @@
 package com.ralphmarondev.settings.presentation.overview
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ralphmarondev.core.domain.model.Result
@@ -67,64 +66,46 @@ class OverviewViewModel(
             }
 
             OverviewAction.Refresh -> {
-                viewModelScope.launch {
-                    _state.update { it.copy(isLoading = true, isRefreshing = true) }
-                    val result = repository.getUserInformation()
-                    Log.d("Settings", "Result: $result")
-                    delay(1000)
+                loadInformation(isRefreshing = true)
+            }
 
-                    when (result) {
-                        is Result.Success -> {
-                            _state.update {
-                                it.copy(
-                                    user = result.data,
-                                    isLoading = false,
-                                    isRefreshing = false
-                                )
-                            }
-                        }
-
-                        is Result.Error -> {
-                            _state.update {
-                                it.copy(
-                                    errorMessage = it.errorMessage,
-                                    isLoading = false,
-                                    isRefreshing = false
-                                )
-                            }
-                        }
-                    }
-                }
+            OverviewAction.LoadInformation -> {
+                loadInformation()
             }
         }
     }
 
-    private fun loadInformation() {
+    private fun loadInformation(isRefreshing: Boolean = false) {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
+            _state.update {
+                it.copy(
+                    isLoading = true,
+                    isRefreshing = isRefreshing,
+                    errorMessage = null,
+                    showErrorMessage = false
+                )
+            }
 
             val result = repository.getUserInformation()
-            Log.d("Settings", "Result: $result")
+            if (isRefreshing) {
+                delay(1000)
+            }
 
             when (result) {
                 is Result.Success -> {
-                    Log.d("Settings", "Inside Result.Success (result.data) => ${result.data}")
                     _state.update {
-                        it.copy(
-                            user = result.data,
-                            isLoading = false
-                        )
+                        it.copy(user = result.data)
                     }
                 }
 
                 is Result.Error -> {
                     _state.update {
-                        it.copy(errorMessage = it.errorMessage, isLoading = false)
+                        it.copy(errorMessage = it.errorMessage, showErrorMessage = true)
                     }
                 }
             }
 
-            Log.d("Settings", "After when. ${_state.value.user.profileImagePath}")
+            _state.update { it.copy(isLoading = false, isRefreshing = false) }
         }
     }
 }

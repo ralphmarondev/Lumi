@@ -21,6 +21,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -28,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,6 +55,10 @@ fun OverviewScreenRoot(
 ) {
     val viewModel: OverviewViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.onAction(OverviewAction.LoadInformation)
+    }
 
     LaunchedEffect(state.navigateBack) {
         if (state.navigateBack) {
@@ -101,6 +108,16 @@ private fun OverviewScreen(
     state: OverviewState,
     action: (OverviewAction) -> Unit
 ) {
+    val snackbar = remember { SnackbarHostState() }
+
+    LaunchedEffect(state.showErrorMessage) {
+        if (state.showErrorMessage) {
+            snackbar.showSnackbar(
+                message = state.errorMessage ?: "An error occurred."
+            )
+        }
+    }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -121,7 +138,8 @@ private fun OverviewScreen(
                     containerColor = MaterialTheme.colorScheme.primary
                 )
             )
-        }
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbar) }
     ) { innerPadding ->
         PullToRefreshBox(
             isRefreshing = state.isRefreshing,
