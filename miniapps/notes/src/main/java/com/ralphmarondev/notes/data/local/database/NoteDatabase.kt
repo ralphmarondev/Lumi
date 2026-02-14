@@ -12,17 +12,17 @@ import com.ralphmarondev.notes.data.local.database.entities.NoteEntity
     version = 2,
     exportSchema = false
 )
-abstract class NoteAppDatabase : RoomDatabase() {
+abstract class NoteDatabase : RoomDatabase() {
     abstract val noteDao: NoteDao
 
     companion object {
         private const val DATABASE_NAME = "note_database"
 
-        fun createDatabase(context: Context): NoteAppDatabase {
+        fun createDatabase(context: Context): NoteDatabase {
             try {
                 val database = Room.databaseBuilder(
                     context = context,
-                    klass = NoteAppDatabase::class.java,
+                    klass = NoteDatabase::class.java,
                     name = DATABASE_NAME
                 ).fallbackToDestructiveMigration(true).build()
                 return database

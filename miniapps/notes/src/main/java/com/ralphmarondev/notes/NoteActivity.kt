@@ -10,7 +10,7 @@ import androidx.core.view.WindowCompat
 import com.ralphmarondev.core.presentation.shell.LocalLumiShellState
 import com.ralphmarondev.core.presentation.shell.LumiShell
 import com.ralphmarondev.core.presentation.shell.LumiShellStyle
-import com.ralphmarondev.notes.data.local.preferences.NoteAppPreferences
+import com.ralphmarondev.notes.data.local.preferences.NotePreferences
 import com.ralphmarondev.notes.theme.LocalThemeState
 import com.ralphmarondev.notes.theme.NoteTheme
 import com.ralphmarondev.notes.theme.ThemeProvider
@@ -18,7 +18,7 @@ import org.koin.android.ext.android.inject
 
 class NoteActivity : ComponentActivity() {
 
-    private val preferences: NoteAppPreferences by inject()
+    private val preferences: NotePreferences by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

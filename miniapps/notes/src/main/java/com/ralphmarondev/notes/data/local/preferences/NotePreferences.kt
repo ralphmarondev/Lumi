@@ -10,7 +10,7 @@ import androidx.datastore.preferences.preferencesDataStoreFile
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class NoteAppPreferences(
+class NotePreferences(
     context: Context
 ) {
     private val appContext = context.applicationContext
@@ -26,8 +26,8 @@ class NoteAppPreferences(
     companion object {
         private const val DATASTORE_NAME = "note_preferences"
 
-        val DARK_MODE = booleanPreferencesKey("note_dark_mode")
-        val ONBOARDING_COMPLETED = booleanPreferencesKey("note_onboarding_completed")
+        val DARK_MODE = booleanPreferencesKey("dark_mode")
+        val ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
     }
 
     suspend fun setDarkMode(value: Boolean) {
