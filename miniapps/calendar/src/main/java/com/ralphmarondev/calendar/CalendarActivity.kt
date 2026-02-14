@@ -7,7 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.LaunchedEffect
 import androidx.core.view.WindowCompat
-import com.ralphmarondev.core.data.local.preferences.AppPreferences
+import com.ralphmarondev.core.data.local.preferences.LumiPreferences
 import com.ralphmarondev.core.presentation.shell.LocalLumiShellState
 import com.ralphmarondev.core.presentation.shell.LumiShell
 import com.ralphmarondev.core.presentation.shell.LumiShellStyle
@@ -18,7 +18,7 @@ import org.koin.android.ext.android.inject
 
 class CalendarActivity : ComponentActivity() {
 
-    private val preferences: AppPreferences by inject()
+    private val preferences: LumiPreferences by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
