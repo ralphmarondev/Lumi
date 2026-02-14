@@ -5,13 +5,13 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import com.ralphmarondev.clock.data.local.preferences.ClockAppPreferences
+import com.ralphmarondev.clock.data.local.preferences.ClockPreferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 class ThemeState internal constructor(
     val darkTheme: State<Boolean>,
-    private val preferences: ClockAppPreferences,
+    private val preferences: ClockPreferences,
     private val scope: CoroutineScope
 ) {
     fun toggleTheme() {
@@ -22,7 +22,7 @@ class ThemeState internal constructor(
 }
 
 @Composable
-fun rememberThemeState(preferences: ClockAppPreferences): ThemeState {
+fun rememberThemeState(preferences: ClockPreferences): ThemeState {
     val darkThemeFlow = preferences.isInDarkMode()
     val darkThemeState = darkThemeFlow.collectAsState(false)
     val scope = rememberCoroutineScope()

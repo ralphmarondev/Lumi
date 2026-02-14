@@ -7,7 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.LaunchedEffect
 import androidx.core.view.WindowCompat
-import com.ralphmarondev.clock.data.local.preferences.ClockAppPreferences
+import com.ralphmarondev.clock.data.local.preferences.ClockPreferences
 import com.ralphmarondev.clock.theme.ClockTheme
 import com.ralphmarondev.clock.theme.LocalThemeState
 import com.ralphmarondev.clock.theme.ThemeProvider
@@ -18,7 +18,7 @@ import org.koin.android.ext.android.inject
 
 class ClockActivity : ComponentActivity() {
 
-    private val preferences: ClockAppPreferences by inject()
+    private val preferences: ClockPreferences by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

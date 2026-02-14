@@ -12,17 +12,17 @@ import com.ralphmarondev.clock.data.local.database.entities.AlarmEntity
     version = 2,
     exportSchema = false
 )
-abstract class ClockAppDatabase : RoomDatabase() {
+abstract class ClockDatabase : RoomDatabase() {
     abstract val alarmDao: AlarmDao
 
     companion object {
         private const val DATABASE_NAME = "clock_database"
 
-        fun createDatabase(context: Context): ClockAppDatabase {
+        fun createDatabase(context: Context): ClockDatabase {
             try {
                 val database = Room.databaseBuilder(
                     context = context,
-                    klass = ClockAppDatabase::class.java,
+                    klass = ClockDatabase::class.java,
                     name = DATABASE_NAME
                 ).fallbackToDestructiveMigration(true)
                     .build()
