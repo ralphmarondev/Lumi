@@ -2,7 +2,7 @@ package com.ralphmarondev.boot.setup.di
 
 import com.ralphmarondev.boot.setup.data.repository.SetupRepositoryImpl
 import com.ralphmarondev.boot.setup.domain.repository.SetupRepository
-import com.ralphmarondev.boot.setup.presentation.SetupViewModel
+import com.ralphmarondev.boot.setup.presentation.setup.SetupViewModel
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind

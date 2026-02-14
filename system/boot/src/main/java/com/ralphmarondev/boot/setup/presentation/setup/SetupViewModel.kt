@@ -1,4 +1,4 @@
-package com.ralphmarondev.boot.setup.presentation
+package com.ralphmarondev.boot.setup.presentation.setup
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -88,9 +88,15 @@ class SetupViewModel(
             }
 
             SetupAction.ResetMessage -> {
-                _state.update {
-                    it.copy(message = null)
-                }
+                _state.update { it.copy(message = null) }
+            }
+
+            is SetupAction.DisplayNameChange -> {
+                _state.update { it.copy(displayName = action.value) }
+            }
+
+            SetupAction.Complete -> {
+                _state.update { it.copy(currentPage = Page.Finalizing) }
             }
         }
     }
