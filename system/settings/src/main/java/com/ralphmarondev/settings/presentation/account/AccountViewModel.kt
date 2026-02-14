@@ -198,8 +198,6 @@ class AccountViewModel(
                             it.copy(errorMessage = it.errorMessage)
                         }
                     }
-
-                    Result.Loading -> Unit
                 }
 
                 if (isRefreshing) {

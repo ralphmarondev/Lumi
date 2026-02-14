@@ -93,8 +93,6 @@ class OverviewViewModel(
                                 )
                             }
                         }
-
-                        Result.Loading -> Unit
                     }
                 }
             }
@@ -124,8 +122,6 @@ class OverviewViewModel(
                         it.copy(errorMessage = it.errorMessage, isLoading = false)
                     }
                 }
-
-                Result.Loading -> Unit
             }
 
             Log.d("Settings", "After when. ${_state.value.user.profileImagePath}")
