@@ -1,5 +1,6 @@
 package com.ralphmarondev.settings.presentation.overview
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,12 +32,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import com.ralphmarondev.core.presentation.component.LumiGestureHandler
+import com.ralphmarondev.settings.R
 import com.ralphmarondev.settings.presentation.component.SettingCard
 import org.koin.compose.viewmodel.koinViewModel
+import java.io.File
 
 @Composable
 fun OverviewScreenRoot(
@@ -174,10 +178,15 @@ private fun AccountSection(
     val displayName = state.user.displayName.ifEmpty {
         "LumiOS User"
     }
+    val painter = rememberAsyncImagePainter(
+        model = state.user.profileImagePath?.takeIf { it.isNotBlank() }?.let { File(it) },
+        error = painterResource(R.drawable.ralphmaron),
+        placeholder = painterResource(R.drawable.ralphmaron)
+    )
 
-    AsyncImage(
-        model = state.user.profileImagePath,
-        contentDescription = displayName,
+    Image(
+        painter = painter,
+        contentDescription = "User Image",
         modifier = Modifier
             .size(140.dp)
             .clip(CircleShape),
