@@ -193,9 +193,8 @@ private fun OverviewScreen(
 private fun AccountSection(
     state: OverviewState
 ) {
-    val displayName = state.user.displayName.ifEmpty {
-        "LumiOS User"
-    }
+    val displayName = state.user.displayName ?: "LumiOS User"
+
     val painter = rememberAsyncImagePainter(
         model = state.user.profileImagePath?.takeIf { it.isNotBlank() }?.let { File(it) },
         error = painterResource(R.drawable.ralphmaron),

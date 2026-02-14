@@ -9,7 +9,7 @@ data class AccountState(
     val errorMessage: String? = null,
     val showErrorMessage: Boolean = false,
 
-    val displayName: String = "",
+    val displayName: String? = null,
     val username: String = "",
     val email: String? = null,
     val phoneNumber: String? = null,

@@ -175,7 +175,7 @@ private fun AccountScreen(
                         Column {
                             AccountField(
                                 label = "Display Name",
-                                value = state.displayName,
+                                value = state.displayName ?: "Not set",
                                 onClick = { action(AccountAction.SetDisplayNameDialogValue(true)) }
                             )
                             HorizontalDivider(thickness = 0.3.dp)
@@ -230,7 +230,7 @@ private fun AccountScreen(
 
         if (state.showDisplayNameDialog) {
             DisplayNameDialog(
-                displayName = state.displayName,
+                displayName = state.displayName ?: "",
                 onCancel = { action(AccountAction.SetDisplayNameDialogValue(false)) },
                 onUpdate = { updatedDisplayName ->
                     action(AccountAction.UpdateDisplayName(updatedDisplayName))
