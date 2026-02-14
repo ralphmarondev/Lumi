@@ -8,9 +8,6 @@ sealed class Result<out T> {
         val throwable: Throwable? = null
     ) : Result<Nothing>()
 
-    data object Loading : Result<Nothing>()
-
     val isSuccess: Boolean get() = this is Success<*>
     val isError: Boolean get() = this is Error
-    val isLoading: Boolean get() = this is Loading
 }
