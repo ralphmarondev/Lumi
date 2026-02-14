@@ -4,7 +4,7 @@ import android.util.Log
 import com.ralphmarondev.core.data.local.database.dao.UserDao
 import com.ralphmarondev.core.data.local.database.dao.WallpaperDao
 import com.ralphmarondev.core.data.local.database.mapper.toDomain
-import com.ralphmarondev.core.data.local.preferences.AppPreferences
+import com.ralphmarondev.core.data.local.preferences.LumiPreferences
 import com.ralphmarondev.core.domain.model.Gender
 import com.ralphmarondev.core.domain.model.Result
 import com.ralphmarondev.core.domain.model.User
@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 
 class SettingsRepositoryImpl(
-    private val preferences: AppPreferences,
+    private val preferences: LumiPreferences,
     private val userDao: UserDao,
     private val wallpaperDao: WallpaperDao
 ) : SettingsRepository {
