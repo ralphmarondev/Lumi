@@ -17,11 +17,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
-import com.ralphmarondev.core.domain.model.Apps
+import com.ralphmarondev.core.domain.model.LumiApp
 
 @Composable
 fun AppContainer(
-    app: Apps,
+    lumiApp: LumiApp,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     showAppName: Boolean = false
@@ -33,8 +33,8 @@ fun AppContainer(
         Card(onClick = onClick) {
             Column(modifier = Modifier.padding(8.dp)) {
                 Image(
-                    painter = rememberAsyncImagePainter(app.icon),
-                    contentDescription = app.name,
+                    painter = rememberAsyncImagePainter(lumiApp.icon),
+                    contentDescription = lumiApp.name,
                     modifier = Modifier
                         .size(40.dp),
                     contentScale = ContentScale.Crop
@@ -43,7 +43,7 @@ fun AppContainer(
         }
         AnimatedVisibility(visible = showAppName) {
             Text(
-                text = app.name,
+                text = lumiApp.name,
                 maxLines = 2,
                 minLines = 2,
                 overflow = TextOverflow.Ellipsis,

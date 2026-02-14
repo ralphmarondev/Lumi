@@ -2,7 +2,7 @@ package com.ralphmarondev.launcher.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ralphmarondev.core.domain.model.ApplicationTag
+import com.ralphmarondev.core.domain.model.LumiAppTag
 import com.ralphmarondev.launcher.domain.repository.LauncherRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,8 +20,8 @@ class LauncherViewModel(
         viewModelScope.launch {
             _state.update {
                 it.copy(
-                    dockApps = repository.getDockApps(),
-                    miniApps = repository.getMiniApps()
+                    dockLumiApps = repository.getDockApps(),
+                    miniLumiApps = repository.getMiniApps()
                 )
             }
             repository.getActiveWallpaper()
@@ -35,73 +35,73 @@ class LauncherViewModel(
         when (action) {
             is LauncherAction.OnAppClick -> {
                 when (action.tag) {
-                    ApplicationTag.Settings.name -> {
+                    LumiAppTag.Settings.name -> {
                         _state.update {
                             it.copy(navigationTarget = NavigationTarget.Settings)
                         }
                     }
 
-                    ApplicationTag.Notes.name -> {
+                    LumiAppTag.Notes.name -> {
                         _state.update {
                             it.copy(navigationTarget = NavigationTarget.Notes)
                         }
                     }
 
-                    ApplicationTag.Clock.name -> {
+                    LumiAppTag.Clock.name -> {
                         _state.update {
                             it.copy(navigationTarget = NavigationTarget.Clock)
                         }
                     }
 
-                    ApplicationTag.Weather.name -> {
+                    LumiAppTag.Weather.name -> {
                         _state.update {
                             it.copy(navigationTarget = NavigationTarget.Weather)
                         }
                     }
 
-                    ApplicationTag.Calendar.name -> {
+                    LumiAppTag.Calendar.name -> {
                         _state.update {
                             it.copy(navigationTarget = NavigationTarget.Calendar)
                         }
                     }
 
-                    ApplicationTag.Camera.name -> {
+                    LumiAppTag.Camera.name -> {
                         _state.update {
                             it.copy(navigationTarget = NavigationTarget.Camera)
                         }
                     }
 
-                    ApplicationTag.Photos.name -> {
+                    LumiAppTag.Photos.name -> {
                         _state.update {
                             it.copy(navigationTarget = NavigationTarget.Photos)
                         }
                     }
 
-                    ApplicationTag.Videos.name -> {
+                    LumiAppTag.Videos.name -> {
                         _state.update {
                             it.copy(navigationTarget = NavigationTarget.Videos)
                         }
                     }
 
-                    ApplicationTag.Contacts.name -> {
+                    LumiAppTag.Contacts.name -> {
                         _state.update {
                             it.copy(navigationTarget = NavigationTarget.Contacts)
                         }
                     }
 
-                    ApplicationTag.Phone.name -> {
+                    LumiAppTag.Phone.name -> {
                         _state.update {
                             it.copy(navigationTarget = NavigationTarget.Phone)
                         }
                     }
 
-                    ApplicationTag.Calculator.name -> {
+                    LumiAppTag.Calculator.name -> {
                         _state.update {
                             it.copy(navigationTarget = NavigationTarget.Calculator)
                         }
                     }
 
-                    ApplicationTag.Community.name -> {
+                    LumiAppTag.Community.name -> {
                         _state.update {
                             it.copy(navigationTarget = NavigationTarget.Community)
                         }

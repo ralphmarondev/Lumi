@@ -204,9 +204,9 @@ private fun LauncherScreen(
                     .padding(horizontal = 8.dp, vertical = 16.dp),
                 userScrollEnabled = false
             ) {
-                items(items = state.dockApps, key = { it.id }) { app ->
+                items(items = state.dockLumiApps, key = { it.id }) { app ->
                     AppContainer(
-                        app = app,
+                        lumiApp = app,
                         onClick = { action(LauncherAction.OnAppClick(app.tag)) }
                     )
                 }
@@ -248,9 +248,9 @@ private fun SecondPage(
                 .padding(horizontal = 8.dp, vertical = 16.dp),
             userScrollEnabled = false
         ) {
-            items(items = state.miniApps, key = { it.id }) { app ->
+            items(items = state.miniLumiApps, key = { it.id }) { app ->
                 AppContainer(
-                    app = app,
+                    lumiApp = app,
                     onClick = { action(LauncherAction.OnAppClick(app.tag)) },
                     showAppName = true
                 )
