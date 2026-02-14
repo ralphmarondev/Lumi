@@ -10,7 +10,7 @@ import androidx.datastore.preferences.preferencesDataStoreFile
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class WeatherAppPreferences(
+class WeatherPreferences(
     context: Context
 ) {
     private val appContext = context.applicationContext

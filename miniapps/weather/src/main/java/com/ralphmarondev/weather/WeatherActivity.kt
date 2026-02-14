@@ -11,7 +11,7 @@ import androidx.core.view.WindowCompat
 import com.ralphmarondev.core.presentation.shell.LocalLumiShellState
 import com.ralphmarondev.core.presentation.shell.LumiShell
 import com.ralphmarondev.core.presentation.shell.LumiShellStyle
-import com.ralphmarondev.weather.data.local.preferences.WeatherAppPreferences
+import com.ralphmarondev.weather.data.local.preferences.WeatherPreferences
 import com.ralphmarondev.weather.theme.LocalThemeState
 import com.ralphmarondev.weather.theme.ThemeProvider
 import com.ralphmarondev.weather.theme.WeatherTheme
@@ -19,7 +19,7 @@ import org.koin.android.ext.android.inject
 
 class WeatherActivity : ComponentActivity() {
 
-    private val preferences: WeatherAppPreferences by inject()
+    private val preferences: WeatherPreferences by inject()
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {

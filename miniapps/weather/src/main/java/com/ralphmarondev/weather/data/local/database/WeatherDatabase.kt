@@ -12,17 +12,17 @@ import com.ralphmarondev.weather.data.local.database.entities.WeatherEntity
     version = 1,
     exportSchema = false
 )
-abstract class WeatherAppDatabase : RoomDatabase() {
+abstract class WeatherDatabase : RoomDatabase() {
     abstract val weatherDao: WeatherDao
 
     companion object {
         private const val DATABASE_NAME = "weather_database"
 
-        fun createDatabase(context: Context): WeatherAppDatabase {
+        fun createDatabase(context: Context): WeatherDatabase {
             try {
                 val database = Room.databaseBuilder(
                     context = context,
-                    klass = WeatherAppDatabase::class.java,
+                    klass = WeatherDatabase::class.java,
                     name = DATABASE_NAME
                 ).build()
                 return database
