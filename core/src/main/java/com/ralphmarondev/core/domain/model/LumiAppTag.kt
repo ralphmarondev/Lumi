@@ -1,6 +1,6 @@
 package com.ralphmarondev.core.domain.model
 
-enum class ApplicationTag {
+enum class LumiAppTag {
     Settings,
     Notes,
     Clock,

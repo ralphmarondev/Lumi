@@ -3,8 +3,8 @@ package com.ralphmarondev.core.data.local.database.entities
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "apps")
-data class AppsEntity(
+@Entity(tableName = "applications")
+data class LumiAppEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val name: String = "",
