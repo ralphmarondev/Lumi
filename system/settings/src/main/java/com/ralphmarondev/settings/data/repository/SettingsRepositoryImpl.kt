@@ -1,6 +1,5 @@
 package com.ralphmarondev.settings.data.repository
 
-import android.util.Log
 import com.ralphmarondev.core.data.local.database.dao.UserDao
 import com.ralphmarondev.core.data.local.database.dao.WallpaperDao
 import com.ralphmarondev.core.data.local.database.mapper.toDomain
@@ -84,21 +83,28 @@ class SettingsRepositoryImpl(
         return wallpaperEntities.map { it.toDomain() }
     }
 
-    override suspend fun updateDisplayName(displayName: String) {
-        try {
-            val username = preferences.getSystemCurrentUser().first()
-            val userEntity = userDao.getByUsername(username)
-                ?: return
+    override suspend fun updateProfileImagePath(path: String) {
+        val username = preferences.getSystemCurrentUser().first()
+        val userEntity = userDao.getByUsername(username)
+            ?: return
 
-            userDao.update(
-                userEntity = userEntity.copy(
-                    displayName = displayName
-                )
+        userDao.update(
+            userEntity = userEntity.copy(
+                profileImagePath = path
             )
-            Log.d("SettingsRepositoryImpl", "Display name updated successfully.")
-        } catch (e: Exception) {
-            Log.e("SettingsRepositoryImpl", "Error updating display name: ${e.message}")
-        }
+        )
+    }
+
+    override suspend fun updateDisplayName(displayName: String) {
+        val username = preferences.getSystemCurrentUser().first()
+        val userEntity = userDao.getByUsername(username)
+            ?: return
+
+        userDao.update(
+            userEntity = userEntity.copy(
+                displayName = displayName
+            )
+        )
     }
 
     override suspend fun updateUsername(username: String) {
@@ -108,6 +114,7 @@ class SettingsRepositoryImpl(
 
         userDao.update(userEntity = userEntity.copy(username = username))
         preferences.setSystemCurrentUser(username)
+        // TODO: UPDATE WALLPAPER OWNER TOO! AND EVERY REFERENCES TO THE PREVIOUS USERNAME
     }
 
     override suspend fun updateEmail(email: String) {

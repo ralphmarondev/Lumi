@@ -20,6 +20,7 @@ interface SettingsRepository {
     fun getActiveWallpaper(): Flow<Wallpaper>
 
     suspend fun getAllWallpapers(): List<Wallpaper>
+    suspend fun updateProfileImagePath(path: String)
 
     suspend fun updateDisplayName(displayName: String)
 

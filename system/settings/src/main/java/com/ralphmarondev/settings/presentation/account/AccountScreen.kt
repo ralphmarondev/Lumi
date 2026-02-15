@@ -155,7 +155,7 @@ private fun AccountScreen(
                     UserImage(
                         imagePath = state.profileImagePath,
                         onImageSelected = { path ->
-                            action(AccountAction.ProfileImageChange(path))
+                            action(AccountAction.SetProfileImage(path))
                         },
                         modifier = Modifier
                             .padding(bottom = 16.dp)

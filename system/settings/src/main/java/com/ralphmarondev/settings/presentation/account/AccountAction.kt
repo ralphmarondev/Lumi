@@ -8,7 +8,7 @@ sealed interface AccountAction {
     data object NavigateBack : AccountAction
     data object ResetNavigation : AccountAction
 
-    data class ProfileImageChange(val path: Uri) : AccountAction
+    data class SetProfileImage(val path: Uri) : AccountAction
 
     data class SetDisplayNameDialogValue(val value: Boolean) : AccountAction
     data class UpdateDisplayName(val updatedDisplayName: String) : AccountAction

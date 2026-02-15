@@ -2,7 +2,6 @@ package com.ralphmarondev.settings.presentation.account
 
 import android.app.Application
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.ralphmarondev.core.domain.model.Gender
@@ -48,7 +47,9 @@ class AccountViewModel(
                 }
             }
 
-            is AccountAction.ProfileImageChange -> {}
+            is AccountAction.SetProfileImage -> {
+                setProfileImage(action.path)
+            }
 
             // DISPLAY NAME
             is AccountAction.SetDisplayNameDialogValue -> {
@@ -216,22 +217,59 @@ class AccountViewModel(
         }
     }
 
-    private suspend fun saveImageToInternalStorage(imageUri: Uri): String? {
-        return try {
-            withContext(Dispatchers.IO) {
-                val context = getApplication<Application>()
-                val file = File(context.filesDir, "profile_${System.currentTimeMillis()}.png")
+    private suspend fun saveImageToInternalStorage(imageUri: Uri): String {
+        return withContext(Dispatchers.IO) {
+            val context = getApplication<Application>()
+            val file = File(context.filesDir, "profile_${System.currentTimeMillis()}.png")
 
-                context.contentResolver.openInputStream(imageUri)?.use { input ->
-                    FileOutputStream(file, false).use { output ->
-                        input.copyTo(output)
-                    }
+            context.contentResolver.openInputStream(imageUri)?.use { input ->
+                FileOutputStream(file, false).use { output ->
+                    input.copyTo(output)
                 }
-                file.absolutePath
             }
-        } catch (e: Exception) {
-            Log.e("Account", "Error saving image to internal storage.", e)
-            null
+            file.absolutePath
+        }
+    }
+
+    private fun setProfileImage(uri: Uri) {
+        viewModelScope.launch {
+            try {
+                val imagePath = saveImageToInternalStorage(uri)
+                _state.update {
+                    it.copy(
+                        isLoading = true,
+                        errorMessage = null,
+                        showErrorMessage = false
+                    )
+                }
+
+                if (imagePath.isBlank()) {
+                    _state.update {
+                        it.copy(
+                            errorMessage = "Failed replacing profile image path.",
+                            showErrorMessage = true
+                        )
+                    }
+                    return@launch
+                }
+                repository.updateProfileImagePath(imagePath)
+                loadUserInformation()
+                _state.update {
+                    it.copy(
+                        showDisplayNameDialog = false,
+                        profileImagePath = imagePath
+                    )
+                }
+            } catch (e: Exception) {
+                _state.update {
+                    it.copy(
+                        errorMessage = "Error: ${e.message ?: "Failed updating profile image."}",
+                        showErrorMessage = true
+                    )
+                }
+            } finally {
+                _state.update { it.copy(isLoading = false) }
+            }
         }
     }
 
@@ -267,7 +305,7 @@ class AccountViewModel(
             } catch (e: Exception) {
                 _state.update {
                     it.copy(
-                        errorMessage = "Failed updating display name. Error: ${e.message}",
+                        errorMessage = "Error: ${e.message ?: "Failed updating display name."}",
                         showErrorMessage = true
                     )
                 }
@@ -309,7 +347,7 @@ class AccountViewModel(
             } catch (e: Exception) {
                 _state.update {
                     it.copy(
-                        errorMessage = "Failed updating username. Error: ${e.message}",
+                        errorMessage = "Error: ${e.message ?: "Failed updating username."}",
                         showErrorMessage = true
                     )
                 }
@@ -351,7 +389,7 @@ class AccountViewModel(
             } catch (e: Exception) {
                 _state.update {
                     it.copy(
-                        errorMessage = "Failed updating email. Error: ${e.message}",
+                        errorMessage = "Error: ${e.message ?: "Failed updating email."}",
                         showErrorMessage = true
                     )
                 }
@@ -394,7 +432,7 @@ class AccountViewModel(
             } catch (e: Exception) {
                 _state.update {
                     it.copy(
-                        errorMessage = "Failed updating display name. Error: ${e.message}",
+                        errorMessage = "Error: ${e.message ?: "Failed updating phone number."}",
                         showErrorMessage = true
                     )
                 }
@@ -426,7 +464,7 @@ class AccountViewModel(
             } catch (e: Exception) {
                 _state.update {
                     it.copy(
-                        errorMessage = "Failed updating gender. Error: ${e.message}",
+                        errorMessage = "Error: ${e.message ?: "Failed updating gender."}",
                         showErrorMessage = true
                     )
                 }
@@ -468,7 +506,7 @@ class AccountViewModel(
             } catch (e: Exception) {
                 _state.update {
                     it.copy(
-                        errorMessage = "Failed updating birthday. Error: ${e.message}",
+                        errorMessage = "Error: ${e.message ?: "Failed updating birthday."}",
                         showErrorMessage = true
                     )
                 }
