@@ -3,6 +3,7 @@ package com.ralphmarondev.boot.setup.data.repository
 import android.content.Context
 import android.util.Log
 import com.ralphmarondev.boot.R
+import com.ralphmarondev.boot.setup.domain.model.SetupResult
 import com.ralphmarondev.boot.setup.domain.repository.SetupRepository
 import com.ralphmarondev.core.common.FileManager
 import com.ralphmarondev.core.data.local.database.dao.LumiAppDao
@@ -14,7 +15,6 @@ import com.ralphmarondev.core.data.local.database.mapper.toDomain
 import com.ralphmarondev.core.data.local.database.mapper.toEntity
 import com.ralphmarondev.core.data.local.preferences.LumiPreferences
 import com.ralphmarondev.core.domain.model.LumiAppTag
-import com.ralphmarondev.core.domain.model.Language
 import com.ralphmarondev.core.domain.model.Result
 import com.ralphmarondev.core.domain.model.User
 
@@ -25,53 +25,34 @@ class SetupRepositoryImpl(
     private val preferences: LumiPreferences,
     private val context: Context
 ) : SetupRepository {
+    override suspend fun setup(setupResult: SetupResult) {
+        val user = User(
+            language = setupResult.selectedLanguage,
+            displayName = setupResult.displayName,
+            username = setupResult.username,
+            password = setupResult.password
+        )
+        val savedUser = saveUser(user)
+            ?: throw IllegalStateException("User not saved")
+        saveDefaultWallpapers(savedUser.username)
+        saveDefaultApps()
 
-    override suspend fun getUserByUsername(username: String): User? {
-        return userDao.getByUsername(username)?.toDomain()
+        preferences.setSystemLanguage(setupResult.selectedLanguage)
+        preferences.setSystemOnboardingCompleted(true)
+        Result.Success(data = savedUser)
     }
 
-    override suspend fun setup(
-        language: Language,
-        username: String,
-        password: String
-    ): Result<User>? {
-        return try {
-            Log.d("Setup", "Saving user.")
-            val existingUser = userDao.getByUsername(username)
-            if (existingUser != null) {
-                Log.e("Setup", "Username already exists")
-                return Result.Error("Username already exists")
-            }
-
-            val profileImagePath = FileManager.saveFromDrawable(
-                context = context,
-                drawableResId = R.drawable.ralphmaron,
-                directory = FileManager.Directory.PROFILE,
-                fileName = "profile_default.jpg"
-            )
-
-            val user = User(
-                username = username,
-                password = password,
-                profileImagePath = profileImagePath
-            )
-            val userEntityId = userDao.create(user.toEntity())
-            val savedUserEntity = userDao.getById(userEntityId)
-                ?: return Result.Error("Failed creating user")
-            Log.d("Setup", "User created successfully.")
-
-            val savedUser = savedUserEntity.toDomain()
-
-            saveDefaultWallpapers(savedUser.username)
-            saveDefaultApps()
-
-            preferences.setSystemLanguage(language.code)
-            preferences.setSystemOnboardingCompleted(true)
-            Result.Success(data = savedUser)
-        } catch (e: Exception) {
-            Log.e("Setup", "Error: ${e.message}")
-            Result.Error(message = e.localizedMessage)
-        }
+    private suspend fun saveUser(user: User): User? {
+        Log.d("Setup", "Saving user...")
+        val profileImagePath = FileManager.saveFromDrawable(
+            context = context,
+            drawableResId = R.drawable.ralphmaron,
+            directory = FileManager.Directory.PROFILE,
+            fileName = "profile_default.jpg"
+        )
+        val userEntityId = userDao.create(user.toEntity())
+        val savedUserEntity = userDao.getById(userEntityId)
+        return savedUserEntity?.toDomain()?.copy(profileImagePath = profileImagePath)
     }
 
     private suspend fun saveDefaultWallpapers(ownerUsername: String) {

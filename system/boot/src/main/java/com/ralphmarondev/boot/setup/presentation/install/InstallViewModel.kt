@@ -81,6 +81,7 @@ class InstallViewModel(
                 Log.d("Install", "DisplayName: ${setupResult.displayName}")
                 Log.d("Install", "Username: ${setupResult.username}")
                 Log.d("Install", "Password: ${setupResult.password}")
+                repository.setup(setupResult)
                 delay(10000)
                 Log.d("Install", "Done...")
                 _state.update { it.copy(installed = true) }
