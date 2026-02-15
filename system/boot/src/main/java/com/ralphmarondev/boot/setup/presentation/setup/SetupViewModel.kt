@@ -50,7 +50,7 @@ class SetupViewModel : ViewModel() {
             }
 
             is SetupAction.SetInstallMode -> {
-                _state.update { it.copy(installLumi = action.mode) }
+                _state.update { it.copy(installationMode = action.mode) }
             }
         }
     }

@@ -45,6 +45,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ralphmarondev.boot.R
+import com.ralphmarondev.boot.setup.presentation.component.InstallOptionCard
 import com.ralphmarondev.boot.setup.presentation.component.LanguageCard
 import com.ralphmarondev.core.domain.model.Language
 import com.ralphmarondev.core.presentation.component.LumiButton
@@ -66,13 +67,13 @@ fun SetupScreenRoot(
     val state by viewModel.state.collectAsState()
 
     LaunchedEffect(state.completeSetup) {
-        if (state.completeSetup && state.installLumi == InstallMode.InstallLumi) {
+        if (state.completeSetup && state.installationMode == InstallMode.InstallLumi) {
             installLumi()
         }
     }
 
-    LaunchedEffect(state.installLumi) {
-        if (state.installLumi == InstallMode.TryLumi) {
+    LaunchedEffect(state.installationMode) {
+        if (state.installationMode == InstallMode.TryLumi) {
             tryLumi()
         }
     }
@@ -184,8 +185,9 @@ private fun SetupScreen(
             ) { page ->
                 when (page) {
                     0 -> ChooseLanguage(state, action)
-                    1 -> CreateAccount(state, action)
-                    2 -> Summary(state)
+                    1 -> TryOrInstallLumi(state, action)
+                    2 -> CreateAccount(state, action)
+                    3 -> Summary(state)
                 }
             }
         }
@@ -241,6 +243,62 @@ private fun ChooseLanguage(
             modifier = Modifier.padding(vertical = 4.dp),
             selected = state.selectedLanguage == Language.FILIPINO,
             flagResId = R.drawable.flag_ph
+        )
+    }
+}
+
+@Composable
+private fun TryOrInstallLumi(
+    state: SetupState,
+    action: (SetupAction) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(vertical = 16.dp, horizontal = 20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        LumiLottie(
+            animatedResId = R.raw.create_account,
+            modifier = Modifier
+                .size(140.dp)
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "What do you want to do with Lumi?",
+            style = MaterialTheme.typography.titleLarge.copy(
+                color = MaterialTheme.colorScheme.primary,
+                textAlign = TextAlign.Center
+            )
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = "Pick an option to get started with Lumi.",
+            style = MaterialTheme.typography.titleMedium.copy(
+                color = MaterialTheme.colorScheme.secondary,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Normal
+            )
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        InstallOptionCard(
+            option = InstallMode.InstallLumi,
+            selectedOption = state.installationMode,
+            title = "Install Lumi",
+            subtitle = "Perform a full installation of Lumi so you can access all features anytime you want.",
+            onSelect = { action(SetupAction.SetInstallMode(it)) },
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
+        InstallOptionCard(
+            option = InstallMode.TryLumi,
+            selectedOption = state.installationMode,
+            title = "Try Lumi",
+            subtitle = "Run Lumi temporarily without installing, perfect if you just want to explore it first.",
+            onSelect = { action(SetupAction.SetInstallMode(it)) },
+            modifier = Modifier.padding(vertical = 8.dp)
         )
     }
 }
