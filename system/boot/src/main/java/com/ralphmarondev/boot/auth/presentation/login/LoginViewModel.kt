@@ -3,7 +3,6 @@ package com.ralphmarondev.boot.auth.presentation.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ralphmarondev.boot.auth.domain.repository.AuthRepository
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -31,37 +30,65 @@ class LoginViewModel(
             }
 
             LoginAction.Login -> {
-                login()
+                login(
+                    username = _state.value.username.trim(),
+                    password = _state.value.password.trim()
+                )
             }
         }
     }
 
-    private fun login() {
+    private fun login(username: String, password: String) {
         viewModelScope.launch {
             try {
                 _state.update {
-                    it.copy(isLoading = true, isError = false, message = null)
+                    it.copy(
+                        isLoggingIn = true,
+                        isLoggedIn = false,
+                        errorMessage = null,
+                        showErrorMessage = false
+                    )
                 }
 
-                val result = repository.login(
-                    username = _state.value.username.trim(),
-                    password = _state.value.password.trim()
-                )
+                if (username.isBlank()) {
+                    _state.update {
+                        it.copy(
+                            isValidUsername = false,
+                            usernameSupportingText = "Username is empty."
+                        )
+                    }
+                }
+                if (password.isBlank()) {
+                    _state.update {
+                        it.copy(
+                            isValidPassword = false,
+                            passwordSupportingText = "Password is empty."
+                        )
+                    }
+                }
+
+                val result = repository.login(username, password)
                 if (result.isSuccess) {
-                    _state.update { it.copy(message = "Login successful!", isLoading = false) }
-                    delay(3000)
-                    _state.update { it.copy(success = true) }
+                    _state.update { it.copy(isLoggedIn = true) }
                 } else {
-                    _state.update { it.copy(message = "Invalid credentials.", isLoading = false) }
+                    _state.update {
+                        it.copy(
+                            isValidUsername = false,
+                            isValidPassword = false,
+                            usernameSupportingText = "Incorrect username or password.",
+                            passwordSupportingText = "Incorrect username or password."
+                        )
+                    }
                 }
             } catch (e: Exception) {
                 _state.update {
                     it.copy(
-                        isLoading = false,
-                        isError = true,
-                        message = e.message
+                        errorMessage = e.message ?: "Invalid credentials.",
+                        showErrorMessage = true
                     )
                 }
+            } finally {
+                _state.update { it.copy(isLoggingIn = false) }
             }
         }
     }

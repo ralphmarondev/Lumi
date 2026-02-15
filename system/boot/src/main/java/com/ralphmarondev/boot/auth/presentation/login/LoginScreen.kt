@@ -56,8 +56,8 @@ fun LoginScreenRoot(
     val viewModel: LoginViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
 
-    LaunchedEffect(state.success) {
-        if (state.success) {
+    LaunchedEffect(state.isLoggedIn) {
+        if (state.isLoggedIn) {
             onSuccess()
         }
     }
@@ -87,9 +87,9 @@ private fun LoginScreen(
         )
     }
 
-    LaunchedEffect(state.message) {
-        state.message?.let { msg ->
-            snackbarHostState.showSnackbar(message = msg)
+    LaunchedEffect(state.showErrorMessage) {
+        if (state.showErrorMessage) {
+            snackbarHostState.showSnackbar(message = state.errorMessage ?: "An error occurred.")
         }
     }
 
@@ -167,7 +167,9 @@ private fun LoginScreen(
                     ),
                     keyboardActions = KeyboardActions(
                         onNext = { focusManager.moveFocus(FocusDirection.Next) }
-                    )
+                    ),
+                    isError = !state.isValidUsername,
+                    supportingText = state.usernameSupportingText ?: ""
                 )
                 LumiPasswordField(
                     value = state.password,
@@ -182,15 +184,20 @@ private fun LoginScreen(
                     ),
                     keyboardActions = KeyboardActions(
                         onDone = { focusManager.clearFocus() }
-                    )
+                    ),
+                    isError = !state.isValidPassword,
+                    supportingText = state.passwordSupportingText ?: ""
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
                 LumiButton(
                     text = "Login",
                     onClick = { action(LoginAction.Login) },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = !state.isLoggingIn
                 )
+
+                Spacer(modifier = Modifier.height(20.dp))
             }
         }
     }
