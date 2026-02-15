@@ -1,14 +1,11 @@
 package com.ralphmarondev.boot.setup.presentation.setup
 
 import androidx.lifecycle.ViewModel
-import com.ralphmarondev.boot.setup.domain.repository.SetupRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class SetupViewModel(
-    private val repository: SetupRepository
-) : ViewModel() {
+class SetupViewModel : ViewModel() {
     private val _state = MutableStateFlow(SetupState())
     val state = _state.asStateFlow()
 
@@ -16,35 +13,21 @@ class SetupViewModel(
         when (action) {
             SetupAction.Continue -> {
                 _state.update {
-                    val currentScreen = _state.value.currentScreen
-                    val screenCount = _state.value.screenCount
-                    if (currentScreen < screenCount - 1) {
-                        it.copy(currentScreen = currentScreen + 1)
-                    } else {
-                        it
-                    }
-                }
-                _state.update {
-                    val newCurrentScreen = _state.value.currentScreen
-                    if (newCurrentScreen >= _state.value.screenCount) {
+                    if (it.currentScreen == it.screenCount - 1) {
                         it.copy(completeSetup = true)
                     } else {
-                        it
+                        it.copy(currentScreen = it.currentScreen + 1)
                     }
                 }
             }
 
             SetupAction.Previous -> {
                 _state.update {
-                    val currentScreen = _state.value.currentScreen
-                    if (currentScreen > 1) {
-                        it.copy(currentScreen = currentScreen - 1)
-                    } else {
-                        it
-                    }
+                    it.copy(
+                        currentScreen = (it.currentScreen - 1).coerceAtLeast(0)
+                    )
                 }
             }
-
 
             is SetupAction.ConfirmPasswordChange -> {
                 _state.update { it.copy(confirmPassword = action.confirmPassword) }

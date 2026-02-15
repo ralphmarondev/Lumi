@@ -1,6 +1,5 @@
 package com.ralphmarondev.boot.setup.presentation.setup
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,7 +19,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountBox
 import androidx.compose.material.icons.outlined.AccountTree
-import androidx.compose.material.icons.outlined.ArrowBackIosNew
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.LightMode
 import androidx.compose.material.icons.outlined.Password
@@ -98,7 +96,7 @@ private fun SetupScreen(
     val pagerState = rememberPagerState { state.screenCount }
 
     LaunchedEffect(state.currentScreen) {
-        pagerState.animateScrollToPage(state.currentScreen)
+        pagerState.scrollToPage(state.currentScreen)
     }
 
     LaunchedEffect(darkMode) {
@@ -112,20 +110,6 @@ private fun SetupScreen(
         topBar = {
             TopAppBar(
                 title = { },
-                navigationIcon = {
-                    AnimatedVisibility(
-                        visible = state.currentScreen > 0
-                    ) {
-                        IconButton(
-                            onClick = { action(SetupAction.Previous) }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.ArrowBackIosNew,
-                                contentDescription = "Previous"
-                            )
-                        }
-                    }
-                },
                 actions = {
                     IconButton(onClick = themeState::toggleTheme) {
                         Icon(
@@ -143,20 +127,19 @@ private fun SetupScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    actionIconContentColor = MaterialTheme.colorScheme.primary,
-                    navigationIconContentColor = MaterialTheme.colorScheme.primary
+                    actionIconContentColor = MaterialTheme.colorScheme.primary
                 )
             )
         },
         bottomBar = {
             BottomAppBar(
                 containerColor = MaterialTheme.colorScheme.background,
-                modifier = Modifier.padding(vertical = 16.dp)
+                modifier = Modifier.padding(16.dp)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceAround
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     LumiOutlineButton(
                         text = "Back",
@@ -167,12 +150,13 @@ private fun SetupScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         repeat(state.screenCount) { index ->
+                            val active = index == state.currentScreen
                             Box(
                                 modifier = Modifier
-                                    .size(if (index == state.currentScreen) 18.dp else 12.dp)
+                                    .size(if (active) 18.dp else 12.dp)
                                     .padding(4.dp)
                                     .background(
-                                        color = if (index == state.currentScreen) MaterialTheme.colorScheme.primary
+                                        color = if (active) MaterialTheme.colorScheme.primary
                                         else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
                                         shape = CircleShape
                                     )
@@ -181,7 +165,7 @@ private fun SetupScreen(
                     }
 
                     LumiButton(
-                        text = if (state.currentScreen == state.screenCount) "Finish" else "Next",
+                        text = if (state.currentScreen == state.screenCount - 1) "Finish" else "Next",
                         onClick = { action(SetupAction.Continue) }
                     )
                 }
@@ -201,6 +185,7 @@ private fun SetupScreen(
                 when (page) {
                     0 -> ChooseLanguage(state, action)
                     1 -> CreateAccount(state, action)
+                    2 -> Summary(state)
                 }
             }
         }
@@ -215,7 +200,7 @@ private fun ChooseLanguage(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(vertical = 16.dp, horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         LumiLottie(
@@ -265,7 +250,12 @@ private fun CreateAccount(
 ) {
     val focusManager = LocalFocusManager.current
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(vertical = 16.dp, horizontal = 20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         LumiLottie(
             animatedResId = R.raw.create_account,
             modifier = Modifier
@@ -352,5 +342,19 @@ private fun CreateAccount(
                 onDone = { focusManager.clearFocus() }
             )
         )
+    }
+}
+
+@Composable
+private fun Summary(
+    state: SetupState
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(vertical = 16.dp, horizontal = 20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = "Summary")
     }
 }

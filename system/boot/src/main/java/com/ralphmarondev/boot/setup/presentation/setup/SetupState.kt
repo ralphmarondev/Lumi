@@ -3,7 +3,7 @@ package com.ralphmarondev.boot.setup.presentation.setup
 import com.ralphmarondev.core.domain.model.Language
 
 data class SetupState(
-    val screenCount: Int = 2,
+    val screenCount: Int = 3,
     val currentScreen: Int = 0,
     val selectedLanguage: Language = Language.ENGLISH,
     val displayName: String = "",
