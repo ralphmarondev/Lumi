@@ -232,13 +232,15 @@ private fun ChooseLanguage(
             text = "English",
             onClick = { action(SetupAction.SetLanguage(Language.ENGLISH)) },
             modifier = Modifier.padding(vertical = 4.dp),
-            selected = state.selectedLanguage == Language.ENGLISH
+            selected = state.selectedLanguage == Language.ENGLISH,
+            flagResId = R.drawable.flag_us
         )
         LanguageCard(
             text = "Filipino",
             onClick = { action(SetupAction.SetLanguage(Language.FILIPINO)) },
             modifier = Modifier.padding(vertical = 4.dp),
-            selected = state.selectedLanguage == Language.FILIPINO
+            selected = state.selectedLanguage == Language.FILIPINO,
+            flagResId = R.drawable.flag_ph
         )
     }
 }
