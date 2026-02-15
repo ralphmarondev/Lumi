@@ -11,7 +11,11 @@ data class SetupState(
     val password: String = "",
     val confirmPassword: String = "",
     val completeSetup: Boolean = false,
-    val installationMode: InstallMode = InstallMode.InstallLumi
+    val installationMode: InstallMode = InstallMode.InstallLumi,
+    val displayNameError: String? = null,
+    val usernameError: String? = null,
+    val passwordError: String? = null,
+    val confirmPasswordError: String? = null
 )
 
 enum class InstallMode {

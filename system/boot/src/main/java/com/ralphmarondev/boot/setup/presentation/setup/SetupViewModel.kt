@@ -12,11 +12,24 @@ class SetupViewModel : ViewModel() {
     fun onAction(action: SetupAction) {
         when (action) {
             SetupAction.Continue -> {
-                _state.update {
-                    if (it.currentScreen == it.screenCount - 1) {
-                        it.copy(completeSetup = true)
-                    } else {
-                        it.copy(currentScreen = it.currentScreen + 1)
+                _state.update { state ->
+                    when (state.currentScreen) {
+                        state.screenCount - 1 -> {
+                            state.copy(completeSetup = true)
+                        }
+
+                        state.screenCount - 2 -> {
+                            val newState = validateAccount(state)
+                            if (newState.isValid) {
+                                newState.setupState.copy(currentScreen = state.currentScreen + 1)
+                            } else {
+                                newState.setupState
+                            }
+                        }
+
+                        else -> {
+                            state.copy(currentScreen = state.currentScreen + 1)
+                        }
                     }
                 }
             }
@@ -54,4 +67,34 @@ class SetupViewModel : ViewModel() {
             }
         }
     }
+
+    private fun validateAccount(state: SetupState): SetupStateWithValid {
+        val displayNameError =
+            if (state.displayName.isBlank()) "Display name cannot be empty" else null
+        val usernameError = if (state.username.isBlank()) "Username cannot be empty" else null
+        val passwordError = if (state.password.isBlank()) "Password cannot be empty" else null
+        val confirmPasswordError = when {
+            state.confirmPassword.isBlank() -> "Confirm your password"
+            state.confirmPassword != state.password -> "Passwords do not match"
+            else -> null
+        }
+
+        val hasError = listOf(displayNameError, usernameError, passwordError, confirmPasswordError)
+            .any { it != null }
+
+        return SetupStateWithValid(
+            setupState = state.copy(
+                displayNameError = displayNameError,
+                usernameError = usernameError,
+                passwordError = passwordError,
+                confirmPasswordError = confirmPasswordError
+            ),
+            isValid = !hasError
+        )
+    }
+
+    private data class SetupStateWithValid(
+        val setupState: SetupState,
+        val isValid: Boolean
+    )
 }

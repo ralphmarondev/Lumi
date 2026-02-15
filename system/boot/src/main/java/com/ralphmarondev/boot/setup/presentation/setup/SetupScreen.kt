@@ -353,7 +353,9 @@ private fun CreateAccount(
             ),
             keyboardActions = KeyboardActions(
                 onNext = { focusManager.moveFocus(FocusDirection.Next) }
-            )
+            ),
+            isError = !state.displayNameError.isNullOrBlank(),
+            supportingText = state.displayNameError ?: ""
         )
         LumiTextField(
             value = state.username,
@@ -368,7 +370,9 @@ private fun CreateAccount(
             ),
             keyboardActions = KeyboardActions(
                 onNext = { focusManager.moveFocus(FocusDirection.Next) }
-            )
+            ),
+            isError = !state.usernameError.isNullOrBlank(),
+            supportingText = state.usernameError ?: ""
         )
         LumiPasswordField(
             value = state.password,
@@ -383,7 +387,9 @@ private fun CreateAccount(
             ),
             keyboardActions = KeyboardActions(
                 onNext = { focusManager.moveFocus(FocusDirection.Next) }
-            )
+            ),
+            isError = !state.passwordError.isNullOrBlank(),
+            supportingText = state.passwordError ?: ""
         )
         LumiPasswordField(
             value = state.confirmPassword,
@@ -398,7 +404,9 @@ private fun CreateAccount(
             ),
             keyboardActions = KeyboardActions(
                 onDone = { focusManager.clearFocus() }
-            )
+            ),
+            isError = !state.confirmPasswordError.isNullOrBlank(),
+            supportingText = state.confirmPasswordError ?: ""
         )
     }
 }
