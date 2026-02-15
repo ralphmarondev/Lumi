@@ -23,6 +23,28 @@ class InstallViewModel : ViewModel() {
             InstallAction.Retry -> {
                 installLumi()
             }
+
+            InstallAction.Continue -> {
+                moveNext()
+            }
+
+            InstallAction.Previous -> {
+                movePrevious()
+            }
+        }
+    }
+
+    private fun moveNext() {
+        _state.update { state ->
+            val next = if (state.currentScreen == state.screenCount - 1) 0
+            else state.currentScreen + 1
+            state.copy(currentScreen = next)
+        }
+    }
+
+    private fun movePrevious() {
+        _state.update { state ->
+            state.copy(currentScreen = (state.currentScreen - 1).coerceAtLeast(0))
         }
     }
 
@@ -33,12 +55,24 @@ class InstallViewModel : ViewModel() {
                     installing = true,
                     installed = false,
                     errorMessage = null,
-                    showErrorMessage = false
+                    showErrorMessage = false,
+                    currentScreen = 0
                 )
             }
+
+            val autoScrollJob = launch {
+                while (_state.value.installing) {
+                    delay(1000)
+                    _state.update { state ->
+                        val next = (state.currentScreen + 1) % state.screenCount
+                        state.copy(currentScreen = next)
+                    }
+                }
+            }
+
             try {
                 Log.d("Install", "Installing Lumi...")
-                delay(2000)
+                delay(10000)
                 Log.d("Install", "Done...")
                 _state.update { it.copy(installed = true) }
             } catch (e: Exception) {
@@ -50,6 +84,7 @@ class InstallViewModel : ViewModel() {
                 }
             } finally {
                 _state.update { it.copy(installing = false) }
+                autoScrollJob.cancel()
             }
         }
     }
