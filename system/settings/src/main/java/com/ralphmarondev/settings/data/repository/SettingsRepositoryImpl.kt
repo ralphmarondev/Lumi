@@ -102,17 +102,12 @@ class SettingsRepositoryImpl(
     }
 
     override suspend fun updateUsername(username: String) {
-        val username = preferences.getSystemCurrentUser().first()
-        val userEntity = userDao.getByUsername(username)
+        val currentUsername = preferences.getSystemCurrentUser().first()
+        val userEntity = userDao.getByUsername(currentUsername)
             ?: return
-        // TODO:
-        //  CHECK IF USERNAME EXISTS
-        //  UPDATE USERNAME REFERENCES
-//        userDao.update(
-//            userEntity = userEntity.copy(
-//                username = username
-//            )
-//        )
+
+        userDao.update(userEntity = userEntity.copy(username = username))
+        preferences.setSystemCurrentUser(username)
     }
 
     override suspend fun updateEmail(email: String) {
