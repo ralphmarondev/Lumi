@@ -46,6 +46,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ralphmarondev.boot.R
+import com.ralphmarondev.boot.setup.domain.model.SetupResult
 import com.ralphmarondev.boot.setup.presentation.component.InstallOptionCard
 import com.ralphmarondev.boot.setup.presentation.component.LanguageCard
 import com.ralphmarondev.core.domain.model.Language
@@ -61,7 +62,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SetupScreenRoot(
-    installLumi: () -> Unit,
+    installLumi: (SetupResult) -> Unit,
     tryLumi: () -> Unit
 ) {
     val viewModel: SetupViewModel = koinViewModel()
@@ -69,7 +70,13 @@ fun SetupScreenRoot(
 
     LaunchedEffect(state.completeSetup) {
         if (state.completeSetup && state.installationMode == InstallMode.InstallLumi) {
-            installLumi()
+            val setupResult = SetupResult(
+                selectedLanguage = state.selectedLanguage.code,
+                displayName = state.displayName,
+                username = state.username,
+                password = state.password
+            )
+            installLumi(setupResult)
         }
     }
 

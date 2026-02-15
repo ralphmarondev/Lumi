@@ -54,6 +54,7 @@ dependencies {
     implementation(libs.androidx.material.icons.extended.android)
     implementation(libs.coil.compose)
     implementation(libs.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.bundles.koin)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

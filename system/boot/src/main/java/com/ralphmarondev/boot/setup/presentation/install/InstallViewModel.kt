@@ -3,13 +3,18 @@ package com.ralphmarondev.boot.setup.presentation.install
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ralphmarondev.boot.setup.domain.model.SetupResult
+import com.ralphmarondev.boot.setup.domain.repository.SetupRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class InstallViewModel : ViewModel() {
+class InstallViewModel(
+    private val setupResult: SetupResult,
+    private val repository: SetupRepository
+) : ViewModel() {
 
     private val _state = MutableStateFlow(InstallState())
     val state = _state.asStateFlow()
@@ -72,6 +77,10 @@ class InstallViewModel : ViewModel() {
 
             try {
                 Log.d("Install", "Installing Lumi...")
+                Log.d("Install", "Language: ${setupResult.selectedLanguage}")
+                Log.d("Install", "DisplayName: ${setupResult.displayName}")
+                Log.d("Install", "Username: ${setupResult.username}")
+                Log.d("Install", "Password: ${setupResult.password}")
                 delay(10000)
                 Log.d("Install", "Done...")
                 _state.update { it.copy(installed = true) }

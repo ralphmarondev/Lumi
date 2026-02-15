@@ -9,7 +9,12 @@ sealed interface SetupRoute {
     data object Setup : SetupRoute
 
     @Serializable
-    data object Installing : SetupRoute
+    data class Installing(
+        val selectedLanguage: String,
+        val displayName: String,
+        val username: String,
+        val password: String
+    ) : SetupRoute
 
     @Serializable
     data object Completed : SetupRoute

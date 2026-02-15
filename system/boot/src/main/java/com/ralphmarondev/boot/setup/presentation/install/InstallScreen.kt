@@ -32,17 +32,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.ralphmarondev.boot.setup.domain.model.SetupResult
 import com.ralphmarondev.core.presentation.component.LumiButton
 import com.ralphmarondev.core.presentation.shell.LocalLumiShellState
 import com.ralphmarondev.core.presentation.shell.LumiShellStyle
 import com.ralphmarondev.core.presentation.theme.LocalThemeState
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun InstallScreenRoot(
+    setupResult: SetupResult,
     onComplete: () -> Unit
 ) {
-    val viewModel: InstallViewModel = koinViewModel()
+    val viewModel: InstallViewModel = koinViewModel(parameters = { parametersOf(setupResult) })
     val state by viewModel.state.collectAsState()
 
     LaunchedEffect(state.installed) {
