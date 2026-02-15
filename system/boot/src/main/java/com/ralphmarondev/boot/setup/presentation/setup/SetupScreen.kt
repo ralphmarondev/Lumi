@@ -259,12 +259,9 @@ private fun TryOrInstallLumi(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         LumiLottie(
-            animatedResId = R.raw.create_account,
-            modifier = Modifier
-                .size(140.dp)
+            animatedResId = R.raw.live_chatbot,
+            modifier = Modifier.size(148.dp)
         )
-
-        Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = "What do you want to do with Lumi?",
             style = MaterialTheme.typography.titleLarge.copy(
