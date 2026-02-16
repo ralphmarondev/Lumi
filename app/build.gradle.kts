@@ -76,6 +76,7 @@ dependencies {
     implementation(project(":miniapps:weather"))
     implementation(project(":miniapps:clock"))
     implementation(project(":miniapps:calendar"))
+    implementation(project(":miniapps:calculator"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

@@ -105,6 +105,12 @@
                 <data android:scheme="tel" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.ralphmarondev.calculator.CalculatorActivity"
+            android:exported="false"
+            android:label="@string/title_activity_calculator"
+            android:theme="@style/Theme.Calculator"
+            tools:replace="android:theme" />
     </application>
 
 </manifest>

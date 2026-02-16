@@ -3,6 +3,7 @@ package com.ralphmarondev.lumi.navigation
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import com.ralphmarondev.calculator.CalculatorActivity
 import com.ralphmarondev.calendar.CalendarActivity
 import com.ralphmarondev.clock.ClockActivity
 import com.ralphmarondev.core.domain.model.LumiAppTag
@@ -49,7 +50,7 @@ fun Context.launchLumiApp(appTag: LumiAppTag) {
         LumiAppTag.Contacts -> ContactsActivity::class.java
         LumiAppTag.Phone -> PhoneActivity::class.java
         LumiAppTag.Community -> return
-        LumiAppTag.Calculator -> return
+        LumiAppTag.Calculator -> CalculatorActivity::class.java
     }
 
     val intent = Intent(this, activityClass).apply {
