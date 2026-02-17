@@ -187,6 +187,16 @@ class SetupRepositoryImpl(
                 resId = R.drawable.phone_call
             ),
             LumiAppEntity(
+                name = "Messages",
+                versionName = "1.0 Message",
+                versionCode = 1,
+                isSystemApp = true,
+                isDocked = false,
+                order = 13,
+                tag = LumiAppTag.Message.name,
+                resId = R.drawable.messages
+            ),
+            LumiAppEntity(
                 name = "Community",
                 versionName = "1.0 Community",
                 versionCode = 1,
@@ -205,6 +215,38 @@ class SetupRepositoryImpl(
                 order = 12,
                 tag = LumiAppTag.Calculator.name,
                 resId = R.drawable.calculator
+            ),
+            LumiAppEntity(
+                name = "App Store",
+                versionName = "1.0 App Store",
+                versionCode = 1,
+                isSystemApp = true,
+                isDocked = false,
+                order = 14,
+                tag = LumiAppTag.AppStore.name,
+                resId = R.drawable.app_store
+            ),
+            LumiAppEntity(
+                name = "Browser",
+                versionName = "1.0 Browser",
+                versionCode = 1,
+                isSystemApp = false,
+                isDocked = false,
+                order = 15,
+                tag = LumiAppTag.Browser.name,
+                resId = R.drawable.browser,
+                isInstalled = false
+            ),
+            LumiAppEntity(
+                name = "Finances",
+                versionName = "1.0 Finances",
+                versionCode = 1,
+                isSystemApp = false,
+                isDocked = false,
+                order = 16,
+                tag = LumiAppTag.Finances.name,
+                resId = R.drawable.finances,
+                isInstalled = false
             )
         )
 
