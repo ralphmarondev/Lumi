@@ -39,7 +39,6 @@ sealed interface LumiApp {
 @Suppress("DEPRECATION")
 fun Context.launchLumiApp(appTag: LumiAppTag) {
     val activityClass = when (appTag) {
-        LumiAppTag.Settings -> return
         LumiAppTag.Notes -> NoteActivity::class.java
         LumiAppTag.Weather -> WeatherActivity::class.java
         LumiAppTag.Clock -> ClockActivity::class.java
@@ -49,8 +48,8 @@ fun Context.launchLumiApp(appTag: LumiAppTag) {
         LumiAppTag.Calendar -> CalendarActivity::class.java
         LumiAppTag.Contacts -> ContactsActivity::class.java
         LumiAppTag.Phone -> PhoneActivity::class.java
-        LumiAppTag.Community -> return
         LumiAppTag.Calculator -> CalculatorActivity::class.java
+        else -> return
     }
 
     val intent = Intent(this, activityClass).apply {

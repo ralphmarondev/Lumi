@@ -139,6 +139,26 @@ fun LumiNavigation(
                         navController.navigate(LumiApp.ComingSoon) {
                             launchSingleTop = true
                         }
+                    },
+                    navigateToMessages = {
+                        navController.navigate(LumiApp.ComingSoon) {
+                            launchSingleTop = true
+                        }
+                    },
+                    navigateToAppStore = {
+                        navController.navigate(LumiApp.ComingSoon) {
+                            launchSingleTop = true
+                        }
+                    },
+                    navigateToFinances = {
+                        navController.navigate(LumiApp.ComingSoon) {
+                            launchSingleTop = true
+                        }
+                    },
+                    navigateToBrowser = {
+                        navController.navigate(LumiApp.ComingSoon) {
+                            launchSingleTop = true
+                        }
                     }
                 )
             }
