@@ -137,7 +137,7 @@ fun LauncherScreenRoot(
                 viewModel.onAction(LauncherAction.ResetNavigation)
             }
 
-            LumiAppTag.AppStore -> {
+            LumiAppTag.LumiStore -> {
                 navigateToAppStore()
                 viewModel.onAction(LauncherAction.ResetNavigation)
             }
