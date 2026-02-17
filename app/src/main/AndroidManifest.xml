@@ -111,6 +111,11 @@
             android:label="@string/title_activity_calculator"
             android:theme="@style/Theme.Calculator"
             tools:replace="android:theme" />
+        <activity
+            android:name="com.ralphmarondev.store.StoreActivity"
+            android:exported="false"
+            android:label="@string/title_activity_store"
+            android:theme="@style/Theme.Store" />
     </application>
 
 </manifest>

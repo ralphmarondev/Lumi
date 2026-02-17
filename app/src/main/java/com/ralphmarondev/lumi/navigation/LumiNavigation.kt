@@ -146,9 +146,7 @@ fun LumiNavigation(
                         }
                     },
                     navigateToAppStore = {
-                        navController.navigate(LumiApp.ComingSoon) {
-                            launchSingleTop = true
-                        }
+                        context.launchLumiApp(LumiAppTag.LumiStore)
                     },
                     navigateToFinances = {
                         navController.navigate(LumiApp.ComingSoon) {

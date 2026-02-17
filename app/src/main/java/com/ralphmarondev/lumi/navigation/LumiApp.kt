@@ -12,6 +12,7 @@ import com.ralphmarondev.media.camera.CameraActivity
 import com.ralphmarondev.media.photos.PhotosActivity
 import com.ralphmarondev.media.videos.VideosActivity
 import com.ralphmarondev.notes.NoteActivity
+import com.ralphmarondev.store.StoreActivity
 import com.ralphmarondev.telephony.contacts.ContactsActivity
 import com.ralphmarondev.telephony.phone.PhoneActivity
 import com.ralphmarondev.weather.WeatherActivity
@@ -49,6 +50,7 @@ fun Context.launchLumiApp(appTag: LumiAppTag) {
         LumiAppTag.Contacts -> ContactsActivity::class.java
         LumiAppTag.Phone -> PhoneActivity::class.java
         LumiAppTag.Calculator -> CalculatorActivity::class.java
+        LumiAppTag.LumiStore -> StoreActivity::class.java
         else -> return
     }
 

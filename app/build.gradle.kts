@@ -72,6 +72,7 @@ dependencies {
     implementation(project(":system:settings"))
     implementation(project(":system:media"))
     implementation(project(":system:telephony"))
+    implementation(project(":system:store"))
     implementation(project(":miniapps:notes"))
     implementation(project(":miniapps:weather"))
     implementation(project(":miniapps:clock"))
