@@ -11,6 +11,11 @@ enum class LumiAppTag {
     Videos,
     Contacts,
     Phone,
+    Message,
     Community,
-    Calculator
+    Calculator,
+    AppStore,
+    Browser,
+    Finances,
+    Unknown
 }
