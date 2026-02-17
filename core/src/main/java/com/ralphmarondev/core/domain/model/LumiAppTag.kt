@@ -14,7 +14,7 @@ enum class LumiAppTag {
     Message,
     Community,
     Calculator,
-    AppStore,
+    LumiStore,
     Browser,
     Finances,
     Unknown
