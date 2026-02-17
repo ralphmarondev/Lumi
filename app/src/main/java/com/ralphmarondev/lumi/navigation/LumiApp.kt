@@ -14,6 +14,7 @@ import com.ralphmarondev.media.videos.VideosActivity
 import com.ralphmarondev.notes.NoteActivity
 import com.ralphmarondev.store.StoreActivity
 import com.ralphmarondev.telephony.contacts.ContactsActivity
+import com.ralphmarondev.telephony.message.MessageActivity
 import com.ralphmarondev.telephony.phone.PhoneActivity
 import com.ralphmarondev.weather.WeatherActivity
 import kotlinx.serialization.Serializable
@@ -51,6 +52,7 @@ fun Context.launchLumiApp(appTag: LumiAppTag) {
         LumiAppTag.Phone -> PhoneActivity::class.java
         LumiAppTag.Calculator -> CalculatorActivity::class.java
         LumiAppTag.LumiStore -> StoreActivity::class.java
+        LumiAppTag.Message -> MessageActivity::class.java
         else -> return
     }
 

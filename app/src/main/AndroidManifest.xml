@@ -92,7 +92,14 @@
             android:name="com.ralphmarondev.telephony.contacts.ContactsActivity"
             android:exported="false"
             android:label="@string/title_activity_contacts"
-            android:theme="@style/Theme.Contacts" />
+            android:theme="@style/Theme.Contacts"
+            tools:replace="android:theme" />
+        <activity
+            android:name="com.ralphmarondev.telephony.message.MessageActivity"
+            android:exported="false"
+            android:label="@string/title_activity_message"
+            android:theme="@style/Theme.Message"
+            tools:replace="android:theme" />
         <activity
             android:name="com.ralphmarondev.telephony.phone.PhoneActivity"
             android:exported="false"
@@ -115,7 +122,8 @@
             android:name="com.ralphmarondev.store.StoreActivity"
             android:exported="false"
             android:label="@string/title_activity_store"
-            android:theme="@style/Theme.Store" />
+            android:theme="@style/Theme.Store"
+            tools:replace="android:theme" />
     </application>
 
 </manifest>
