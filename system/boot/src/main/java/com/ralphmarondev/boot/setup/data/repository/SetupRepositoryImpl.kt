@@ -223,7 +223,7 @@ class SetupRepositoryImpl(
                 isSystemApp = true,
                 isDocked = false,
                 order = 14,
-                tag = LumiAppTag.AppStore.name,
+                tag = LumiAppTag.LumiStore.name,
                 resId = R.drawable.app_store
             ),
             LumiAppEntity(
