@@ -217,8 +217,8 @@ class SetupRepositoryImpl(
                 resId = R.drawable.calculator
             ),
             LumiAppEntity(
-                name = "App Store",
-                versionName = "1.0 App Store",
+                name = "Lumi Store",
+                versionName = "1.0 Lumi Store",
                 versionCode = 1,
                 isSystemApp = true,
                 isDocked = false,
