@@ -37,73 +37,73 @@ class LauncherViewModel(
                 when (action.tag) {
                     LumiAppTag.Settings.name -> {
                         _state.update {
-                            it.copy(navigationTarget = NavigationTarget.Settings)
+                            it.copy(launchLumiApp = LumiAppTag.Settings)
                         }
                     }
 
                     LumiAppTag.Notes.name -> {
                         _state.update {
-                            it.copy(navigationTarget = NavigationTarget.Notes)
+                            it.copy(launchLumiApp = LumiAppTag.Notes)
                         }
                     }
 
                     LumiAppTag.Clock.name -> {
                         _state.update {
-                            it.copy(navigationTarget = NavigationTarget.Clock)
+                            it.copy(launchLumiApp = LumiAppTag.Clock)
                         }
                     }
 
                     LumiAppTag.Weather.name -> {
                         _state.update {
-                            it.copy(navigationTarget = NavigationTarget.Weather)
+                            it.copy(launchLumiApp = LumiAppTag.Weather)
                         }
                     }
 
                     LumiAppTag.Calendar.name -> {
                         _state.update {
-                            it.copy(navigationTarget = NavigationTarget.Calendar)
+                            it.copy(launchLumiApp = LumiAppTag.Calendar)
                         }
                     }
 
                     LumiAppTag.Camera.name -> {
                         _state.update {
-                            it.copy(navigationTarget = NavigationTarget.Camera)
+                            it.copy(launchLumiApp = LumiAppTag.Camera)
                         }
                     }
 
                     LumiAppTag.Photos.name -> {
                         _state.update {
-                            it.copy(navigationTarget = NavigationTarget.Photos)
+                            it.copy(launchLumiApp = LumiAppTag.Photos)
                         }
                     }
 
                     LumiAppTag.Videos.name -> {
                         _state.update {
-                            it.copy(navigationTarget = NavigationTarget.Videos)
+                            it.copy(launchLumiApp = LumiAppTag.Videos)
                         }
                     }
 
                     LumiAppTag.Contacts.name -> {
                         _state.update {
-                            it.copy(navigationTarget = NavigationTarget.Contacts)
+                            it.copy(launchLumiApp = LumiAppTag.Contacts)
                         }
                     }
 
                     LumiAppTag.Phone.name -> {
                         _state.update {
-                            it.copy(navigationTarget = NavigationTarget.Phone)
+                            it.copy(launchLumiApp = LumiAppTag.Phone)
                         }
                     }
 
                     LumiAppTag.Calculator.name -> {
                         _state.update {
-                            it.copy(navigationTarget = NavigationTarget.Calculator)
+                            it.copy(launchLumiApp = LumiAppTag.Calculator)
                         }
                     }
 
                     LumiAppTag.Community.name -> {
                         _state.update {
-                            it.copy(navigationTarget = NavigationTarget.Community)
+                            it.copy(launchLumiApp = LumiAppTag.Community)
                         }
                     }
                 }
@@ -111,7 +111,7 @@ class LauncherViewModel(
 
             LauncherAction.ResetNavigation -> {
                 _state.update {
-                    it.copy(navigationTarget = NavigationTarget.None)
+                    it.copy(launchLumiApp = LumiAppTag.Unknown)
                 }
             }
         }

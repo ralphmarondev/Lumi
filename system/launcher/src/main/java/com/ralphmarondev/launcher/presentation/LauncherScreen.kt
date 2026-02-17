@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.ralphmarondev.core.domain.model.LumiAppTag
 import com.ralphmarondev.core.presentation.shell.LocalLumiShellState
 import com.ralphmarondev.core.presentation.shell.LumiShellStyle
 import com.ralphmarondev.launcher.presentation.component.AppContainer
@@ -53,8 +54,12 @@ fun LauncherScreenRoot(
     navigateToVideos: () -> Unit,
     navigateToContacts: () -> Unit,
     navigateToPhone: () -> Unit,
+    navigateToMessages: () -> Unit,
     navigateToCalculator: () -> Unit,
-    navigateToCommunity: () -> Unit
+    navigateToCommunity: () -> Unit,
+    navigateToAppStore: () -> Unit,
+    navigateToFinances: () -> Unit,
+    navigateToBrowser: () -> Unit
 ) {
     val viewModel: LauncherViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
@@ -64,66 +69,86 @@ fun LauncherScreenRoot(
         shellState.setAppearance(LumiShellStyle.WhiteOnTransparent)
     }
 
-    LaunchedEffect(state.navigationTarget) {
-        when (state.navigationTarget) {
-            NavigationTarget.None -> Unit
-            NavigationTarget.Notes -> {
+    LaunchedEffect(state.launchLumiApp) {
+        when (state.launchLumiApp) {
+            LumiAppTag.Unknown -> Unit
+            LumiAppTag.Notes -> {
                 navigateToNotes()
                 viewModel.onAction(LauncherAction.ResetNavigation)
             }
 
-            NavigationTarget.Settings -> {
+            LumiAppTag.Settings -> {
                 navigateToSettings()
                 viewModel.onAction(LauncherAction.ResetNavigation)
             }
 
-            NavigationTarget.Clock -> {
+            LumiAppTag.Clock -> {
                 navigateToClock()
                 viewModel.onAction(LauncherAction.ResetNavigation)
             }
 
-            NavigationTarget.Weather -> {
+            LumiAppTag.Weather -> {
                 navigateToWeather()
                 viewModel.onAction(LauncherAction.ResetNavigation)
             }
 
-            NavigationTarget.Calendar -> {
+            LumiAppTag.Calendar -> {
                 navigateToCalendar()
                 viewModel.onAction(LauncherAction.ResetNavigation)
             }
 
-            NavigationTarget.Camera -> {
+            LumiAppTag.Camera -> {
                 navigateToCamera()
                 viewModel.onAction(LauncherAction.ResetNavigation)
             }
 
-            NavigationTarget.Photos -> {
+            LumiAppTag.Photos -> {
                 navigateToPhotos()
                 viewModel.onAction(LauncherAction.ResetNavigation)
             }
 
-            NavigationTarget.Videos -> {
+            LumiAppTag.Videos -> {
                 navigateToVideos()
                 viewModel.onAction(LauncherAction.ResetNavigation)
             }
 
-            NavigationTarget.Contacts -> {
+            LumiAppTag.Contacts -> {
                 navigateToContacts()
                 viewModel.onAction(LauncherAction.ResetNavigation)
             }
 
-            NavigationTarget.Phone -> {
+            LumiAppTag.Phone -> {
                 navigateToPhone()
                 viewModel.onAction(LauncherAction.ResetNavigation)
             }
 
-            NavigationTarget.Calculator -> {
+            LumiAppTag.Calculator -> {
                 navigateToCalculator()
                 viewModel.onAction(LauncherAction.ResetNavigation)
             }
 
-            NavigationTarget.Community -> {
+            LumiAppTag.Community -> {
                 navigateToCommunity()
+                viewModel.onAction(LauncherAction.ResetNavigation)
+            }
+
+            LumiAppTag.Message -> {
+                navigateToMessages()
+                viewModel.onAction(LauncherAction.ResetNavigation)
+            }
+
+            LumiAppTag.AppStore -> {
+                navigateToAppStore()
+                viewModel.onAction(LauncherAction.ResetNavigation)
+            }
+
+            LumiAppTag.Browser -> {
+                navigateToBrowser()
+                viewModel.onAction(LauncherAction.ResetNavigation)
+            }
+
+            LumiAppTag.Finances -> {
+                navigateToFinances()
                 viewModel.onAction(LauncherAction.ResetNavigation)
             }
         }
