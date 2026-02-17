@@ -3,6 +3,11 @@
 
     <application>
         <activity
+            android:name=".message.MessageActivity"
+            android:exported="false"
+            android:label="@string/title_activity_message"
+            android:theme="@style/Theme.Message" />
+        <activity
             android:name=".phone.PhoneActivity"
             android:exported="false"
             android:label="@string/title_activity_phone"

@@ -1,4 +1,5 @@
 <resources>
     <string name="title_activity_contacts">ContactsActivity</string>
     <string name="title_activity_phone">PhoneActivity</string>
+    <string name="title_activity_message">MessageActivity</string>
 </resources>
