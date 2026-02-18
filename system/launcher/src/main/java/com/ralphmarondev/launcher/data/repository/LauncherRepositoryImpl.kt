@@ -32,6 +32,6 @@ class LauncherRepositoryImpl(
     }
 
     override suspend fun getMiniApps(): List<LumiApp> {
-        return lumiAppDao.getAll().map { it.toDomain() }
+        return lumiAppDao.getInstalledApps().map { it.toDomain() }
     }
 }
