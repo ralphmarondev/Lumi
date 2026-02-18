@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -26,15 +25,17 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
@@ -93,35 +94,41 @@ private fun AppListScreen(
             )
         }
     ) { innerPadding ->
-        LazyColumn(
+        PullToRefreshBox(
+            isRefreshing = state.isRefreshing,
+            onRefresh = { action(AppListAction.Refresh) },
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
-            contentPadding = PaddingValues(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = if (state.lumiApps.isEmpty()) Arrangement.Center else Arrangement.Top
+                .padding(innerPadding)
         ) {
-            item {
-                AnimatedVisibility(state.lumiApps.isEmpty()) {
-                    Text(
-                        text = "Lumi store is empty.",
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            color = MaterialTheme.colorScheme.primary,
-                            textAlign = TextAlign.Center
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = if (state.lumiApps.isEmpty()) Arrangement.Center else Arrangement.Top
+            ) {
+                item {
+                    AnimatedVisibility(state.lumiApps.isEmpty()) {
+                        Text(
+                            text = "Lumi store is empty.",
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                color = MaterialTheme.colorScheme.primary,
+                                textAlign = TextAlign.Center
+                            )
                         )
+                    }
+                }
+                items(state.lumiApps) { app ->
+                    AppCard(
+                        onClick = { action(AppListAction.AppSelected(app.tag)) },
+                        app = app,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
                     )
                 }
+                item { Spacer(modifier = Modifier.height(100.dp)) }
             }
-            items(state.lumiApps) { app ->
-                AppCard(
-                    onClick = { action(AppListAction.AppSelected(app.tag)) },
-                    app = app,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp)
-                )
-            }
-            item { Spacer(modifier = Modifier.height(100.dp)) }
         }
     }
 }
@@ -149,25 +156,34 @@ private fun AppCard(
             Image(
                 painter = painter,
                 contentDescription = "${app.name} Icon",
-                modifier = Modifier
-                    .size(80.dp)
-                    .clip(RoundedCornerShape(16.dp)),
-                contentScale = ContentScale.Crop
+                modifier = Modifier.size(60.dp),
+                contentScale = ContentScale.Fit
             )
 
-            Column(modifier = Modifier.padding(start = 16.dp)) {
+            Column(modifier = Modifier.padding(start = 24.dp)) {
                 Text(
                     text = app.name,
-                    style = MaterialTheme.typography.bodyLarge.copy(
+                    style = MaterialTheme.typography.titleMedium.copy(
                         color = MaterialTheme.colorScheme.primary
                     )
                 )
-                Text(
-                    text = app.name,
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        color = MaterialTheme.colorScheme.secondary
+                Spacer(modifier = Modifier.height(8.dp))
+                if (app.isInstalled) {
+                    Text(
+                        text = "Installed",
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            color = Color.Green
+                        )
                     )
-                )
+                } else {
+                    Text(
+                        text = "Install",
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            color = Color.Green,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    )
+                }
             }
         }
     }
