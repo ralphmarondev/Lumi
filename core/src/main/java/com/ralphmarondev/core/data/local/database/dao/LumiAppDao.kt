@@ -19,8 +19,11 @@ interface LumiAppDao {
     suspend fun count(): Int
 
     @Query("SELECT * FROM applications WHERE isInstalled = 1 ORDER BY name ASC")
-    suspend fun getAll(): List<LumiAppEntity>
+    suspend fun getInstalledApps(): List<LumiAppEntity>
 
     @Query("SELECT * FROM applications WHERE isDocked = 1 AND isInstalled  = 1 LIMIT :limit")
     suspend fun getDockApps(limit: Int = 4): List<LumiAppEntity>
+
+    @Query("SELECT * FROM applications ORDER BY name ASC")
+    suspend fun getAll(): List<LumiAppEntity>
 }
