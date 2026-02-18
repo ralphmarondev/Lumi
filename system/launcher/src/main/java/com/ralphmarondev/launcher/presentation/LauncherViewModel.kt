@@ -106,6 +106,22 @@ class LauncherViewModel(
                             it.copy(launchLumiApp = LumiAppTag.Community)
                         }
                     }
+
+                    LumiAppTag.Message.name -> {
+                        _state.update { it.copy(launchLumiApp = LumiAppTag.Message) }
+                    }
+
+                    LumiAppTag.LumiStore.name -> {
+                        _state.update { it.copy(launchLumiApp = LumiAppTag.LumiStore) }
+                    }
+
+                    LumiAppTag.Browser.name -> {
+                        _state.update { it.copy(launchLumiApp = LumiAppTag.Browser) }
+                    }
+
+                    LumiAppTag.Finances.name -> {
+                        _state.update { it.copy(launchLumiApp = LumiAppTag.Finances) }
+                    }
                 }
             }
 
