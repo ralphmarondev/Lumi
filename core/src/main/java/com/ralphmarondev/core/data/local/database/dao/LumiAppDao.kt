@@ -26,4 +26,10 @@ interface LumiAppDao {
 
     @Query("SELECT * FROM applications ORDER BY name ASC")
     suspend fun getAll(): List<LumiAppEntity>
+
+    @Query("UPDATE applications SET isInstalled = 1 WHERE id = :id")
+    suspend fun install(id: Long)
+
+    @Query("UPDATE applications SET isInstalled = 0 WHERE id = :id")
+    suspend fun unInstall(id: Long)
 }
