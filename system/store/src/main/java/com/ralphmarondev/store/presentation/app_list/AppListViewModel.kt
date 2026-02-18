@@ -2,12 +2,16 @@ package com.ralphmarondev.store.presentation.app_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ralphmarondev.store.domain.repository.StoreRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class AppListViewModel : ViewModel() {
+class AppListViewModel(
+    private val repository: StoreRepository
+) : ViewModel() {
 
     private val _state = MutableStateFlow(AppListState())
     val state = _state.asStateFlow()
@@ -47,6 +51,11 @@ class AppListViewModel : ViewModel() {
                         isRefreshing = isRefreshing
                     )
                 }
+                val applications = repository.loadApplications()
+                if (isRefreshing) {
+                    delay(1000)
+                }
+                _state.update { it.copy(lumiApps = applications) }
             } catch (e: Exception) {
                 _state.update {
                     it.copy(
