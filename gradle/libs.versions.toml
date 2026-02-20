@@ -121,3 +121,8 @@ camerax = [
     "camera-video",
     "camera-view"
 ]
+firebase = [
+    "firebase-auth",
+    "firebase-firestore",
+    "firebase-storage"
+]
