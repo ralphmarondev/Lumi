@@ -1,5 +1,8 @@
 package com.ralphmarondev.lumi.di
 
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import com.ralphmarondev.boot.auth.di.authModule
 import com.ralphmarondev.boot.setup.di.setupModule
 import com.ralphmarondev.calculator.di.calculatorModule
@@ -37,4 +40,7 @@ val appModule = module {
     includes(communityModule)
 
     viewModelOf(::MainViewModel)
+    single { FirebaseAuth.getInstance() }
+    single { FirebaseFirestore.getInstance() }
+    single { FirebaseStorage.getInstance() }
 }
