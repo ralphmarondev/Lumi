@@ -55,6 +55,7 @@ fun AppListScreenRoot(
     LaunchedEffect(state.navigateToDetails) {
         if (state.navigateToDetails) {
             navigateToDetails(state.selectedAppId)
+            viewModel.onAction(AppListAction.ClearNavigation)
         }
     }
 

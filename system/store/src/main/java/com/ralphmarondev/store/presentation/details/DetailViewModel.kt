@@ -1,5 +1,6 @@
 package com.ralphmarondev.store.presentation.details
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ralphmarondev.store.domain.repository.StoreRepository
@@ -43,6 +44,7 @@ class DetailViewModel(
     private fun loadApp(id: Long) {
         viewModelScope.launch {
             try {
+                Log.d("Detail", "Loading app...")
                 val app = repository.getAppById(id)
                 if (app == null) {
                     _state.update {
@@ -53,8 +55,10 @@ class DetailViewModel(
                     }
                     return@launch
                 }
+                Log.d("Detail", "App details fetch successfully. Name: `${app.name}`")
                 _state.update { it.copy(app = app) }
             } catch (e: Exception) {
+                Log.e("Detail", "Error fetching. Error: ${e.localizedMessage}")
                 _state.update {
                     it.copy(
                         errorMessage = e.localizedMessage ?: "Unknown error occurred.",
