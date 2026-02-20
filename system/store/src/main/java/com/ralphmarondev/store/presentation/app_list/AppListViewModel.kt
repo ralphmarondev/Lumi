@@ -27,7 +27,7 @@ class AppListViewModel(
             }
 
             AppListAction.ClearNavigation -> {
-                _state.update { it.copy(navigateBack = false) }
+                _state.update { it.copy(navigateBack = false, navigateToDetails = false) }
             }
 
             AppListAction.NavigateBack -> {
@@ -35,7 +35,12 @@ class AppListViewModel(
             }
 
             is AppListAction.AppSelected -> {
-
+                _state.update {
+                    it.copy(
+                        selectedAppId = action.id,
+                        navigateToDetails = true
+                    )
+                }
             }
         }
     }

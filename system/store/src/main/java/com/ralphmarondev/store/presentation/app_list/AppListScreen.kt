@@ -46,10 +46,17 @@ import java.io.File
 
 @Composable
 fun AppListScreenRoot(
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
+    navigateToDetails: (Long) -> Unit
 ) {
     val viewModel: AppListViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
+
+    LaunchedEffect(state.navigateToDetails) {
+        if (state.navigateToDetails) {
+            navigateToDetails(state.selectedAppId)
+        }
+    }
 
     LaunchedEffect(state.navigateBack) {
         if (state.navigateBack) {
@@ -120,7 +127,7 @@ private fun AppListScreen(
                 }
                 items(state.lumiApps) { app ->
                     AppCard(
-                        onClick = { action(AppListAction.AppSelected(app.tag)) },
+                        onClick = { action(AppListAction.AppSelected(app.id)) },
                         app = app,
                         modifier = Modifier
                             .fillMaxWidth()

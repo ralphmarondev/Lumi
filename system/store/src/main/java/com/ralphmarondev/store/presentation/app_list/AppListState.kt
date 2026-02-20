@@ -8,6 +8,7 @@ data class AppListState(
     val errorMessage: String? = null,
     val showErrorMessage: Boolean = false,
     val lumiApps: List<LumiApp> = emptyList(),
-    val selectedAppTag: String = "",
-    val navigateBack: Boolean = false
+    val selectedAppId: Long = 0,
+    val navigateBack: Boolean = false,
+    val navigateToDetails: Boolean = false
 )
