@@ -136,9 +136,7 @@ fun LumiNavigation(
                         context.launchLumiApp(LumiAppTag.Calculator)
                     },
                     navigateToCommunity = {
-                        navController.navigate(LumiApp.ComingSoon) {
-                            launchSingleTop = true
-                        }
+                        context.launchLumiApp(LumiAppTag.Community)
                     },
                     navigateToMessages = {
                         context.launchLumiApp(LumiAppTag.Message)

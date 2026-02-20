@@ -124,6 +124,12 @@
             android:label="@string/title_activity_store"
             android:theme="@style/Theme.Store"
             tools:replace="android:theme" />
+        <activity
+            android:name="com.ralphmarondev.community.CommunityActivity"
+            android:exported="false"
+            android:label="@string/title_activity_community"
+            android:theme="@style/Theme.Lumi"
+            tools:replace="android:theme" />
     </application>
 
 </manifest>
