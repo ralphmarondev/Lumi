@@ -12,10 +12,16 @@ interface LumiAppDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun create(lumiAppEntity: LumiAppEntity)
 
-    @Query("SELECT * FROM applications WHERE id = :id AND isInstalled = 1 LIMIT 1")
+    @Query("SELECT * FROM applications WHERE id = :id LIMIT 1")
     suspend fun getById(id: Long): LumiAppEntity?
 
     @Query("SELECT COUNT(*) FROM applications WHERE isInstalled = 1")
+    suspend fun countInstalled(): Int
+
+    @Query("SELECT COUNT(*) FROM applications WHERE isInstalled = 0")
+    suspend fun countNotInstalled(): Int
+
+    @Query("SELECT COUNT(*) FROM applications")
     suspend fun count(): Int
 
     @Query("SELECT * FROM applications WHERE isInstalled = 1 ORDER BY name ASC")
