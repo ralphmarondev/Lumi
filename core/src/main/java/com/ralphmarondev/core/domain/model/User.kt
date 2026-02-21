@@ -1,6 +1,8 @@
 package com.ralphmarondev.core.domain.model
 
 data class User(
+    val uid: String? = null,
+    val id: Long = 0,
     val username: String = "",
     val password: String = "",
     val displayName: String? = null,
