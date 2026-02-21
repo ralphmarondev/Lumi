@@ -18,7 +18,11 @@ fun CommunityNavigation(
         startDestination = startDestination
     ) {
         composable<Routes.Login> {
-            LoginScreenRoot()
+            LoginScreenRoot(
+                navigateBack = finishActivity,
+                onRegister = {},
+                onLoginSuccess = {}
+            )
         }
     }
 }

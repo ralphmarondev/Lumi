@@ -38,8 +38,8 @@ class CommunityActivity : ComponentActivity() {
                                 else LumiShellStyle.BlackOnTransparent
                             )
                         }
+                        CommunityNavigation(finishActivity = { finish() })
                     }
-
                 }
             }
         }

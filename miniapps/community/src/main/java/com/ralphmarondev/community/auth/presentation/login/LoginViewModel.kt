@@ -35,6 +35,14 @@ class LoginViewModel(
                     password = _state.value.password.trim()
                 )
             }
+
+            is LoginAction.EmailChange -> {
+                _state.update { it.copy(email = action.email) }
+            }
+
+            is LoginAction.PasswordChange -> {
+                _state.update { it.copy(password = action.password) }
+            }
         }
     }
 
